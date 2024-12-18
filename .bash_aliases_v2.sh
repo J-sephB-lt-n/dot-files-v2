@@ -9,3 +9,12 @@ checkcert() {
 		tac |
 		openssl x509 -noout -subject -issuer
 }
+
+rmaf() {
+	# delete all instances of file with this name (also looks in all subdirectories)
+	find . -type f -name "${1}" -exec rm -f '{}' +
+}
+rmad() {
+	# delete all instances of directory with this name (also looks in all subdirectories)
+	find . -type d -name "${1}" -exec rm -rf {} \;
+}
