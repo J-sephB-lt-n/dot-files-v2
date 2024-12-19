@@ -38,7 +38,7 @@ alias lls="ls -lahS"
 # screen management #
 alias cl='clear'
 alias cll="clear && ls -lah"
-alias clct='clear && tree -a -I .git -I .mypy_cache -I .pytest_cache -I __pycache__ -I node_modules'
+alias clct='clear && tree -a -I .git -I .mypy_cache -I .pytest_cache -I .venv -I __pycache__ -I node_modules -I venv'
 
 # python uv #
 alias uvrn='uv run --no-project'
