@@ -13,6 +13,9 @@ checkcert() {
 		openssl x509 -noout -subject -issuer
 }
 
+# file system #
+alias folder_size='du --human-readable --summarize'
+
 # git #
 alias czc='cz commit'
 alias ga="git add"
