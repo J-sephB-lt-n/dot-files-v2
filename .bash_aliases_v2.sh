@@ -1,3 +1,6 @@
+# code linting #
+alias poetry_run_pylint_recursive='poetry run pylint --rcfile .pylintrc --recursive=y .'
+
 checkcert() {
 	# e.g. checkcert www.github.com
 	# this function from: https://stackoverflow.com/questions/21181231/server-certificate-verification-failed-cafile-etc-ssl-certs-ca-certificates-c/67698986#67698986
@@ -9,6 +12,39 @@ checkcert() {
 		tac |
 		openssl x509 -noout -subject -issuer
 }
+
+# git #
+alias czc='cz commit'
+alias ga="git add"
+alias ga.="git add ."
+alias gb="git branch"
+alias gch="git checkout"
+alias gd="git diff"
+alias gdn="git diff --name-only"
+alias git_verbose='GIT_CURL_VERBOSE=1 GIT_TRACE=1' # e.g. git_verbose git status
+alias gp="git push"
+alias gpom="git pull origin main --no-rebase"
+alias grs="git restore --staged"
+alias grs.="git restore --staged ."
+alias gst="git status"
+
+# navigation #
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+#alias ll='ls -lah'
+alias lls="ls -lahS"
+
+# screen management #
+alias cl='clear'
+alias cll="clear && ls -lah"
+alias clct='clear && tree -a -I .git -I .mypy_cache -I .pytest_cache -I __pycache__ -I node_modules'
+
+# python uv #
+alias uvrn='uv run --no-project'
+alias uvrn3.10='uv run --no-project --python 3.10'
+alias uvrn3.11='uv run --no-project --python 3.11'
+alias uvrn3.12='uv run --no-project --python 3.12'
 
 rmaf() {
 	# delete all instances of file with this name (also looks in all subdirectories)
