@@ -44,10 +44,9 @@ alias cll="clear && ls -lah"
 alias clct='clear && tree -a -I .git -I .mypy_cache -I .pytest_cache -I .ruff_cache -I .venv -I __pycache__ -I node_modules -I target -I venv'
 
 # python uv #
-alias uvrn='uv run --no-project'
-alias uvrn3.10='uv run --no-project --python 3.10'
-alias uvrn3.11='uv run --no-project --python 3.11'
-alias uvrn3.12='uv run --no-project --python 3.12'
+uvrn() { # e.g. uvrn 3.13 python -m venv .venv
+	uv run --no-project --python "${1}" "${@:2}"
+}
 
 rmaf() {
 	# delete all instances of file with this name (also looks in all subdirectories)
