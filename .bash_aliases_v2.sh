@@ -15,6 +15,9 @@ checkcert() {
 
 # file system #
 alias folder_size='du --human-readable --summarize'
+#alias ll='ls -lah'
+alias lls="ls -lahS"
+alias lsd="ls -d */" # list only directories
 
 # git #
 alias czc='cz commit'
@@ -35,8 +38,6 @@ alias gst="git status"
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
-#alias ll='ls -lah'
-alias lls="ls -lahS"
 
 # screen management #
 alias cl='clear'
