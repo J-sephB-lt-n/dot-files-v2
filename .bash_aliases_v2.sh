@@ -49,6 +49,7 @@ uvrn() {
 	# e.g. uvrn 3.13 python -m venv .venv
 	uv run --no-project --python "${1}" "${@:2}"
 }
+alias urrf='uv run ruff format'
 
 rmaf() {
 	# delete all instances of file with this name (also looks in all subdirectories)
