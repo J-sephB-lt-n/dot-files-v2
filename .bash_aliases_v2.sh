@@ -32,15 +32,39 @@ alias lls="ls -lahS"
 alias lsd="ls -d */" # list only directories
 
 # quick folder navigation using explicit path cache #
-std() {
+savepath() {
   # save current directory path to memory (under provided name) 
   if [ -z "$1" ]; then
-    echo "Usage: std <name>"
+    echo "Usage: savepath <name>"
     return 1
   fi
-  local savename="SETDIR_$1"
+  local savename="SAVEDPATH_${1}"
   echo "saving path $(pwd) to environment variable ${savename}"
   export $savename=$(pwd)
+}
+
+listpath() {
+  echo 'listing saved paths (i.e. variables in ENV with prefix SAVEDPATH_)'
+  env | grep 'SAVEDPATH_' | cut -c 11-
+}
+
+getpath() {
+  if [ -z "$1" ]; then
+    echo "Usage: getpath <name>"
+    return 1
+  fi
+  local savedpath=$(env | grep "SAVEDPATH_$1=" | sed "s:^.*=::")
+  echo "navigating to ${savedpath}"
+  cd $(echo $savedpath)
+}
+
+delpath() {
+  if [ -z "$1" ]; then
+    echo "Usage: delpath <name>"
+    return 1
+  fi
+  echo "Removing saved path $1"
+  unset SAVEDPATH_$1
 }
 
 # git #
