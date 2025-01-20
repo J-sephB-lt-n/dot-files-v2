@@ -31,6 +31,18 @@ alias folder_size='du --human-readable --summarize'
 alias lls="ls -lahS"
 alias lsd="ls -d */" # list only directories
 
+# quick folder navigation using explicit path cache #
+std() {
+  # save current directory path to memory (under provided name) 
+  if [ -z "$1" ]; then
+    echo "Usage: std <name>"
+    return 1
+  fi
+  local savename="SETDIR_$1"
+  echo "saving path $(pwd) to environment variable ${savename}"
+  export $savename=$(pwd)
+}
+
 # git #
 alias czc='cz commit'
 alias ga="git add"
