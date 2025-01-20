@@ -14,6 +14,18 @@ checkcert() {
 }
 
 # file system #
+alias find_helper='echo "
+  # find anything using substring of the name #
+  # \".\" is current directory. 
+  # \"*\" is wildcard meaning \"match anything\"
+  find . -name \"*substring_here*\" 
+
+  # find only files #
+  find . -type f -name \"*substring_here*\"
+
+  # find only directories #
+  find . -type d -name \"*substring_here*\"
+"'
 alias folder_size='du --human-readable --summarize'
 #alias ll='ls -lah'
 alias lls="ls -lahS"
