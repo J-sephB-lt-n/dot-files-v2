@@ -13,6 +13,33 @@ checkcert() {
 		openssl x509 -noout -subject -issuer
 }
 
+# docker #
+alias docker_helper='echo "
+  # Build image using definition from file named \`Dockerfile\` in current folder #
+  docker build --tag my_image_name .
+
+  # Run image \`my_image_name\` interactively (i.e. enter the running container and give me a bash terminal) #
+  docker run -it --name my_container_name my_image_name bash
+
+  # Stop the container \`my_container_name\` (running image \`my_image_name\`) #
+  # (stops container but state persists i.e. created files will still be there when the container is started again) #
+  docker stop my_container_name
+
+  # Start the stopped container again #
+  docker start my_container_name 
+
+  # List all running containers #
+  docker ps
+
+  # Go into the running container again #
+  # (NOTE: there is also \`docker exec\` - go read about the differences) #
+  docker attach my_container_name
+
+  # Delete the container \`my_container_name\` #
+  # i.e. free up resources by erasing the container completely #
+  docker rm my_container_name
+"'
+
 # file system #
 alias find_helper='echo "
   # find anything using substring of the name #
