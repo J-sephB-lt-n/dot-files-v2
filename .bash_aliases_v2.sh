@@ -42,9 +42,9 @@ alias docker_helper='echo "
 
 # file system #
 alias find_helper='echo "
-  # find anything using substring of the name #
+  # find file or directory using substring of its name #
   # \".\" is current directory. 
-  # \"*\" is wildcard meaning \"match anything\"
+  # \"*\" is wildcard meaning \"match any number of characters of anything\"
   find . -name \"*substring_here*\" 
 
   # find only files #
