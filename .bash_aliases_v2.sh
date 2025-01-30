@@ -58,7 +58,7 @@ alias folder_size='du --human-readable --summarize'
 alias lls="ls -lahS"
 alias lsd="ls -d */" # list only directories
 
-# quick folder navigation using explicit path cache #
+# folder navigation using explicit path cache #
 savepath() {
   # save current directory path to memory (under provided name) 
   if [ -z "$1" ]; then
@@ -114,11 +114,6 @@ alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 
-# screen management #
-alias cl='clear'
-alias cll="clear && ls -lah"
-alias clct='clear && tree -a -I .git -I .mypy_cache -I .pytest_cache -I .ruff_cache -I .venv -I __pycache__ -I node_modules -I target -I venv'
-
 # python uv #
 uvrn() {
 	# e.g. uvrn 3.13 python -m venv .venv
@@ -134,3 +129,9 @@ rmad() {
 	# delete all instances of directory with this name (also looks in all subdirectories)
 	find . -type d -name "${1}" -exec rm -rf {} \;
 }
+
+# screen management #
+alias cl='clear'
+alias cll="clear && ls -lah"
+alias clct='clear && tree -a -I .git -I .mypy_cache -I .pytest_cache -I .ruff_cache -I .venv -I __pycache__ -I node_modules -I target -I venv'
+
