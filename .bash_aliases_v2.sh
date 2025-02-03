@@ -109,6 +109,27 @@ alias grs="git restore --staged"
 alias grs.="git restore --staged ."
 alias gst="git status"
 
+google_search() {
+  if [ "$#" -ne 2 ]; then  
+    echo "Usage: $0 <URL> <format>"
+    echo 'Examples:'
+    echo ' $ google_search "my query" human-readable'
+    echo ' $ google_search "my query" html'
+    return 1
+  fi
+  local search_query=$(printf '%s' "$1" | jq -sRr @uri)
+  local output_format=$2
+  local url="https://www.google.com/search?q=${search_query}"
+  if [ "$output_format" == "html" ]; then  
+    lynx -dump -source $url
+  elif [ "$output_format" == "human-readable" ]; then  
+    lynx -dump $url
+  else  
+    # Handle unsupported output formats  
+    echo "$output_format not supported"  
+  fi
+}
+
 # navigation #
 alias ..='cd ..'
 alias ...='cd ../..'
