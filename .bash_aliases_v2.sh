@@ -111,10 +111,11 @@ alias gst="git status"
 
 google_search() {
   if [ "$#" -ne 2 ]; then  
-    echo "Usage: $0 <URL> <format>"
+    echo "Usage: google_search <URL> <format>"
     echo 'Examples:'
-    echo ' $ google_search "my query" human-readable'
     echo ' $ google_search "my query" html'
+    echo ' $ google_search "my query" lynx-browser-view'
+    echo ' $ google_search "my query" python-bs4'
     return 1
   fi
   local search_query=$(printf '%s' "$1" | jq -sRr @uri)
@@ -122,11 +123,50 @@ google_search() {
   local url="https://www.google.com/search?q=${search_query}"
   if [ "$output_format" == "html" ]; then  
     lynx -dump -source $url
-  elif [ "$output_format" == "human-readable" ]; then  
+  elif [ "$output_format" == "lynx-browser-view" ]; then  
     lynx -dump $url
+  elif [ "$output_format" == "python-bs4" ]; then
+    lynx -dump -source $url | python3 -c '
+import json
+import sys
+from urllib.parse import urlparse
+
+import bs4
+
+soup = bs4.BeautifulSoup(sys.stdin.read(), "html.parser")
+
+urls_already_seen: set[str] = set()
+search_results: list[dict] = []
+for div in soup.find_all("div"):
+    a_tags = div.find_all("a")
+    if len(a_tags)==0 or not all(hasattr(a_tag, "href") for a_tag in a_tags):
+        continue
+    non_google_a_tags = [a_tag for a_tag in a_tags if "google.com" not in a_tag["href"]]
+    clean_non_google_urls: list[str] = [
+        a_tag["href"].replace("/url?q=", "").split("&")[0] for a_tag in non_google_a_tags
+    ]
+    clean_non_google_urls = [url for url in clean_non_google_urls if url[:4]=="http"]
+    url_domains: list[str] = [urlparse(url).netloc for url in clean_non_google_urls]
+    if not len(set(url_domains)) == 1:
+        continue
+    clean_url: str = clean_non_google_urls[0] 
+    if clean_url not in urls_already_seen:
+        urls_already_seen.add(clean_url)
+        search_results.append(
+            {
+                "url": clean_url,
+                "preview_text": "  ".join(div.stripped_strings),
+            }
+        )
+
+print(
+  json.dumps(
+    search_results, 
+    indent=4
+  )
+)'
   else  
-    # Handle unsupported output formats  
-    echo "$output_format not supported"  
+    echo "output format '$output_format' not supported"  
   fi
 }
 
