@@ -54,6 +54,21 @@ alias find_helper='echo "
   find . -type d -name \"*substring_here*\"
 "'
 alias folder_size='du --human-readable --summarize'
+alias grep_helper='echo "
+  # search all files recursively for specified substring #
+  # -r means recursive (not only current directory, but also subdirectories)
+  # \".\" is current directory. 
+  # --include is a pattern match on the filenames (default is no filter)
+  # default grep (same as -e) is not regex, but interprets {[(|+ etc. symbols literally
+  grep -r --include=\"*.py\" \"[my-substring\)\" .
+
+  # -P treats the search pattern as proper Perl-compatible regex #
+  # i.e. interprets {[(|+ etc. in the regex way
+  grep -rP --include=\"*.py\" \"\d+\" .
+
+  # only return names of matching files #
+  grep -rPl --include=\"*.py\" \"\d+\" . 
+"'
 #alias ll='ls -lah'
 alias lls="ls -lahS"
 alias lsd="ls -d */" # list only directories
