@@ -1,17 +1,6 @@
 # code linting #
 alias poetry_run_pylint_recursive='poetry run pylint --rcfile .pylintrc --recursive=y .'
 
-checkcert() {
-	# e.g. checkcert www.google.com
-	# this function from: https://stackoverflow.com/questions/21181231/server-certificate-verification-failed-cafile-etc-ssl-certs-ca-certificates-c/67698986#67698986
-	echo -n |
-		openssl s_client -showcerts -servername $1 \
-			-connect $1:443 2>/dev/null |
-		tac |
-		awk '/-END CERTIFICATE-/{f=1} f;/-BEGIN CERTIFICATE-/{exit}' |
-		tac |
-		openssl x509 -noout -subject -issuer
-}
 
 # docker #
 alias docker_helper='echo "
@@ -72,6 +61,13 @@ alias grep_helper='echo "
 #alias ll='ls -lah'
 alias lls="ls -lahS"
 alias lsd="ls -d */" # list only directories
+pwdc() {
+    if uname -r | grep -q "WSL"; then
+        pwd | clip.exe
+    else
+        echo "platform not supported"
+    fi
+}
 
 # folder navigation using explicit path cache #
 savepath() {
@@ -189,6 +185,19 @@ print(
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
+
+# networking
+checkcert() {
+	# e.g. checkcert www.google.com
+	# this function from: https://stackoverflow.com/questions/21181231/server-certificate-verification-failed-cafile-etc-ssl-certs-ca-certificates-c/67698986#67698986
+	echo -n |
+		openssl s_client -showcerts -servername $1 \
+			-connect $1:443 2>/dev/null |
+		tac |
+		awk '/-END CERTIFICATE-/{f=1} f;/-BEGIN CERTIFICATE-/{exit}' |
+		tac |
+		openssl x509 -noout -subject -issuer
+}
 
 # python uv #
 uvrn() {
