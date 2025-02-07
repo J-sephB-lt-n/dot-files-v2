@@ -119,6 +119,17 @@ alias gpom="git pull origin main --no-rebase"
 alias grs="git restore --staged"
 alias grs.="git restore --staged ."
 alias gst="git status"
+git_helper() {
+  # examples of useful git workflows #
+  cat <<EOF
+  
+  # show all changes between 2 different branches (including committed) #
+  git diff main..feature-branch
+  git diff --stat main..feature-branch # only file names (and count of insertions/deletions per file)
+  git diff --shortstat main..feature-branch # total count of changes
+
+EOF
+}
 
 google_search() {
   if [ "$#" -ne 2 ]; then  
