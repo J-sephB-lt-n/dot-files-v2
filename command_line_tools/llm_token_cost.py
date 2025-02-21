@@ -18,8 +18,8 @@ ExpiringData = namedtuple(
 )
 
 ZAR_PER_USD: Final[ExpiringData] = ExpiringData(
-    last_updated_date=datetime.date(2025, 1, 30),
-    value=19,
+    last_updated_date=datetime.date(2025, 2, 21),
+    value=18.39,
 )
 
 COST_PER_MILLION_TOKENS: Final[dict] = {
@@ -73,10 +73,10 @@ COST_PER_MILLION_TOKENS: Final[dict] = {
         },
         "gemini-1.5-pro": {
             "input": ExpiringData(
-                last_updated_date=datetime.date(2025, 1, 30), value=1.25
+                last_updated_date=datetime.date(2025, 2, 21), value=1.25
             ),
             "output": ExpiringData(
-                last_updated_date=datetime.date(2025, 1, 30), value=5
+                last_updated_date=datetime.date(2025, 2, 21), value=5
             ),
         },
     },
