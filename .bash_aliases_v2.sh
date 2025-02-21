@@ -69,7 +69,6 @@ pwdc() {
     fi
 }
 
-# folder navigation using explicit path cache #
 savepath() {
   # save current directory path to memory (under provided name) 
   if [ -z "$1" ]; then
@@ -80,12 +79,10 @@ savepath() {
   echo "saving path $(pwd) to environment variable ${savename}"
   export $savename=$(pwd)
 }
-
 listpath() {
   echo 'listing saved paths (i.e. variables in ENV with prefix SAVEDPATH_)'
   env | grep 'SAVEDPATH_' | cut -c 11-
 }
-
 getpath() {
   if [ -z "$1" ]; then
     echo "Usage: getpath <name>"
@@ -95,7 +92,6 @@ getpath() {
   echo "navigating to ${savedpath}"
   cd $(echo $savedpath)
 }
-
 delpath() {
   if [ -z "$1" ]; then
     echo "Usage: delpath <name>"
@@ -103,6 +99,15 @@ delpath() {
   fi
   echo "Removing saved path $1"
   unset SAVEDPATH_$1
+}
+
+rmaf() {
+	# delete all instances of file with this name (also looks in all subdirectories)
+	find . -type f -name "${1}" -exec rm -f '{}' +
+}
+rmad() {
+	# delete all instances of directory with this name (also looks in all subdirectories)
+	find . -type d -name "${1}" -exec rm -rf {} \;
 }
 
 # git #
@@ -124,9 +129,12 @@ git_helper() {
   cat <<EOF
   
   # show all changes between 2 different branches (including committed) #
-  git diff main..feature-branch
-  git diff --stat main..feature-branch # only file names (and count of insertions/deletions per file)
-  git diff --shortstat main..feature-branch # total count of changes
+  git diff other-branch-name # compare current branch to other branch
+  git diff other-branch-name -- path/to/specific/folder/or/file # limit to changes in specific folder/files(s)
+  git diff --stat other-branch-name # changed file names only (not changed file contents)
+  # all of the above also work specifying both branch names
+  #   example: git diff --stat main..feature-branch-name
+  git diff --shortstat other-branch-name # just count of line changes
 
 EOF
 }
@@ -192,6 +200,20 @@ print(
   fi
 }
 
+# misc #
+timer() {
+  # example usage: timer && sleep 5 && timer
+  if [[ -z "${TIMER_START}" ]]; then
+    export TIMER_START=$EPOCHREALTIME
+  else
+    local seconds_elapsed=$(echo "$EPOCHREALTIME - $TIMER_START" | bc)
+    local minutes_elapsed=$(echo "scale=2; $seconds_elapsed / 60" | bc)
+    echo "total time elapsed in minutes: $minutes_elapsed"
+    echo "total time elapsed in seconds: $seconds_elapsed"
+    unset TIMER_START
+  fi
+}
+
 # navigation #
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -217,14 +239,6 @@ uvrn() {
 }
 alias urrf='uv run ruff format'
 
-rmaf() {
-	# delete all instances of file with this name (also looks in all subdirectories)
-	find . -type f -name "${1}" -exec rm -f '{}' +
-}
-rmad() {
-	# delete all instances of directory with this name (also looks in all subdirectories)
-	find . -type d -name "${1}" -exec rm -rf {} \;
-}
 
 # screen management #
 alias cl='clear'
