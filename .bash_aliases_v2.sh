@@ -232,7 +232,8 @@ checkcert() {
 		openssl x509 -noout -subject -issuer
 }
 
-# python uv #
+# python #
+alias pri='poetry run ipython'
 uvrn() {
 	# e.g. uvrn 3.13 python -m venv .venv
 	uv run --no-project --python "${1}" "${@:2}"
