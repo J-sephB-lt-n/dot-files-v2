@@ -136,6 +136,11 @@ git_helper() {
   #   example: git diff --stat main..feature-branch-name
   git diff --shortstat other-branch-name # just count of line changes
 
+  # I just did a git pull origin main and I wish that I hadn't #
+  git merge --abort
+
+  # get latest state of main, resolving merge conflicts in favour of main #
+  git pull -X theirs origin/main
 EOF
 }
 
