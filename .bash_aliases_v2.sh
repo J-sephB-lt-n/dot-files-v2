@@ -141,6 +141,10 @@ git_helper() {
 
   # get latest state of main, resolving merge conflicts in favour of main #
   git pull -X theirs origin/main
+
+  # authenticate to github using a token #
+  git remote remove origin
+  git remote add origin https://[YOUR-TOKEN]@github.com/[REPO-OWNER]/[REPO-NAME] # i.e. just the repo URL, but with the token in it
 EOF
 }
 
