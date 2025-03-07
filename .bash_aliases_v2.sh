@@ -30,6 +30,9 @@ alias docker_helper='echo "
 "'
 
 # file system #
+findfile() {
+    nvim "$(fd --type f | fzf --preview 'bat --style=numbers --color=always {}')"
+}
 alias find_helper='echo "
   # find file or directory using substring of its name #
   # \".\" is current directory. 
@@ -43,6 +46,7 @@ alias find_helper='echo "
   find . -type d -name \"*substring_here*\"
 "'
 alias folder_size='du --human-readable --summarize'
+
 alias grep_helper='echo "
   # search all files recursively for specified substring #
   # -r means recursive (not only current directory, but also subdirectories)
