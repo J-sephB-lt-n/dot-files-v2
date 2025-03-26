@@ -245,6 +245,18 @@ checkcert() {
 		openssl x509 -noout -subject -issuer
 }
 
+# PDF files #
+pdf_helper() {
+  cat <<EOF
+
+  sudo apt install pdftk
+  
+  # Get a subset of pages of a PDF #
+  pdftk input.pdf cat 2-5 output output.pdf
+EOF
+}
+
+
 # python #
 alias pri='poetry run ipython'
 uvrn() {
