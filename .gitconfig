@@ -1,0 +1,7 @@
+[user]
+	email = joseph.jazz.bolton@gmail.com
+	name = J-sephB-lt-n
+
+[alias]
+  lol = log --oneline --decorate # got this from https://www.youtube.com/watch?v=DZI0Zl-1JqQ
+  graph = log --oneline --graph --decorate # got this from https://www.youtube.com/watch?v=DZI0Zl-1JqQ
