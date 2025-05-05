@@ -253,6 +253,7 @@ pdf_helper() {
   
   # Get a subset of pages of a PDF #
   pdftk input.pdf cat 2-5 output output.pdf
+  pdftk input.pdf cat 1 3-9 15 18-19 output output.pdf
 EOF
 }
 
