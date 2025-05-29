@@ -30,6 +30,7 @@ alias docker_helper='echo "
 "'
 
 # file system #
+alias file_sizes='du -ah . | sort -hr'
 findfile() {
     nvim "$(fd --type f | fzf --preview 'bat --style=numbers --color=always {}')"
 }
@@ -144,7 +145,7 @@ git_helper() {
   git merge --abort
 
   # get latest state of main, resolving merge conflicts in favour of main #
-  git pull -X theirs origin/main
+  git pull -X theirs origin main
 
   # authenticate to github using a token #
   git remote remove origin
