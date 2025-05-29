@@ -1,0 +1,13 @@
+{
+    "security.allowedUNCHosts": [
+        "wsl.localhost"
+    ],
+    "editor.fontFamily": "Fira Code",
+    "editor.fontLigatures": true,
+    "editor.renderWhitespace": "boundary",
+    "explorer.compactFolders": false,
+    "workbench.sideBar.location": "right",
+    "workbench.tree.indent": 24,
+    "workbench.colorTheme": "Dracula Theme",
+    "workbench.iconTheme": "material-icon-theme"
+}
