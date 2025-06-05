@@ -1,0 +1,9 @@
+// Place your key bindings in this file to override the defaults
+[
+    {
+        // just run the selected code in the current active terminal
+        "key": "shift+enter",
+        "command": "workbench.action.terminal.runSelectedText",
+        "when": "editorTextFocus && !findInputFocussed && !replaceInputFocussed"
+    }
+]

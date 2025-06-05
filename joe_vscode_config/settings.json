@@ -1,7 +1,4 @@
 {
-    "security.allowedUNCHosts": [
-        "wsl.localhost"
-    ],
     "editor.fontFamily": "Fira Code",
     "editor.fontLigatures": true,
     "editor.renderWhitespace": "boundary",
@@ -9,5 +6,10 @@
     "workbench.sideBar.location": "right",
     "workbench.tree.indent": 24,
     "workbench.colorTheme": "Dracula Theme",
-    "workbench.iconTheme": "material-icon-theme"
+    "workbench.iconTheme": "material-icon-theme",
+    "editor.formatOnSave": true,
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true
+    }
 }
