@@ -29,6 +29,26 @@ alias docker_helper='echo "
   docker rm my_container_name
 "'
 
+# docling #
+alias docling_helper='echo "
+  # with explicit settings (defaults explicitly shown) #
+  uv run docling \\
+    --verbose \\
+    --to md \\
+    --image-export-mode placeholder \\
+    --pipeline standard \\
+    --ocr \\
+    --no-force-ocr \\
+    --ocr-engine easyocr \\
+    --pdf-backend pypdfium2 \\
+    --abort-on-error \\
+    --verbose \\
+    --num-threads 4 \\
+    --device auto \\
+  'example_input_docs/Act_135_of_1998_Insider_Trading_Act.pdf' 
+"'
+
+
 # file system #
 alias file_sizes='du -ah . | sort -hr'
 findfile() {
