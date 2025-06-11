@@ -167,6 +167,11 @@ git_helper() {
   # get latest state of main, resolving merge conflicts in favour of main #
   git pull -X theirs origin main
 
+  # see a file state in a specific commit
+  git log   # to see the commit history
+  git show 1aCOMMITHASHHERE0j:path/to/file.txt   # for a specific commit hash
+  git show HEAD~2:path/to/file.txt    # 2 commits ago
+
   # authenticate to github using a token #
   git remote remove origin
   git remote add origin https://[YOUR-TOKEN]@github.com/[REPO-OWNER]/[REPO-NAME] # i.e. just the repo URL, but with the token in it
