@@ -301,7 +301,9 @@ alias clct='clear && tree -a -I .git -I .mypy_cache -I .pytest_cache -I .ruff_ca
 # task warrior #
 task_warrior_helper() {
   cat <<EOF
- 
+  task add Task Description Here
+  task ID done
+
   # project #
   task ID modify project:Project-Name-Here
   task add project:Project-Name-Here
@@ -314,18 +316,36 @@ task_warrior_helper() {
   task ID modify due:2weeks
   task ID modify due:2069-04-20T17:00Z  # 5pm UTC (omit Z for local time)
 
+  # mark active/inactive #
   task ID start   # set active
   task ID stop    # set inactive
 
+  # priority #
   task ID modify priority:M    # by default, values are L, M, H
 
-  # add tags #
+  # tags #
   task ID modify +tag1 +tag2
 
   # dependencies #
-  task ID modify depends:OTHER_ID
+  task ID modify depends:OTHER_ID   # i.e. task OTHER_ID is blocking task ID
 
-  # mark as more urgent #
-  task ID modify +next
+  # reports #
+  task active # Started tasks
+  task all # Pending, completed and deleted tasks
+  task blocked # Tasks that are blocked by other tasks
+  task blocking # Tasks that block other tasks
+  task completed # Tasks that have been completed
+  task list # Pending tasks
+  task long # Pending tasks, long form
+  task ls # Pending tasks, short form
+  task minimal # Pending tasks, minimal form
+  task newest # Most recent pending tasks
+  task next # Most urgent tasks
+  task oldest # Oldest pending tasks
+  task overdue # Overdue tasks
+  task ready # Pending, unblocked, scheduled tasks
+  task recurring # Pending recurring tasks
+  task unblocked # Tasks that are not blocked
+  task waiting # Hidden, waiting tasks
 EOF
 }
