@@ -298,3 +298,34 @@ alias cl='clear'
 alias cll="clear && ls -lah"
 alias clct='clear && tree -a -I .git -I .mypy_cache -I .pytest_cache -I .ruff_cache -I .venv -I __pycache__ -I node_modules -I target -I venv'
 
+# task warrior #
+task_warrior_helper() {
+  cat <<EOF
+ 
+  # project #
+  task ID modify project:Project-Name-Here
+  task add project:Project-Name-Here
+  
+  # due date #
+  task ID modify due:2069-04-20
+  task ID modify due:tomorrow
+  task ID modify due:next Monday
+  task ID modify due:3days
+  task ID modify due:2weeks
+  task ID modify due:2069-04-20T17:00Z  # 5pm UTC (omit Z for local time)
+
+  task ID start   # set active
+  task ID stop    # set inactive
+
+  task ID modify priority:M    # by default, values are L, M, H
+
+  # add tags #
+  task ID modify +tag1 +tag2
+
+  # dependencies #
+  task ID modify depends:OTHER_ID
+
+  # mark as more urgent #
+  task ID modify +next
+EOF
+}
