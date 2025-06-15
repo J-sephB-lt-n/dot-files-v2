@@ -286,6 +286,7 @@ EOF
 
 # python #
 alias pri='poetry run ipython'
+alias uri='uv run ipython'
 uvrn() {
 	# e.g. uvrn 3.13 python -m venv .venv
 	uv run --no-project --python "${1}" "${@:2}"
