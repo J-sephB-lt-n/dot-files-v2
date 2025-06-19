@@ -175,6 +175,9 @@ git_helper() {
   git show 1aCOMMITHASHHERE0j:path/to/file.txt   # for a specific commit hash
   git show HEAD~2:path/to/file.txt    # 2 commits ago
 
+  # see a file state on a different branch #
+  git show branch_name:path/to/file.ini
+
   # authenticate to github using a token #
   git remote remove origin
   git remote add origin https://[YOUR-TOKEN]@github.com/[REPO-OWNER]/[REPO-NAME] # i.e. just the repo URL, but with the token in it
