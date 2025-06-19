@@ -65,6 +65,9 @@ alias find_helper='echo "
 
   # find only directories #
   find . -type d -name \"*substring_here*\"
+
+  # ignore a directory #
+  find . -path ./.venv -prune -o -type f -name \"*.json\"   # find all json files but dont look in .venv
 "'
 alias folder_size='du --human-readable --summarize'
 
