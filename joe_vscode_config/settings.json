@@ -1,6 +1,7 @@
 {
     "editor.fontFamily": "Fira Code",
     "editor.fontLigatures": true,
+    "editor.minimap.enabled": false,
     "editor.renderWhitespace": "boundary",
     "explorer.compactFolders": false,
     "workbench.sideBar.location": "right",
@@ -11,5 +12,6 @@
     "[python]": {
         "editor.defaultFormatter": "ms-python.black-formatter",
         "editor.formatOnSave": true
-    }
+    },
+    "python.analysis.typeCheckingMode": "standard"
 }
