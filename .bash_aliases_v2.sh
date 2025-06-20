@@ -186,6 +186,11 @@ git_helper() {
   # authenticate to github using a token #
   git remote remove origin
   git remote add origin https://[YOUR-TOKEN]@github.com/[REPO-OWNER]/[REPO-NAME] # i.e. just the repo URL, but with the token in it
+
+  # discard local changes to a (tracked) file
+  git restore --staged path/to/file   # if file is staged
+  git restore path/to/file            # discard
+  git restore .                       # get state of all tracked files at last commit
 EOF
 }
 
