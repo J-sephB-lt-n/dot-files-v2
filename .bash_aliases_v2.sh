@@ -1,7 +1,6 @@
 # code linting #
 alias poetry_run_pylint_recursive='poetry run pylint --rcfile .pylintrc --recursive=y .'
 
-
 # docker #
 alias docker_helper='echo "
   # Build image using definition from file named \`Dockerfile\` in current folder #
@@ -48,11 +47,10 @@ alias docling_helper='echo "
   'example_input_docs/Act_135_of_1998_Insider_Trading_Act.pdf' 
 "'
 
-
 # file system #
 alias file_sizes='du -ah . | sort -hr'
 findfile() {
-    nvim "$(fd --type f | fzf --preview 'bat --style=numbers --color=always {}')"
+	nvim "$(fd --type f | fzf --preview 'bat --style=numbers --color=always {}')"
 }
 alias find_helper='echo "
   # find file or directory using substring of its name #
@@ -90,43 +88,50 @@ alias grep_helper='echo "
 alias lls="ls -lahS"
 alias lsd="ls -d */" # list only directories
 pwdc() {
-    if uname -r | grep -q "WSL"; then
-        pwd | clip.exe
-    else
-        echo "platform not supported"
-    fi
+	if uname -r | grep -q "WSL"; then
+		pwd | clip.exe
+	else
+		echo "platform not supported"
+	fi
+}
+
+zip_helper() {
+	cat <<EOF
+  # add files to zip file #
+  zip my_archive.zip file1 file2 file3
+EOF
 }
 
 savepath() {
-  # save current directory path to memory (under provided name) 
-  if [ -z "$1" ]; then
-    echo "Usage: savepath <name>"
-    return 1
-  fi
-  local savename="SAVEDPATH_${1}"
-  echo "saving path $(pwd) to environment variable ${savename}"
-  export $savename=$(pwd)
+	# save current directory path to memory (under provided name)
+	if [ -z "$1" ]; then
+		echo "Usage: savepath <name>"
+		return 1
+	fi
+	local savename="SAVEDPATH_${1}"
+	echo "saving path $(pwd) to environment variable ${savename}"
+	export $savename=$(pwd)
 }
 listpath() {
-  echo 'listing saved paths (i.e. variables in ENV with prefix SAVEDPATH_)'
-  env | grep 'SAVEDPATH_' | cut -c 11-
+	echo 'listing saved paths (i.e. variables in ENV with prefix SAVEDPATH_)'
+	env | grep 'SAVEDPATH_' | cut -c 11-
 }
 getpath() {
-  if [ -z "$1" ]; then
-    echo "Usage: getpath <name>"
-    return 1
-  fi
-  local savedpath=$(env | grep "SAVEDPATH_$1=" | sed "s:^.*=::")
-  echo "navigating to ${savedpath}"
-  cd $(echo $savedpath)
+	if [ -z "$1" ]; then
+		echo "Usage: getpath <name>"
+		return 1
+	fi
+	local savedpath=$(env | grep "SAVEDPATH_$1=" | sed "s:^.*=::")
+	echo "navigating to ${savedpath}"
+	cd $(echo $savedpath)
 }
 delpath() {
-  if [ -z "$1" ]; then
-    echo "Usage: delpath <name>"
-    return 1
-  fi
-  echo "Removing saved path $1"
-  unset SAVEDPATH_$1
+	if [ -z "$1" ]; then
+		echo "Usage: delpath <name>"
+		return 1
+	fi
+	echo "Removing saved path $1"
+	unset SAVEDPATH_$1
 }
 
 rmaf() {
@@ -153,8 +158,8 @@ alias grs="git restore --staged"
 alias grs.="git restore --staged ."
 alias gst="git status"
 git_helper() {
-  # examples of useful git workflows #
-  cat <<EOF
+	# examples of useful git workflows #
+	cat <<EOF
   
   # show all changes between 2 different branches (including committed) #
   git diff other-branch-name # compare current branch to other branch
@@ -185,23 +190,23 @@ EOF
 }
 
 google_search() {
-  if [ "$#" -ne 2 ]; then  
-    echo "Usage: google_search <URL> <format>"
-    echo 'Examples:'
-    echo ' $ google_search "my query" html'
-    echo ' $ google_search "my query" lynx-browser-view'
-    echo ' $ google_search "my query" python-bs4'
-    return 1
-  fi
-  local search_query=$(printf '%s' "$1" | jq -sRr @uri)
-  local output_format=$2
-  local url="https://www.google.com/search?q=${search_query}"
-  if [ "$output_format" == "html" ]; then  
-    lynx -dump -source $url
-  elif [ "$output_format" == "lynx-browser-view" ]; then  
-    lynx -dump $url
-  elif [ "$output_format" == "python-bs4" ]; then
-    lynx -dump -source $url | python3 -c '
+	if [ "$#" -ne 2 ]; then
+		echo "Usage: google_search <URL> <format>"
+		echo 'Examples:'
+		echo ' $ google_search "my query" html'
+		echo ' $ google_search "my query" lynx-browser-view'
+		echo ' $ google_search "my query" python-bs4'
+		return 1
+	fi
+	local search_query=$(printf '%s' "$1" | jq -sRr @uri)
+	local output_format=$2
+	local url="https://www.google.com/search?q=${search_query}"
+	if [ "$output_format" == "html" ]; then
+		lynx -dump -source $url
+	elif [ "$output_format" == "lynx-browser-view" ]; then
+		lynx -dump $url
+	elif [ "$output_format" == "python-bs4" ]; then
+		lynx -dump -source $url | python3 -c '
 import json
 import sys
 from urllib.parse import urlparse
@@ -240,23 +245,23 @@ print(
     indent=4
   )
 )'
-  else  
-    echo "output format '$output_format' not supported"  
-  fi
+	else
+		echo "output format '$output_format' not supported"
+	fi
 }
 
 # misc #
 timer() {
-  # example usage: timer && sleep 5 && timer
-  if [[ -z "${TIMER_START}" ]]; then
-    export TIMER_START=$EPOCHREALTIME
-  else
-    local seconds_elapsed=$(echo "$EPOCHREALTIME - $TIMER_START" | bc)
-    local minutes_elapsed=$(echo "scale=2; $seconds_elapsed / 60" | bc)
-    echo "total time elapsed in minutes: $minutes_elapsed"
-    echo "total time elapsed in seconds: $seconds_elapsed"
-    unset TIMER_START
-  fi
+	# example usage: timer && sleep 5 && timer
+	if [[ -z "${TIMER_START}" ]]; then
+		export TIMER_START=$EPOCHREALTIME
+	else
+		local seconds_elapsed=$(echo "$EPOCHREALTIME - $TIMER_START" | bc)
+		local minutes_elapsed=$(echo "scale=2; $seconds_elapsed / 60" | bc)
+		echo "total time elapsed in minutes: $minutes_elapsed"
+		echo "total time elapsed in seconds: $seconds_elapsed"
+		unset TIMER_START
+	fi
 }
 
 # navigation #
@@ -279,7 +284,7 @@ checkcert() {
 
 # PDF files #
 pdf_helper() {
-  cat <<EOF
+	cat <<EOF
 
   sudo apt install pdftk
   
@@ -288,7 +293,6 @@ pdf_helper() {
   pdftk input.pdf cat 1 3-9 15 18-19 output output.pdf
 EOF
 }
-
 
 # python #
 alias pri='poetry run ipython'
@@ -299,7 +303,6 @@ uvrn() {
 }
 alias urrf='uv run ruff format'
 
-
 # screen management #
 alias cl='clear'
 alias cll="clear && ls -lah"
@@ -307,7 +310,7 @@ alias clct='clear && tree -a -I .git -I .mypy_cache -I .pytest_cache -I .ruff_ca
 
 # task warrior #
 task_warrior_helper() {
-  cat <<EOF
+	cat <<EOF
   task add Task Description Here
   task ID done
 
