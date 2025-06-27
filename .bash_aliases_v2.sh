@@ -222,7 +222,7 @@ git_worktree_helper() {
   # I can now just delete the (temporary) 'quick-fix' worktree:
   cd ../../myrepo     # go back to my main repo
   git worktree list   # get the path of the worktree I want to delete
-  git worktree remote <absolute path to worktree to delete>
+  git worktree remove <absolute path to worktree to delete>
 
 EOF
 }
