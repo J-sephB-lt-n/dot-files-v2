@@ -197,6 +197,36 @@ git_helper() {
 EOF
 }
 
+git_worktree_helper() {
+	cat <<EOF
+  # for a more thorough example, see: https://github.com/J-sephB-lt-n/Git-worktree-example
+  
+  # update all local views of remote (or git fetch origin <branch name>) 
+  git fetch origin 
+
+  # assuming I'm in the root of my git repo /myrepo/
+  git worktree add \    # make a copy of my repo
+    -b quick-fix \      # check out in the copy to a new branch called 'quick-fix'
+    ../myrepo_git_worktrees/a-quick-fix \ # save the copy outside of my repo folder (1 level up) with folders named whatever I like
+    origin/main         # make the copy contents match remote main branch (can choose other branch)
+
+  git worktree list     # see that it's been created
+
+  # navigate to the worktree (repo copy)
+  cd ../myrepo_git_worktrees/a-quick-fix
+  <make whatever changes you want>
+  git add .
+  git commit -m "..."
+  git push            # can now PR my changes into main
+
+  # I can now just delete the (temporary) $(quick-fix) worktree:
+  cd ../../myrepo     # go back to my main repo
+  git worktree list   # get the path of the worktree I want to delete
+  git worktree remote <absolute path to worktree to delete>
+
+EOF
+}
+
 google_search() {
 	if [ "$#" -ne 2 ]; then
 		echo "Usage: google_search <URL> <format>"
