@@ -219,7 +219,7 @@ git_worktree_helper() {
   git commit -m "..."
   git push            # can now PR my changes into main
 
-  # I can now just delete the (temporary) $(quick-fix) worktree:
+  # I can now just delete the (temporary) 'quick-fix' worktree:
   cd ../../myrepo     # go back to my main repo
   git worktree list   # get the path of the worktree I want to delete
   git worktree remote <absolute path to worktree to delete>
