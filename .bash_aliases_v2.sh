@@ -99,6 +99,9 @@ zip_helper() {
 	cat <<EOF
   # add files to zip file #
   zip my_archive.zip file1 file2 file3
+
+  # add entire folder (and subfolders) to zip file #
+  zip -r my_archive.zip folder_name
 EOF
 }
 
