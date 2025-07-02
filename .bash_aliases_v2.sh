@@ -102,6 +102,9 @@ zip_helper() {
 
   # add entire folder (and subfolders) to zip file #
   zip -r my_archive.zip folder_name
+
+  # unzip #
+  unzip my_archive.zip -d /path/to/destination # omit -d part for unzip to current dir
 EOF
 }
 
