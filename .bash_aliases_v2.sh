@@ -1,5 +1,5 @@
 # code linting #
-alias poetry_run_pylint_recursive='poetry run pylint --rcfile .pylintrc --recursive=y .'
+alias poetry_run_pylint_recursive='poetry run pylint --rcfile .pylintrc --recursive=y --ignore ./demo_ui .'
 
 # docker #
 alias docker_helper='echo "
@@ -84,7 +84,8 @@ alias grep_helper='echo "
   # only return names of matching files #
   grep -rPl --include=\"*.py\" \"\d+\" . 
 "'
-#alias ll='ls -lah'
+alias l1='ls -1'
+alias ll='ls -lah'
 alias lls="ls -lahS"
 alias lsd="ls -d */" # list only directories
 pwdc() {
