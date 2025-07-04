@@ -84,7 +84,7 @@ alias grep_helper='echo "
   # only return names of matching files #
   grep -rPl --include=\"*.py\" \"\d+\" . 
 "'
-alias l1='ls -1'
+alias l1='ls -a1'
 alias ll='ls -lah'
 alias lls="ls -lahS"
 alias lsd="ls -d */" # list only directories
