@@ -1,0 +1,3 @@
+export NNN_FIFO=/tmp/nnn.fifo # required by preview-tui
+export NNN_PAGER="batcat --style=numbers --color=always {}"
+export NNN_PLUG='p:preview-tui;'
