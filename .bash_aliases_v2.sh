@@ -403,3 +403,39 @@ task_warrior_helper() {
   task waiting # Hidden, waiting tasks
 EOF
 }
+
+function list_llms() {
+	# list all models using /v1/models endpoint of an openai-compatible API
+	if [[ -z "$OPENAI_API_BASE" ]]; then
+		echo "Error: OPENAI_API_BASE is not set." >&2
+		return 1
+	fi
+
+	# Strip trailing slash
+	local base_url="${OPENAI_API_BASE%/}"
+
+	if [[ -z "$OPENAI_API_KEY" ]]; then
+		echo "Error: OPENAI_API_KEY is not set." >&2
+		return 1
+	fi
+
+	local response
+	if ! response=$(curl -s -w "%{http_code}" \
+		-H "Authorization: Bearer $OPENAI_API_KEY" \
+		"$base_url/v1/models"); then
+		echo "Error: Failed to connect to $base_url/v1/models" >&2
+		return 1
+	fi
+
+	local http_code="${response: -3}"
+	local body="${response%???}"
+
+	if [[ "$http_code" -ne 200 ]]; then
+		echo "Error: HTTP $http_code" >&2
+		echo "$body" >&2
+		return 1
+	fi
+
+	# Parse and print each model ID
+	echo "$body" | jq -r '.data[].id'
+}
