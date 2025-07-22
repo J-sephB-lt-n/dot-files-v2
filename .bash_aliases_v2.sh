@@ -439,3 +439,45 @@ function list_llms() {
 	# Parse and print each model ID
 	echo "$body" | jq -r '.data[].id'
 }
+
+llm_chat_completion() {
+	# Example usage:
+	#   llm_chat_completion "Tell me something interesting"
+	#   echo "<doc>$(cat myfile.txt)</doc> Please summarise the contents of doc" | llm_chat_completion
+
+	: "${OPENAI_API_BASE:?Error: OPENAI_API_BASE environment variable is not set}"
+	: "${OPENAI_API_KEY:?Error: OPENAI_API_KEY environment variable is not set}"
+	: "${OPENAI_DEFAULT_MODEL:?Error: OPENAI_DEFAULT_MODEL environment variable is not set}"
+
+	echo "using model [${OPENAI_DEFAULT_MODEL}]"
+	echo ""
+
+	local prompt
+
+	if [ $# -gt 0 ]; then
+		prompt="$*"
+	else
+		prompt="$(cat)"
+	fi
+
+	# OpenAI-compatible streaming request
+	curl -sN "${OPENAI_API_BASE}/v1/chat/completions" \
+		-H "Authorization: Bearer ${OPENAI_API_KEY}" \
+		-H "Content-Type: application/json" \
+		-d "$(jq -n \
+			--arg model "$OPENAI_DEFAULT_MODEL" \
+			--arg content "$prompt" \
+			'{ model: $model,
+             messages: [{ role: "user", content: $content }],
+             stream: true
+           }')" |
+		sed -u 's/^data: //' |
+		grep -v '^\\[DONE]$' |
+		while read -r line; do
+			# extract and print any new content delta
+			delta=$(echo "$line" | jq -r '.choices[0].delta.content // empty')
+			[ -n "$delta" ] && printf "%s" "$delta"
+		done
+
+	printf "\n"
+}
