@@ -461,7 +461,7 @@ llm_chat_completion() {
 
 	echo "using model [${OPENAI_DEFAULT_MODEL}]"
 
-	local prompt
+	local prompt line
 
 	if [ $# -gt 0 ]; then
 		prompt="$*"
@@ -476,17 +476,11 @@ llm_chat_completion() {
 		-d "$(jq -n \
 			--arg model "$OPENAI_DEFAULT_MODEL" \
 			--arg content "$prompt" \
-			'{ model: $model,
-             messages: [{ role: "user", content: $content }],
-             stream: true
-           }')" |
-		sed -u 's/^data: //' |
-		grep -v '^\\[DONE]$' |
-		while read -r line; do
-			# extract and print any new content delta
-			delta=$(echo "$line" | jq -r '.choices[0].delta.content // empty')
-			[ -n "$delta" ] && printf "%s" "$delta"
+			'{model:$model,messages:[{role:"user",content:$content}],stream:true}')" |
+		sed 's/^data: //' |
+		while IFS= read -r line; do
+			[[ $line == "[DONE]" ]] && break # skip sentinel
+			jq -rj '.choices[0].delta.content // empty' <<<"$line"
 		done
-
-	printf "\n"
+	printf '\n'
 }
