@@ -440,6 +440,16 @@ function list_llms() {
 	echo "$body" | jq -r '.data[].id'
 }
 
+llm_chat_completion_helper() {
+	cat <<EOF
+  # Example usage of my llm_chat_completion() function:
+  llm_chat_completion "Tell me something interesting"
+
+  echo "<doc>\$(cat myfile.txt)</doc> Please summarise the contents of doc" | llm_chat_completion
+
+EOF
+}
+
 llm_chat_completion() {
 	# Example usage:
 	#   llm_chat_completion "Tell me something interesting"
@@ -450,7 +460,6 @@ llm_chat_completion() {
 	: "${OPENAI_DEFAULT_MODEL:?Error: OPENAI_DEFAULT_MODEL environment variable is not set}"
 
 	echo "using model [${OPENAI_DEFAULT_MODEL}]"
-	echo ""
 
 	local prompt
 
