@@ -50,7 +50,8 @@ alias docling_helper='echo "
 # file system #
 alias file_sizes='du -ah . | sort -hr'
 findfile() {
-	nvim "$(fd --type f | fzf --preview 'bat --style=numbers --color=always {}')"
+	fd --type f | fzf --multi --preview 'bat --style=numbers --color=always {}'
+	# nvim "$(fd --type f | fzf --preview 'bat --style=numbers --color=always {}')"
 }
 alias find_helper='echo "
   # find file or directory using substring of its name #
@@ -407,7 +408,7 @@ EOF
 function list_llms() {
 	# list all models using /v1/models endpoint of an openai-compatible API
 	if [[ -z "$OPENAI_API_BASE" ]]; then
-		echo "Error: OPENAI_API_BASE is not set." >&2
+		echo "Error: OPENAI_API_BASE environment variable is not set." >&2
 		return 1
 	fi
 
@@ -415,7 +416,7 @@ function list_llms() {
 	local base_url="${OPENAI_API_BASE%/}"
 
 	if [[ -z "$OPENAI_API_KEY" ]]; then
-		echo "Error: OPENAI_API_KEY is not set." >&2
+		echo "Error: OPENAI_API_KEY environment variable is not set." >&2
 		return 1
 	fi
 
@@ -437,7 +438,7 @@ function list_llms() {
 	fi
 
 	# Parse and print each model ID
-	echo "$body" | jq -r '.data[].id'
+	echo "$body" | jq -r '.data[].id' | sort
 }
 
 llm_chat_completion_helper() {
