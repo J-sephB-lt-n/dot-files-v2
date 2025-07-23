@@ -442,13 +442,23 @@ function list_llms() {
 }
 
 llm_chat_completion_helper() {
-	cat <<EOF
-  # Example usage of my llm_chat_completion() function:
+	cat <<EOT
+  # Example usage of llm_chat_completion() function #
+
   llm_chat_completion "Tell me something interesting"
 
+  # Question answering for a single text file #
   echo "<doc>\$(cat myfile.txt)</doc> Please summarise the contents of doc" | llm_chat_completion
 
-EOF
+  # Question answering over multiple text files #
+  #   (use cat or less instead of llm_chat_completion to see the prompt)
+  llm_chat_completion <<EOF
+    Please summarise what these scripts are doing:
+    <scripts>
+    \$(findfile | file_contents_to_md)
+    </scripts>
+    EOF
+EOT
 }
 
 llm_chat_completion() {
@@ -484,4 +494,28 @@ llm_chat_completion() {
 			jq -rj '.choices[0].delta.content // empty' <<<"$line"
 		done
 	printf '\n'
+}
+
+file_contents_to_md() {
+	# accepts a list of filepaths and dumps file contents into a single markdown string
+	# Example usage:
+	#   findfile | file_contents_to_md | less    # or cat
+	local file
+	while IFS= read -r file; do
+		# Skip empty lines
+		[[ -z "$file" ]] && continue
+
+		# If the file doesn't exist or isn't readable, warn and skip
+		if [[ ! -r "$file" ]]; then
+			echo "# $file" >&2
+			echo "⚠️ Cannot read file: $file" >&2
+			continue
+		fi
+
+		# Print the header, code fence, contents, and closing fence
+		printf '# %s\n' "$file"
+		printf '```\n'
+		cat "$file"
+		printf '```\n\n'
+	done
 }
