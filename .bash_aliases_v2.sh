@@ -76,7 +76,7 @@ alias grep_helper='echo "
   # \".\" is current directory. 
   # --include is a pattern match on the filenames (default is no filter)
   # default grep (same as -e) is not regex, but interprets {[(|+ etc. symbols literally
-  grep -r --include=\"*.py\" \"[my-substring\)\" .
+  grep -r --include=\"*.py\" --exclude-dir={.venv,__pycache__,.ruff_cache} \"[my-substring\)\" .
 
   # -P treats the search pattern as proper Perl-compatible regex #
   # i.e. interprets {[(|+ etc. in the regex way
