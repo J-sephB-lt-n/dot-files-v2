@@ -483,6 +483,7 @@ llm_chat_completion() {
 	# Example usage:
 	#   llm_chat_completion "Tell me something interesting"
 	#   echo "<doc>$(cat myfile.txt)</doc> Please summarise the contents of doc" | llm_chat_completion
+	#   for more examples, run `llm_chat_completion_helper`
 
 	: "${OPENAI_API_BASE:?Error: OPENAI_API_BASE environment variable is not set}"
 	: "${OPENAI_API_KEY:?Error: OPENAI_API_KEY environment variable is not set}"
