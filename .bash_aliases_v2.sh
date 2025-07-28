@@ -49,10 +49,28 @@ alias docling_helper='echo "
 
 # file system #
 alias file_sizes='du -ah . | sort -hr'
+
 findfile() {
-	fd --type f | fzf --multi --preview 'bat --style=numbers --color=always {}'
-	# nvim "$(fd --type f | fzf --preview 'bat --style=numbers --color=always {}')"
+	# find files using an interactive file picker with fuzzy find #
+	#   Example usage:
+	#     $ findfile        # just lists selected filepaths (can pipe to something else)
+	#     $ findfile ~/nvim-linux64/bin/nvim   # open selected files with neovim
+
+	local open_command="$1"
+	local filepaths=()
+
+	readarray -t filepaths < <(fd --type f | fzf --multi --preview 'bat --style=numbers --color=always {}') || return
+
+	# exit if no files selected #
+	[[ ${#filepaths[@]} -eq 0 ]] && return
+
+	if [[ -n "$open_command" ]]; then
+		"$open_command" "${filepaths[@]}"
+	else
+		printf '%s\n' "${filepaths[@]}"
+	fi
 }
+
 alias find_helper='echo "
   # find file or directory using substring of its name #
   # \".\" is current directory. 
