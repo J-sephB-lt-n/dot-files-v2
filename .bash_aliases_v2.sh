@@ -1,5 +1,5 @@
 # code linting #
-alias poetry_run_pylint_recursive='poetry run pylint --rcfile .pylintrc --recursive=y --ignore ./demo_ui .'
+alias poetry_run_pylint_recursive='poetry run pylint --rcfile .pylintrc --recursive=y .'
 
 # docker #
 alias docker_helper='echo "
@@ -127,6 +127,9 @@ zip_helper() {
   unzip my_archive.zip -d /path/to/destination # omit -d part for unzip to current dir
 EOF
 }
+
+# paste from clipboard after removing windows carriage returns #
+alias wslpaste='powershell.exe Get-Clipboard | sed "s/\r$//" | xargs -0 printf "%s"'
 
 savepath() {
 	# save current directory path to memory (under provided name)
