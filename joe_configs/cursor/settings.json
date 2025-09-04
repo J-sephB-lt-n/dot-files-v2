@@ -1,0 +1,18 @@
+{
+  "security.allowedUNCHosts": ["wsl.localhost"],
+  "editor.fontFamily": "Fira Code",
+  "editor.fontLigatures": true,
+  "editor.minimap.enabled": false,
+  "editor.renderWhitespace": "boundary",
+  "explorer.compactFolders": false,
+  "workbench.sideBar.location": "right",
+  "workbench.tree.indent": 24,
+  "workbench.colorTheme": "Cursor Dark High Contrast",
+  "workbench.iconTheme": "material-icon-theme",
+  "editor.formatOnSave": true,
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true
+  },
+  "cursorpyright.analysis.typeCheckingMode": "standard"
+}
