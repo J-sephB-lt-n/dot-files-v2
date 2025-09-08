@@ -112,7 +112,7 @@ jq_helper() {
 
   # select only specific fields #
   # (I'm building good-looking JSON here) #
-  jq '{usage_description: .request.usage_description, token_usage: .response.API_response.usage}' myfile.jsonl
+  jq '{usage_description: .request.usage_description, token_usage: .response.API_response.usage}' llm_logs.jsonl
 
   # show JSONL entries where request.metadata.doc_name contains 'qlink' (case insensitive) #
   jq 'select(.request.metadata.doc_name | test("QLink"; "i"))' myfile.jsonl
@@ -128,6 +128,16 @@ jq_helper() {
   jq -r 'paths(scalars) as \$p | "\(\$p | join(".")): \(getpath(\$p))"' myfile.jsonl | less
   # same as above but alternative syntax #
   cat myfile.jsonl | jq -r 'paths(scalars) as \$p | "\(\$p | join(".")): \(getpath(\$p))"' | less
+
+  # group by and sum #
+  jq -s '
+    group_by(.request.usage_description) |
+    map({
+      usage_description: .[0].request.usage_description,
+      total_prompt_tokens: (map(.response.API_response.usage.prompt_tokens) | add),
+      total_completion_tokens: (map(.response.API_response.usage.completion_tokens) | add)
+    })
+  ' llm_logs.jsonl
 
 EOF
 }
