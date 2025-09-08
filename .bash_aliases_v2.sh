@@ -110,6 +110,9 @@ jq_helper() {
   # basic JSONL usage #
   jq . myfile.jsonl         # or 'cat myfile.jsonl | jq .'
 
+  # random sample of records #
+  shuf -n 3 logs.jsonl | jq .
+
   # select only specific fields #
   # (I'm building good-looking JSON here) #
   jq '{usage_description: .request.usage_description, token_usage: .response.API_response.usage}' llm_logs.jsonl
