@@ -110,6 +110,9 @@ jq_helper() {
   # basic JSONL usage #
   jq . myfile.jsonl         # or 'cat myfile.jsonl | jq .'
 
+  # filter out records #
+  jq 'select(.request.chat_id == 69420)' llm_logs.jsonl
+
   # random sample of records #
   shuf -n 3 logs.jsonl | jq .
 
