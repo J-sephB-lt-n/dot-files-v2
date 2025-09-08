@@ -103,6 +103,35 @@ alias grep_helper='echo "
   # only return names of matching files #
   grep -rPl --include=\"*.py\" \"\d+\" . 
 "'
+
+jq_helper() {
+	cat <<EOF
+
+  # basic JSONL usage #
+  jq . myfile.jsonl         # or 'cat myfile.jsonl | jq .'
+
+  # select only specific fields #
+  # (I'm building good-looking JSON here) #
+  jq '{usage_description: .request.usage_description, token_usage: .response.API_response.usage}' myfile.jsonl
+
+  # show JSONL entries where request.metadata.doc_name contains 'qlink' (case insensitive) #
+  jq 'select(.request.metadata.doc_name | test("QLink"; "i"))' myfile.jsonl
+
+  # same as above but with scrolling and nice terminal colours #
+  jq -C 'select(.request.metadata.doc_name | test("QLink"; "i"))' myfile.jsonl | less -R
+
+  # get correct colours when using \`less\` #
+  jq -C . myfile.jsonl | less -R
+
+  # everything flat with \n characters rendered #
+  # (so can read values in the JSON with a lot of newlines in them) #
+  jq -r 'paths(scalars) as \$p | "\(\$p | join(".")): \(getpath(\$p))"' myfile.jsonl | less
+  # same as above but alternative syntax #
+  cat myfile.jsonl | jq -r 'paths(scalars) as \$p | "\(\$p | join(".")): \(getpath(\$p))"' | less
+
+EOF
+}
+
 alias l1='ls -a1'
 alias ll='ls -lah'
 alias lls="ls -lahS"
