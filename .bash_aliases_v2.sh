@@ -590,3 +590,16 @@ file_contents_to_md() {
 		printf '```\n\n'
 	done
 }
+
+prompt_format() {
+	# example structure for a LLM prompt #
+	cat <<EOF
+
+  Task: describe what is required.
+  Input: what are the inputs to the task (e.g. multiple CSV files, all same columns)
+  Constraints: describe the limits
+  Output: describe required output format
+  Verify: describe how to verify that the proposed solution works
+  
+EOF
+}
