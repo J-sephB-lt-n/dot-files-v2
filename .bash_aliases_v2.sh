@@ -599,13 +599,13 @@ postgres_helper() {
   docker run \\
       -d \\                  # run detached
       --name ephemeral_pgvector \\
-      -e POSTGRES_USER      postgres \\  
-      -e POSTGRES_PASSWORD  password \\
-      -e POSTGRES_DB        postgres \\
+      -e POSTGRES_USER=postgres \\  
+      -e POSTGRES_PASSWORD=password \\
+      -e POSTGRES_DB=pg_db \\
       -p 5432:5432 \\
-      ankane/pgvector
+      pgvector/pgvector:pg17
 
-    psql -h localhost -U postgres -d postgres   # shell for running queries in
+    psql -h localhost -U postgres -d pg_db   # shell for running queries in
   
 EOF
 }
