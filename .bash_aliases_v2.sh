@@ -606,6 +606,7 @@ postgres_helper() {
       pgvector/pgvector:pg17
 
     psql -h localhost -U postgres -d pg_db   # shell for running queries in
+    # run \`\\x auto\` in psql shell to make output readable for wide tables
   
 EOF
 }
