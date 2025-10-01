@@ -597,7 +597,6 @@ postgres_helper() {
 
   # postgres+pgvector ephemeral local container #
   docker run \\
-      --rm \\                # auto delete when container stops
       -d \\                  # run detached
       --name ephemeral_pgvector \\
       -e POSTGRES_USER      postgres \\  
