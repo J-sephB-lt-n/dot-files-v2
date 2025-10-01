@@ -591,6 +591,24 @@ file_contents_to_md() {
 	done
 }
 
+postgres_helper() {
+	# useful CLI commands related to postgreSQL #
+	cat <<EOF
+
+  # postgres+pgvector ephemeral local container #
+  docker run \
+      --rm \                # auto delete when container stops
+      -d \                  # run detached
+      --name ephemeral_pgvector \
+      -e POSTGRES_USER      postgres \  
+      -e POSTGRES_PASSWORD  password \
+      -e POSTGRES_DB        postgres \
+      -p 5432:5432 \
+      ankane/pgvector
+  
+EOF
+}
+
 prompt_format() {
 	# example structure for a LLM prompt #
 	cat <<EOF
