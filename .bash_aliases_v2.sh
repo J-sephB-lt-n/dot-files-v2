@@ -596,15 +596,17 @@ postgres_helper() {
 	cat <<EOF
 
   # postgres+pgvector ephemeral local container #
-  docker run \
-      --rm \                # auto delete when container stops
-      -d \                  # run detached
-      --name ephemeral_pgvector \
-      -e POSTGRES_USER      postgres \  
-      -e POSTGRES_PASSWORD  password \
-      -e POSTGRES_DB        postgres \
-      -p 5432:5432 \
+  docker run \\
+      --rm \\                # auto delete when container stops
+      -d \\                  # run detached
+      --name ephemeral_pgvector \\
+      -e POSTGRES_USER      postgres \\  
+      -e POSTGRES_PASSWORD  password \\
+      -e POSTGRES_DB        postgres \\
+      -p 5432:5432 \\
       ankane/pgvector
+
+    psql -h localhost -U postgres -d postgres   # shell for running queries in
   
 EOF
 }
