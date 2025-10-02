@@ -477,13 +477,13 @@ EOF
 
 function list_llms() {
 	# list all models using /v1/models endpoint of an openai-compatible API
-	if [[ -z "$OPENAI_API_BASE" ]]; then
-		echo "Error: OPENAI_API_BASE environment variable is not set." >&2
+	if [[ -z "$OPENAI_BASE_URL" ]]; then
+		echo "Error: OPENAI_BASE_URL environment variable is not set." >&2
 		return 1
 	fi
 
 	# Strip trailing slash
-	local base_url="${OPENAI_API_BASE%/}"
+	local base_url="${OPENAI_BASE_URL%/}"
 
 	if [[ -z "$OPENAI_API_KEY" ]]; then
 		echo "Error: OPENAI_API_KEY environment variable is not set." >&2
@@ -537,7 +537,7 @@ llm_chat_completion() {
 	#   echo "<doc>$(cat myfile.txt)</doc> Please summarise the contents of doc" | llm_chat_completion
 	#   for more examples, run `llm_chat_completion_helper`
 
-	: "${OPENAI_API_BASE:?Error: OPENAI_API_BASE environment variable is not set}"
+	: "${OPENAI_BASE_URL:?Error: OPENAI_BASE_URL environment variable is not set}"
 	: "${OPENAI_API_KEY:?Error: OPENAI_API_KEY environment variable is not set}"
 	: "${OPENAI_DEFAULT_MODEL:?Error: OPENAI_DEFAULT_MODEL environment variable is not set}"
 
@@ -552,7 +552,7 @@ llm_chat_completion() {
 	fi
 
 	# OpenAI-compatible streaming request
-	curl -sN "${OPENAI_API_BASE}/v1/chat/completions" \
+	curl -sN "${OPENAI_BASE_URL}/v1/chat/completions" \
 		-H "Authorization: Bearer ${OPENAI_API_KEY}" \
 		-H "Content-Type: application/json" \
 		-d "$(jq -n \
