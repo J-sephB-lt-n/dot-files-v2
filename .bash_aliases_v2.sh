@@ -602,10 +602,10 @@ postgres_helper() {
       -e POSTGRES_USER=postgres \\  
       -e POSTGRES_PASSWORD=password \\
       -e POSTGRES_DB=pg_db \\
-      -p 5432:5432 \\
+      -p 11636:5432 \\
       pgvector/pgvector:pg17
 
-    psql -h localhost -U postgres -d pg_db   # shell for running queries in
+    psql -h localhost -U postgres -d pg_db --port 11636  # shell for running queries in
     # run \`\\x auto\` in psql shell to make output readable for wide tables
   
 EOF
