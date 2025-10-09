@@ -607,6 +607,9 @@ postgres_helper() {
 
     psql -h localhost -U postgres -d pg_db --port 11636  # shell for running queries in
     # run \`\\x auto\` in psql shell to make output readable for wide tables
+
+    uv tool install harlequin[postgres]
+    uvx harlequin --adapter postgres postgresql://postgres:password@localhost:11636/pg_db
   
 EOF
 }
