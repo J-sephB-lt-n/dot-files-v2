@@ -399,12 +399,16 @@ pdf_helper() {
 
   sudo apt install pdftk
   
-  # Get a subset of pages of a PDF #
+  # Get a subset of pages of a PDF (this discards the Table of Contents) #
   pdftk input.pdf cat 2-5 output output.pdf
   pdftk input.pdf cat 1 3-9 15 18-19 output output.pdf
-
+  
   # extract PDF text (using poppler-utils) #
   pdftotext -enc UTF-8 -eol unix -nopgbrk -layout input.pdf output.txt
+
+  # Get a subset of pages of a PDF                                #
+  # (this keeps the full Table of Contents - even deleted pages)  #
+  qpdf input.pdf --pages . 2-5 -- output.pdf
 
 EOF
 }
