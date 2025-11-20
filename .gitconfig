@@ -1,5 +1,5 @@
 [user]
-	email = joseph.jazz.bolton@gmail.com
+; 	email = someone@something.com
 	name = J-sephB-lt-n
 
 [alias]
@@ -7,3 +7,5 @@
   graph = log --oneline --graph --decorate # got this from https://www.youtube.com/watch?v=DZI0Zl-1JqQ
 [init]
 	defaultBranch = main
+[credential]
+	helper = cache --timeout=28800
