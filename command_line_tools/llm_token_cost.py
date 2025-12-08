@@ -18,27 +18,43 @@ ExpiringData = namedtuple(
 )
 
 ZAR_PER_USD: Final[ExpiringData] = ExpiringData(
-    last_updated_date=datetime.date(2025, 2, 21),
-    value=18.39,
+    last_updated_date=datetime.date(2025, 11, 26),
+    value=17.15,
 )
 
 COST_PER_MILLION_TOKENS: Final[dict] = {
     "openai": {
         # https://openai.com/api/pricing/
-        "gpt-4o": {
+        "gpt-4.1": {
             "input": ExpiringData(
-                last_updated_date=datetime.date(2025, 1, 30), value=2.5
+                last_updated_date=datetime.date(2025, 11, 26), value=2
             ),
             "output": ExpiringData(
-                last_updated_date=datetime.date(2025, 1, 30), value=10
+                last_updated_date=datetime.date(2025, 11, 26), value=8
+            ),
+        },
+        "gpt-4.1-mini": {
+            "input": ExpiringData(
+                last_updated_date=datetime.date(2025, 11, 26), value=0.4
+            ),
+            "output": ExpiringData(
+                last_updated_date=datetime.date(2025, 11, 26), value=1.6
+            ),
+        },
+        "gpt-4o": {
+            "input": ExpiringData(
+                last_updated_date=datetime.date(2025, 11, 26), value=5
+            ),
+            "output": ExpiringData(
+                last_updated_date=datetime.date(2025, 11, 26), value=15
             ),
         },
         "gpt-4o-mini": {
             "input": ExpiringData(
-                last_updated_date=datetime.date(2025, 1, 30), value=0.15
+                last_updated_date=datetime.date(2025, 11, 26), value=0.17
             ),
             "output": ExpiringData(
-                last_updated_date=datetime.date(2025, 1, 30), value=0.6
+                last_updated_date=datetime.date(2025, 11, 26), value=0.66
             ),
         },
     },
