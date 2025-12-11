@@ -1,4 +1,7 @@
-# Launch a Subagent
+---
+description: "This rule describes how to launch and monitor subagents which run in the backgound to perform tasks."
+alwaysApply: false
+---
 
 Launch a subagent in the background from the terminal using this command:
 
