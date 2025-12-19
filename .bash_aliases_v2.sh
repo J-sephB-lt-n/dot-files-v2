@@ -630,3 +630,141 @@ prompt_format() {
   
 EOF
 }
+
+# TASK TIMER #
+# timer state is stored in /var/tmp/task_timers/
+if [[ ! -e /var/tmp/task_timers/ ]]; then
+	echo "creating directory /var/tmp/task_timers/"
+	mkdir /var/tmp/task_timers/
+fi
+seconds_to_human_readable() {
+	# from https://unix.stackexchange.com/questions/27013/displaying-seconds-as-days-hours-mins-seconds
+	local T=$(awk -v num=$1 'BEGIN {printf "%.0f", num}')
+	local D=$((T / 60 / 60 / 24))
+	local H=$((T / 60 / 60 % 24))
+	local M=$((T / 60 % 60))
+	local S=$((T % 60))
+	(($D > 0)) && printf '%d days ' $D
+	(($H > 0)) && printf '%d hours ' $H
+	(($M > 0)) && printf '%d minutes ' $M
+	(($D > 0 || $H > 0 || $M > 0))
+	printf '%d seconds\n' $S
+}
+tmr_go() { # start specific timer
+	# e.g. tmr_go task1
+	local timer_description=$2
+	if [[ $timer_description == *"|"* ]]; then
+		echo "ERROR: timer description may not contain pipe symbol"
+		return 0
+	fi
+	if [[ -z "${timer_description}" ]]; then
+		local timer_description="no_description"
+	fi
+	if [[ ! -f /var/tmp/task_timers/$1.tmr ]]; then
+		echo -n "${timer_description}|${EPOCHREALTIME}" >/var/tmp/task_timers/$1.tmr
+		echo "started timer [$1]"
+	else
+		local latest_entry=$(tail -n 1 /var/tmp/task_timers/$1.tmr)
+		local n_entries=$(echo $latest_entry | awk -F '|' '{print NF}')
+		#n_entries=$(awk "{print NF}" <<< "$latest_entry")
+		if [[ n_entries -eq 2 ]]; then
+			echo "timer [$1] is already running"
+		else
+			echo -n "${timer_description}|${EPOCHREALTIME}" >>/var/tmp/task_timers/$1.tmr
+			echo "started timer [$1]"
+		fi
+	fi
+}
+tmr_stop() { # stop specific timer
+	# e.g. tmr_stop task1
+	if [[ ! -f /var/tmp/task_timers/$1.tmr ]]; then
+		echo "timer [$1] does not exist"
+	else
+		local latest_entry=$(tail -n 1 /var/tmp/task_timers/$1.tmr)
+		local n_entries=$(echo $latest_entry | awk -F '|' '{print NF}')
+		if [[ $n_entries -eq 2 ]]; then
+			echo "|${EPOCHREALTIME}" >>/var/tmp/task_timers/$1.tmr
+			echo "stopped timer [$1]"
+		else
+			echo "timer [$1] is already stopped"
+		fi
+	fi
+}
+tmr_view() { # view specific timer
+	# e.g. tmr_view task1
+	if [[ ! -f /var/tmp/task_timers/$1.tmr ]]; then
+		echo "timer [$1] does not exist"
+	else
+		echo ""
+		echo "--Summary of Timer [$1]--"
+		echo ""
+		local total_n_seconds=0
+		while read line || [[ -n $line ]]; do
+			n_entries=$(echo $line | awk -F '|' '{print NF}')
+			if [[ $n_entries -eq 3 ]]; then
+				timer_description=$(echo $line | cut -d "|" -f 1)
+				start_utc=$(echo $line | cut -d "|" -f 2)
+				end_utc=$(echo $line | cut -d "|" -f 3)
+				echo -n "* ["$(perl -le 'print scalar localtime $ARGV[0]' $start_utc)"]"
+				echo -n " --> "
+				echo "["$(perl -le 'print scalar localtime $ARGV[0]' $end_utc)"]"
+				if [[ $timer_description != "no_description" ]]; then
+					echo "       \"${timer_description}\""
+				else
+					echo "       <no timer description>"
+				fi
+				n_seconds=$(echo "($end_utc - $start_utc)/1" | bc)
+				total_n_seconds=$(echo "$total_n_seconds + $n_seconds" | bc)
+				echo -n "       ("
+				echo -n $(seconds_to_human_readable ${n_seconds})
+				echo ")"
+			else
+				timer_description=$(echo $line | cut -d "|" -f 1)
+				start_utc=$(echo $line | cut -d "|" -f 2)
+				end_utc=$EPOCHREALTIME
+				echo -n "* ["$(perl -le 'print scalar localtime $ARGV[0]' $start_utc)"]"
+				echo -n " --> "
+				echo "<currently running>"
+				if [[ $timer_description != "no_description" ]]; then
+					echo "       \"${timer_description}\""
+				else
+					echo "       <no timer description>"
+				fi
+				n_seconds=$(echo "($end_utc - $start_utc)/1" | bc)
+				total_n_seconds=$(echo "$total_n_seconds + $n_seconds" | bc)
+				echo -n "       ("
+				echo -n $(seconds_to_human_readable ${n_seconds})
+				echo ")"
+			fi
+		done <<<$(cat /var/tmp/task_timers/$1.tmr)
+		echo ""
+		echo "TOTAL TIME: "$(seconds_to_human_readable ${total_n_seconds})
+	fi
+}
+tmr_ls() { # list all timers
+	echo "--ALL TIMERS--"
+	n_timers=$(find /var/tmp/task_timers/ -type f -name "*.tmr" | wc -l)
+	if [[ $n_timers -eq 0 ]]; then
+		echo "There are no timers"
+	else
+		for timer_filepath in /var/tmp/task_timers/*.tmr; do
+			timer_name=$(echo $timer_filepath | sed "s/\/var\/tmp\/task_timers\/\(.*\).tmr$/\1/")
+			latest_entry=$(tail -n 1 $timer_filepath)
+			n_entries=$(echo $latest_entry | awk -F '|' '{print NF}')
+			if [[ $n_entries -eq 2 ]]; then
+				echo "[$timer_name] <currently running>"
+			else
+				echo "[$timer_name]"
+			fi
+		done
+	fi
+}
+tmr_delete() {
+	# e.g. tmr_delete task1
+	if [[ ! -f /var/tmp/task_timers/$1.tmr ]]; then
+		echo "timer [$1] does not exist"
+	else
+		rm /var/tmp/task_timers/$1.tmr
+		echo "deleted timer [$1]"
+	fi
+}
