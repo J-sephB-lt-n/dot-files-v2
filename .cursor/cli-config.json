@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Shell(ls)",
+      "Shell(cat)",
+      "Shell(cd)",
+      "Shell(echo)",
+      "Shell(git add)",
+      "Shell(git commit)",
+      "Shell(git diff)",
+      "Shell(git log)",
+      "Shell(git tag)",
+      "Shell(git status)",
+      "Shell(head)",
+      "Shell(ls)",
+      "Shell(tail)",
+      "Shell(uv run python -m pytest)",
+      "Shell(uv run python -m excel_atlas.llm.tools.*)",
+      "Shell(uv run ty check)",
+      "Shell(wc)"
+    ],
+    "deny": []
+  },
+  "version": 1,
+  "editor": {
+    "vimMode": false
+  },
+  "model": {
+    "modelId": "claude-4.5-opus-high",
+    "displayModelId": "opus-4.5",
+    "displayName": "Claude 4.5 Opus",
+    "displayNameShort": "Opus 4.5",
+    "aliases": ["opus", "opus-4.5"]
+  },
+  "hasChangedDefaultModel": true,
+  "network": {
+    "useHttp1ForAgent": false
+  }
+}
