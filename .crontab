@@ -22,4 +22,6 @@
 # 
 # m h  dom mon dow   command
 DISPLAY=:0
-45 9-17 * * * /usr/bin/python3 /home/<omitted>/experiments/popup-learning/main.py # >> /home/<omitted>/cron.log 2>&1
+45 9-17 * * * /usr/bin/python3 /home/josephbbolton/experiments/popup-learning/main.py # >> /home/josephbbolton/cron.log 2>&1
+
+20 10 * * * popup_msg -m 'timer with message example'
