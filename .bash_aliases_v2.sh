@@ -425,7 +425,7 @@ alias urrf='uv run ruff format'
 # screen management #
 alias cl='clear'
 alias cll="clear && ls -lah"
-alias clct='clear && tree -a -I .git -I .mypy_cache -I .pytest_cache -I .ruff_cache -I .venv -I __pycache__ -I node_modules -I target -I venv'
+alias clct='clear && tree -C -a -I .git -I .mypy_cache -I .pytest_cache -I .ruff_cache -I .venv -I __pycache__ -I node_modules -I target -I venv'
 
 # task warrior #
 task_warrior_helper() {
