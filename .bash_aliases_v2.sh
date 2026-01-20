@@ -1,7 +1,43 @@
 alias poetry_run_pylint_recursive='poetry run pylint --rcfile .pylintrc --recursive=y .'
 
 alias cursor_helper='echo "
-# Small brownfield feature workflow #
+# greenfield anthropic harness agents #
+           /harness_discuss_prd
+              Creates the Product Requirements Document through a long chat and saves it to docs/PRD.md
+              Adds a note and link to docs/PRD.md in the project root README.md
+(optional) /harness_discuss_architecture
+              Creates the Architecture Design Document (ADD) through a long chat and saves it to docs/architecture_design.md
+              Adds a note and link to docs/architecture_design.md in the project root README.md
+          /harness_scaffold_project
+            Creates docs/adr/ (and adds a note and link to it in project root README.md)
+            Creates the scaffold of project folders based on the decisions in docs/PRD.md and docs/architecture_design.md
+            Populates README.md based on the project folders, docs/PRD.md and docs/architecture_design.md (if it exists)
+            Adds section to README.md explaining required format of an entry in /docs/adr/
+            If it made any technical decisions, agent adds an ADR to /docs/adr/<adr-num>-<adr-name>.md
+            Does a git commit
+          <now proceed to "brownfield anthropic harness agents">
+
+# brownfield anthropic harness agents #
+(optional) /harness_scaffold_project
+              Same as in "greenfield anthropic harness agents" but user can choose to omit steps
+              This only needs to be run if "greenfield anthropic harness agents" was not run
+           /harness_init_task
+              Creates folder docs/current_task/ (clears it out if it already exists)
+              Adds docs/current_task/ to .gitignore (if not already there)
+
+           /harness_plan_task
+              Reads all context 
+
+
+
+
+# greenfield dexter horthy workflow #
+TODO
+
+# brownfield dexter horthy workflow #
+TODO
+
+
            1. /init_task_context
               Create local folder current_task/ to store task context (and scaffolds some core files within it).
            2. /discuss_requirements
