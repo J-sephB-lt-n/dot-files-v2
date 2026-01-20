@@ -1,7 +1,29 @@
-# code linting #
 alias poetry_run_pylint_recursive='poetry run pylint --rcfile .pylintrc --recursive=y .'
 
-# docker #
+alias cursor_helper='echo "
+# Small brownfield feature workflow #
+           1. /init_task_context
+              Create local folder current_task/ to store task context (and scaffolds some core files within it).
+           2. /discuss_requirements
+              Creates current_task/requirements.md through a chat.
+(optional) 3. /research
+              TODO
+(optional) 4. /discuss_potential_approaches
+              TODO
+(optional) 5. /plan_task
+              TODO
+(optional) 6. /code_next_feature
+              TODO
+(optional) 7. /review_last_feature
+              TODO
+(optional) 8. /code_review_general
+              TODO
+
+# Greenfield project workflow #
+1. /discuss_prd
+    Create a Product Requirements Document (PRD) through a long chat with the agent.
+"'
+
 alias docker_helper='echo "
   # Build image using definition from file named \`Dockerfile\` in current folder #
   docker build --tag my_image_name .
