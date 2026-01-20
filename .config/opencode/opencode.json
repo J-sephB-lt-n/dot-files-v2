@@ -1,0 +1,21 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  "provider": {
+    "gaiss": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "gaiss",
+      "options": {
+        "baseURL": "{env:OPENAI_BASE_URL}",
+        "apiKey": "{env:OPENAI_API_KEY}"
+      },
+      "models": {
+        "bedrock.anthropic.claude-sonnet-4-5": {
+          "name": "Claude Sonnet 4.5"
+        }
+      }
+    }
+  },
+
+  "model": "gaiss/bedrock.anthropic.claude-sonnet-4-5"
+}
