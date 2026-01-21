@@ -1,6 +1,16 @@
 alias poetry_run_pylint_recursive='poetry run pylint --rcfile .pylintrc --recursive=y .'
 
 alias cursor_helper='echo "
+# anthropic harness agents share context through:
+- git logs
+- README.md
+- docs/PRD.md
+- docs/architecture_design.md
+- docs/adr/<adr-num>-<adr-name>.md
+- docs/current_task/task_requirements.md (temporary)
+- docs/current_task/dev_notes.md         (temporary)
+- docs/current_task/features_list.json   (temporary)
+
 # greenfield anthropic harness agents #
            /harness_discuss_prd
               Creates the Product Requirements Document through a long chat and saves it to docs/PRD.md
@@ -9,55 +19,48 @@ alias cursor_helper='echo "
               Creates the Architecture Design Document (ADD) through a long chat and saves it to docs/architecture_design.md
               Adds a note and link to docs/architecture_design.md in the project root README.md
           /harness_scaffold_project
+            Agent reads README.md, docs/PRD.md, docs/architecture_design.md
             Creates docs/adr/ (and adds a note and link to it in project root README.md)
-            Creates the scaffold of project folders based on the decisions in docs/PRD.md and docs/architecture_design.md
-            Populates README.md based on the project folders, docs/PRD.md and docs/architecture_design.md (if it exists)
             Adds section to README.md explaining required format of an entry in /docs/adr/
-            If it made any technical decisions, agent adds an ADR to /docs/adr/<adr-num>-<adr-name>.md
+            Creates the scaffold of project folders based on the decisions in docs/PRD.md and docs/architecture_design.md
+            Populates README.md
+            If it made any technical decisions, agent adds an ADR(s) to /docs/adr/<adr-num>-<adr-name>.md
             Does a git commit
           <now proceed to "brownfield anthropic harness agents">
 
 # brownfield anthropic harness agents #
 (optional) /harness_scaffold_project
               Same as in "greenfield anthropic harness agents" but user can choose to omit steps
-              This only needs to be run if "greenfield anthropic harness agents" was not run
-           /harness_init_task
+              This only needs to be run in a brownfield codebase (i.e. not coming straight from a run of "greenfield anthropic harness agents")
+           /harness_discuss_task
               Creates folder docs/current_task/ (clears it out if it already exists)
-              Adds docs/current_task/ to .gitignore (if not already there)
-
+              Adds docs/current_task/ to .gitignore (if its not already there)
+              Adds docs/current_task/dev_notes.md
+              Creates docs/current_task/task_requirements.md through a brief chat through the required task
+(optional) /harness_research_task
+              Agent explores the codebase and suggests different approaches to solving the task.
+              A final approach is decided upon and docs/current_task/task_requirements.md is updated with this new information
            /harness_plan_task
-              Reads all context 
-
-
-
+              Agent reads all context docs (especially docs/current_task/task_requirements.md), explores the codebase and breaks down the task into separate features (chunks of work). These features (and the status of each) is written to docs/current_task/features_list.json
+           /harness_code_next_feature
+              Agent reads all context docs
+              If it can, agent runs the application and full test suite (to see that we are starting off with a working app)
+              Agent codes the next feature marked as NOT_STARTED in docs/current_task/features_list.json using Test-Driven Development (TDD)
+              Agent marks the feature as COMPLETED in docs/current_task/features_list.json
+              Agent can update README.md, docs/adr/, docs/current_task/dev_notes.md
+              Agent does a git commit
+(optional) /harness_review_last_feature
+              Agent reads all context docs
+              Agent reviews the feature most recently marked as COMPLETED
+              Agent applies fixes using TDD
+              Agent can update README.md, docs/adr/, docs/current_task/dev_notes.md
+              Agent does a git commit
 
 # greenfield dexter horthy workflow #
 TODO
 
 # brownfield dexter horthy workflow #
 TODO
-
-
-           1. /init_task_context
-              Create local folder current_task/ to store task context (and scaffolds some core files within it).
-           2. /discuss_requirements
-              Creates current_task/requirements.md through a chat.
-(optional) 3. /research
-              TODO
-(optional) 4. /discuss_potential_approaches
-              TODO
-(optional) 5. /plan_task
-              TODO
-(optional) 6. /code_next_feature
-              TODO
-(optional) 7. /review_last_feature
-              TODO
-(optional) 8. /code_review_general
-              TODO
-
-# Greenfield project workflow #
-1. /discuss_prd
-    Create a Product Requirements Document (PRD) through a long chat with the agent.
 "'
 
 alias docker_helper='echo "
