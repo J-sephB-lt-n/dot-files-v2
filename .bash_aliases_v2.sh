@@ -12,26 +12,32 @@ alias cursor_helper='echo "
 - docs/current_task/features_list.json   (temporary)
 
 # greenfield anthropic harness agents #
-           /harness_discuss_prd
-              Creates the Product Requirements Document through a long chat and saves it to docs/PRD.md
-              Adds a note and link to docs/PRD.md in the project root README.md
-(optional) /harness_discuss_architecture
-              Creates the Architecture Design Document (ADD) through a long chat and saves it to docs/architecture_design.md
-              Adds a note and link to docs/architecture_design.md in the project root README.md
+           /discuss_prd
+              Creates the Product Requirements Document through a long chat and 
+                saves it to docs/PRD.md
+(optional) /discuss_architecture
+              Creates the Architecture Design Document (ADD) through a long chat and 
+                saves it to docs/architecture_design.md
           /harness_scaffold_project
-            Agent reads README.md, docs/PRD.md, docs/architecture_design.md
-            Creates docs/adr/ (and adds a note and link to it in project root README.md)
-            Adds section to README.md explaining required format of an entry in /docs/adr/
-            Creates the scaffold of project folders based on the decisions in docs/PRD.md and docs/architecture_design.md
-            Populates README.md
-            If it made any technical decisions, agent adds an ADR(s) to /docs/adr/<adr-num>-<adr-name>.md
-            Does a git commit
-          <now proceed to "brownfield anthropic harness agents">
+              Agent reads README.md, docs/PRD.md, docs/architecture_design.md
+              Creates docs/adr/ (and adds a note and link to it in project 
+                root README.md)
+              Adds section to README.md explaining required format of an entry 
+                in /docs/adr/
+              Creates the scaffold of project folders based on the decisions in 
+                docs/PRD.md and docs/architecture_design.md
+              Populates README.md
+              If it made any technical decisions, agent adds an ADR(s) 
+                to /docs/adr/<adr-num>-<adr-name>.md
+              Does a git commit
+            <now proceed to "brownfield anthropic harness agents">
 
 # brownfield anthropic harness agents #
 (optional) /harness_scaffold_project
-              Same as in "greenfield anthropic harness agents" but user can choose to omit steps
-              This only needs to be run in a brownfield codebase (i.e. not coming straight from a run of "greenfield anthropic harness agents")
+              Same as in "greenfield anthropic harness agents" but user can choose 
+                to omit steps
+              This only needs to be run in a brownfield codebase (i.e. not 
+                coming straight from a run of "greenfield anthropic harness agents")
            /harness_discuss_task
               Creates folder docs/current_task/ (clears it out if it already exists)
               Adds docs/current_task/ to .gitignore (if its not already there)
