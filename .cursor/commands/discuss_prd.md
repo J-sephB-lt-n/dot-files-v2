@@ -44,6 +44,7 @@ Prompt me for my brain dump and then review it carefully, applying the rules out
 - Acceptance criteria
 - Dependencies and integrations
 - Risks and mitigations
+- Decomposition of development into epics
 - Milestones and phasing (rollout plan)
 - Open Questions / Future Considerations
 
