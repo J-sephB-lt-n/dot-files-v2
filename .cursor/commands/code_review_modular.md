@@ -47,5 +47,7 @@ Then, ask me which of the following I want included in the code review:
 Once I've told you which aspects I want included, confirm the list with me again. Then, perform the code review on these aspects.
 
 Write your findings into a `PR_review_<your-review-name>.md` file, with at least 1 comment for each of these review areas I have requested from you.
-Rank your findings from most critical to least critical.
+
+Include a short summary of the code changes, including a simple mermaid diagram showing how affected modules/objects relate Following that, the list of your findings ranked from most critical to least critical.
+
 Please link each review comment to a specific file(s) and line number(s).

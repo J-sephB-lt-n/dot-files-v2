@@ -46,3 +46,5 @@ Prompt me for my brain dump and then review it carefully, applying the rules out
 - Risks and mitigations
 - Milestones and phasing (rollout plan)
 - Open Questions / Future Considerations
+
+When we are finished, save the PRD document into `docs/PRD.md`
