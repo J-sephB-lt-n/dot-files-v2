@@ -20,7 +20,7 @@ Then, please perform the following steps in order:
    i. Create the /docs/adr/ folder (if it doesn't exist)
    ii. Add a note into the project root README.md linking to /docs/adr/ and explaining what it is for.
    iii. Describe in the project root README.md describing how to add an ADR (ADRs must be sequentially numbered markdown files in /docs/adr/{{ adr_num }}-{{ adr_name }}.md in a consistent schema with entries "title", "status", "context", "decision", "consequences", "alternatives considered", "decision drivers", "references")
-3. If this is a greenfield codebase, scaffold (create) the project folders and files according to the goals and requirements in the project documentation you read earlier (ask my permission first). Keep the actual files empty for now.
+3. If this is a greenfield codebase, scaffold (create) the project folders and files according to the goals and requirements in the project documentation you read earlier (ask my permission first). Keep the actual files empty for now (you can add module docstrings and similar high-level documentation).
 4. Check whether each of the following sections exist in the README.md, adding them if they don't (ask my permission first):
    i. Very brief overview of the project - like an elevator pitch.
    ii. Instructions on how to run the project.

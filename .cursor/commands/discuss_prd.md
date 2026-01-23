@@ -33,6 +33,7 @@ Prompt me for my brain dump and then review it carefully, applying the rules out
 - Background and problem statement
 - Goals / Objectives (SMART goals if possible)
 - Target Audience / User Personas
+- Application UI layout and user flow
 - User Stories / Use Cases
 - Functional Requirements
 - Non-Functional Requirements (Performance, Security, Usability, etc.)
@@ -49,3 +50,5 @@ Prompt me for my brain dump and then review it carefully, applying the rules out
 - Open Questions / Future Considerations
 
 When we are finished, save the PRD document into `docs/PRD.md`
+
+Write my original brain dump to `/docs/original_brain_dump.md`
