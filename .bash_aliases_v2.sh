@@ -7,6 +7,7 @@ alias cursor_helper='echo "
 - docs/PRD.md
 - docs/architecture_design.md
 - docs/adr/<adr-num>-<adr-name>.md
+- docs/epics.md
 - docs/current_epic/epic_requirements.md (temporary)
 - docs/current_epic/dev_notes.md         (temporary)
 - docs/current_epic/user_stories.json    (temporary)
@@ -39,6 +40,11 @@ alias cursor_helper='echo "
               This only needs to be run in a brownfield codebase (i.e. not 
                 coming straight from a run of "greenfield anthropic harness agents")
            /harness_discuss_epic
+              Agent reads all context docs:
+                - README.md
+                - docs/PRD.md
+                - docs/architecture_design.md
+                - docs/adr/*.md
               Creates folder docs/current_epic/ (clears it out if it already exists)
               Adds docs/current_epic/ to .gitignore (if its not already there)
               Adds docs/current_epic/dev_notes.md
@@ -58,23 +64,37 @@ alias cursor_helper='echo "
                 - docs/current_epic/epic_requirements.md
               Agent explores the codebase. 
               Agent partitions the epic into self-contained user stories (units 
-                of work) and writes these to docs/current_epic/user_stories.json
-                in a standardised format.
-           /harness_code_next_feature
-              Agent reads all context docs
-              If it can, agent runs the application and full test suite (to see that we are starting off with a working app)
-              Agent codes the next feature marked as NOT_STARTED in docs/current_epic/features_list.json using Test-Driven Development (TDD)
-              Agent marks the feature as COMPLETED in docs/current_epic/features_list.json
+                of dev work) and writes these to 
+                docs/current_epic/user_stories.json in a standardised format.
+           /harness_code_next_user_story
+              Agent asks what the user would like coded (default is next user 
+                story marked as NOT_STARTED in 
+                docs/current_epic/user_stories.json)
+              Agent reads all context docs:
+                - README.md
+                - docs/PRD.md
+                - docs/architecture_design.md
+                - docs/adr/*.md
+                - docs/epics.md
+                - docs/current_epic/epic_requirements.md
+                - docs/current_epic/user_stories.json
+                - other docs which look useful (asks user permission first)
+              Agent explores the codebase. 
+              If it can, agent runs the application and full test suite (to 
+                see that we are starting off with a working app)
+              Agent writes the code
+              Agent marks the feature as COMPLETED in docs/current_epic/user_stories.json
               Agent can update README.md, docs/adr/, docs/current_epic/dev_notes.md
               Agent does a git commit
-(optional) /harness_review_last_feature
-              Agent reads all context docs
-              Agent reviews the feature most recently marked as COMPLETED
+(optional) /harness_code_review
+              Same as /harness_code_next_user_story agent except that the agent reviews 
+                the feature most recently marked as COMPLETED (or something
+                else that the user requests)
               Agent applies fixes using TDD
               Agent can update README.md, docs/adr/, docs/current_epic/dev_notes.md
               Agent does a git commit
-(optional) /harness_clean_up
-              Move /docs/current_epic/ to /docs/past-epics/{{ epic_num }}_{{ epic_name }}/
+(optional)  /harness_clean_up
+              Move /docs/current_epic/ to /docs/past_epics/{{ epic_num }}_{{ epic_name }}/
 
 # greenfield dexter horthy workflow #
 TODO
@@ -337,6 +357,11 @@ git_helper() {
 
   # see a file state on a different branch #
   git show branch_name:path/to/file.ini
+
+  # I committed and I want to "uncommit" and unstage #
+  #   (e.g. I committed on the wrong branch)
+  git reset --soft HEAD~1
+  git checkout -b my-feature-branch-name  # can now go commit on this other branch or whatever
 
   # authenticate to github using a token #
   git remote remove origin
