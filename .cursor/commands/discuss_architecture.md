@@ -46,7 +46,7 @@ Collaborate with me to create an appropriate architecture design and codebase la
 
 ## PROCESS & KEY RULES
 
-1. Before we start, I will first provide you with an initial "brain dump". This might be incomplete or unstructured.
+1. Before we start, I will first provide you with an initial "brain dump". This might be incomplete or unstructured. Please write this brain dump (verbatim) to `docs/original_architecture_brain_dump.md`.
    Additionally, before we start ask me for existing context which is relevant to this architecture discussion:
    - Existing code in the codebase.
    - Existing requirements documentation (e.g. a PRD).
@@ -96,4 +96,4 @@ Prompt me for my brain dump and then review it carefully, applying the rules out
 
 When we have together confirmed that we are finished, ask me where I would like to save this document. You can suggest `docs/architecture_design.md`.
 
-Write my original brain dump to `/docs/architecture_brain_dump.md`.
+When we're completely finished, please write this entire conversation (verbatim) to `/docs/architecture_discussion.md`.

@@ -28,3 +28,4 @@ At a minimum, return the following:
    - A description of how it is linked (or related) to the other relevant files you have listed.
    - Whether the file is run as part of the core application flow (or alternatively is dead or dormant code).
 3. A list of any other links to relevant information that you have uncovered in your search.
+4. An explanation of all search approaches attempted, including commands run, precise search terms, regex used etc.

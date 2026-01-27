@@ -65,6 +65,7 @@ Ask what actions you should take after completing the task.
 Default options to propose:
 
 - Updating `.current_agent_context/features_list.json` (only if this file exists)
+- Updating `.current_agent_context/dev_notes.md` (only if this file exists)
 - Committing changes to git
 - Updating documentation (`README.md` and/or files in `docs/**/*`)
 
