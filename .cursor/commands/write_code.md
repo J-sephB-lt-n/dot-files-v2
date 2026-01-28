@@ -25,7 +25,7 @@ Default options to propose:
 - Review relevant git history (commit logs)
 - Inspect `.current_agent_context/**/*`
   - If it exists, list the files and ask which ones you may read
-- Use a research subagent to gather additional context
+- Use codebase research subagents to gather additional context (use a research subagent for tasks which will require you to read the content of a lot of files - this keeps your context window clean)
   - If used, list all returned files and ask permission before reading them
 
 Only read the files I explicitly approve, and read approved files in full.
@@ -34,8 +34,8 @@ Only read the files I explicitly approve, and read approved files in full.
 
 ## Step 3: Clarify Requirements
 
-If any requirements, assumptions, or context are unclear or conflicting, ask direct and specific clarification questions.
-Do not begin implementation until requirements are fully understood.
+If any requirements, assumptions, or context are unclear or conflicting, ask me direct and specific clarification questions.
+Do not begin implementation until the requirements are fully understood.
 
 ---
 
