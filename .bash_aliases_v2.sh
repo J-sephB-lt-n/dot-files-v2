@@ -261,6 +261,52 @@ pwdc() {
 	fi
 }
 
+load-dotenv() {
+	if [[ $# -eq 0 ]]; then
+		# show this help message if no path to .env file provided #
+		cat <<'EOF'
+Usage:
+  load-dotenv <path-to-env-file>
+
+Description:
+  Load environment variables from a .env-style file into the current shell
+  and print the names of variables that were added or updated.
+
+Example:
+  load-dotenv .env
+  load-dotenv .env.local
+EOF
+		return 0
+	fi
+
+	local env_file="$1"
+
+	if [[ ! -f "$env_file" ]]; then
+		echo "❌ $env_file not found"
+		return 1
+	fi
+
+	# Capture existing env var names
+	local before after added
+	before=$(printenv | cut -d= -f1 | sort)
+
+	# Load .env
+	export $(grep -v '^\s*#' "$env_file" | xargs)
+
+	# Capture env var names after
+	after=$(printenv | cut -d= -f1 | sort)
+
+	# Diff to find added/changed vars
+	added=$(comm -13 <(echo "$before") <(echo "$after"))
+
+	if [[ -n "$added" ]]; then
+		echo "✅ Loaded variables from $env_file:"
+		echo "$added"
+	else
+		echo "ℹ️ No new variables added from $env_file"
+	fi
+}
+
 zip_helper() {
 	cat <<EOF
   # add files to zip file #
