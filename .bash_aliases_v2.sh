@@ -1,107 +1,34 @@
 alias poetry_run_pylint_recursive='poetry run pylint --rcfile .pylintrc --recursive=y .'
 
-alias cursor_helper='echo "
-# anthropic harness agents share context through:
-- git logs
-- README.md
-- docs/PRD.md
-- docs/architecture_design.md
-- docs/adr/<adr-num>-<adr-name>.md
-- docs/epics.md
-- docs/current_epic/epic_requirements.md (temporary)
-- docs/current_epic/dev_notes.md         (temporary)
-- docs/current_epic/user_stories.json    (temporary)
+cursor_helper() {
+	cat <<EOF
+-- GREENFIELD CODING TASK --
+/discuss_prd                 (or /discuss_requirements if smaller task)
+/discuss_architecture        (optional)
+/decompose_task              (optional)
+/write_code
+/code_review_agent_generated (optional) (for agent-written code)
+  OR /code_review_joe        (optional) (for human-written code. More opinionated)
 
-# greenfield anthropic harness agents #
-           /discuss_prd
-              Creates the Product Requirements Document through a long chat and 
-                saves it to docs/PRD.md
-(optional) /discuss_architecture
-              Creates the Architecture Design Document (ADD) through a long chat and 
-                saves it to docs/architecture_design.md
-          /harness_scaffold_project
-              Agent reads README.md, docs/PRD.md, docs/architecture_design.md
-              Creates docs/adr/ (and adds a note and link to it in project 
-                root README.md)
-              Adds section to README.md explaining required format of an entry 
-                in /docs/adr/
-              Creates the scaffold of project folders based on the decisions in 
-                docs/PRD.md and docs/architecture_design.md
-              Populates README.md
-              If it made any technical decisions, agent adds an ADR(s) 
-                to /docs/adr/<adr-num>-<adr-name>.md
-              Does a git commit
-            <now proceed to "brownfield anthropic harness agents">
+-- BROWNFIELD CODING TASK --
+/research                    (optional)
+/discuss_potential_approaches_llm_general_knowledge (optional)
+  OR /discuss_potential_approaches_framework_based  (optional)
+/more_solutions              (optional) (can run many times in same chat)
+/assess_solution             (optional)
+/research                    (optional)
+/decompose_task              (optional)
+/write_code
+/code_review_agent_generated (optional) (for agent-written code)
+  OR /code_review_joe        (optional) (for human-written code. More opinionated)
 
-# brownfield anthropic harness agents #
-(optional) /harness_scaffold_project
-              Same as in "greenfield anthropic harness agents" but user can choose 
-                to omit steps
-              This only needs to be run in a brownfield codebase (i.e. not 
-                coming straight from a run of "greenfield anthropic harness agents")
-           /harness_discuss_epic
-              Agent reads all context docs:
-                - README.md
-                - docs/PRD.md
-                - docs/architecture_design.md
-                - docs/adr/*.md
-              Creates folder docs/current_epic/ (clears it out if it already exists)
-              Adds docs/current_epic/ to .gitignore (if its not already there)
-              Adds docs/current_epic/dev_notes.md
-              Creates docs/current_epic/task_requirements.md through a brief chat 
-                through the required task
-(optional) /harness_research_epic
-                Agent explores the codebase and suggests different approaches to 
-                  approaching the epic (or a specific piece of it)
-                A final approach is decided upon and this information is added into 
-                  docs/current_epic/epic_requirements.md
-           /harness_plan_epic
-              Agent reads all context docs:
-                - README.md
-                - docs/PRD.md
-                - docs/architecture_design.md
-                - docs/adr/*.md
-                - docs/current_epic/epic_requirements.md
-              Agent explores the codebase. 
-              Agent partitions the epic into self-contained user stories (units 
-                of dev work) and writes these to 
-                docs/current_epic/user_stories.json in a standardised format.
-           /harness_code_next_user_story
-              Agent asks what the user would like coded (default is next user 
-                story marked as NOT_STARTED in 
-                docs/current_epic/user_stories.json)
-              Agent reads all context docs:
-                - README.md
-                - docs/PRD.md
-                - docs/architecture_design.md
-                - docs/adr/*.md
-                - docs/epics.md
-                - docs/current_epic/epic_requirements.md
-                - docs/current_epic/user_stories.json
-                - other docs which look useful (asks user permission first)
-              Agent explores the codebase. 
-              If it can, agent runs the application and full test suite (to 
-                see that we are starting off with a working app)
-              Agent writes the code
-              Agent marks the feature as COMPLETED in docs/current_epic/user_stories.json
-              Agent can update README.md, docs/adr/, docs/current_epic/dev_notes.md
-              Agent does a git commit
-(optional) /harness_code_review
-              Same as /harness_code_next_user_story agent except that the agent reviews 
-                the feature most recently marked as COMPLETED (or something
-                else that the user requests)
-              Agent applies fixes using TDD
-              Agent can update README.md, docs/adr/, docs/current_epic/dev_notes.md
-              Agent does a git commit
-(optional)  /harness_clean_up
-              Move /docs/current_epic/ to /docs/past_epics/{{ epic_num }}_{{ epic_name }}/
+-- SUBAGENTS -- 
+* Codebase Researcher Subagent
 
-# greenfield dexter horthy workflow #
-TODO
+For further detail, see obsidian note "Joe's AI Coding Strategy 2026-01"
 
-# brownfield dexter horthy workflow #
-TODO
-"'
+EOF
+}
 
 alias docker_helper='echo "
   # Build image using definition from file named \`Dockerfile\` in current folder #
