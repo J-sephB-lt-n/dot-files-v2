@@ -8,22 +8,22 @@ Do the following (in exactly this order):
 
 - Ask my permission to read `README.md` (if it exists)
 - Ask my permission to read the files in `docs/**/*` (if they exist)
-- Ask my permission to see the layout of the whole codebase (``)
+- Ask my permission to see the layout of the whole codebase (`fd . --type f --exclude '.*' --exclude '__pycache__'`)
 - Ask my permission to read the files in `.current_agent_context/**/*` (if this folder exists)
-- If you deem them necessary, ask my permission to delegate context gathering tasks to codebase researcher subagents (see [Guide to using Codebase Research Subagents](#guide-to-using-codebase-research-subagents))
+- If you deem them necessary, ask my permission to delegate context-gathering tasks to codebase researcher subagents (see [Guide to using Codebase Research Subagents](#guide-to-using-codebase-research-subagents))
 
-2. fill in the template from the context yourself
-3. we discuss each section (with your recommendations you discovered/wrote)
-4. you ask me where to write it to
+2. Populate a requirements document (don't write it to file yet) with sections as described in [Requirements Template Layout](#requirements-template-layout). Use the conext you have gathered to populate each section. Where you don't have enough information to populate a section accurately, leave a note of this and move on.
+3. Step me through the template and finalise each section with me.
+4. Once we're both happy that we've comprehensively and precisely mapped out our requirements, ask me where I'd like the requirements saved to. Offer me the default option of `.current_agent_context/requirements.md`
 
-## Requirements Template Sections
+## Requirements Template Layout
 
 This template enforces structure that helps avoid common requirement deficits:
 
-✅ **Completeness** — covers drivers, constraints, functional and non-functional requirements
-✅ **Clarity** — separate glossary and data dictionary reduces ambiguity
-✅ **Testability** — it encourages a “fit criterion” for each requirement so you can measure whether it’s satisfied (not just stated)
-✅ **Traceability** — each requirement can link back to business goals and stakeholders
+- **Completeness** — covers drivers, constraints, functional and non-functional requirements
+- **Clarity** — separate glossary and data dictionary reduces ambiguity
+- **Testability** — it encourages a “fit criterion” for each requirement so you can measure whether it’s satisfied (not just stated)
+- **Traceability** — each requirement can link back to business goals and stakeholders
 
 ### 1) **Project Needs (Project Drivers)**
 
@@ -103,9 +103,9 @@ Critical for clarity and precision:
 Delegate a research/exploration task to a codebase researcher subagent if any of the following apply:
 
 - Context cost is high i.e. the question requires reading many docs / long logs / multiple web pages that would bloat your own context window (you are a Large Language Model).
-- Deep factual lookup e.g. you are looking for stable facts, up-to-date API details, benchmark numbers, or library behaviour and you need a concise, verified summary as output.
-- Exploratory research e.g. evaluating multiple options, tradeoffs, or gathering citations and links (design choices, benchmarking results, algorithm selection).
-- Complex synthesis e.g. you require a short, information-dense deliverable (TL;DR + 3 recommended options + one best option + commands/code snippets).
+- You are doing deep factual lookup e.g. you are looking for stable facts, up-to-date API details, benchmark numbers, or library behaviour and you need a concise, verified summary as output.
+- You are doing exploratory research e.g. evaluating multiple options, tradeoffs, or gathering citations and links (design choices, benchmarking results, algorithm selection).
+- You are doing complex synthesis e.g. you require a short, information-dense deliverable (TL;DR + 3 recommended options + one best option + commands/code snippets).
 
 You may launch several parallel subagents - launch 1 subagent per distinct task.
 
