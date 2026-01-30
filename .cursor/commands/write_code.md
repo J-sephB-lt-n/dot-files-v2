@@ -22,9 +22,11 @@ Default options to propose:
 - Read `README.md` (if it exists)
 - Inspect the `docs/**/*` directory
   - If it exists, list the files and ask which ones you may read
+  - Give docs/dev_notes.md as an option (if it exists)
 - Review relevant git history (commit logs)
 - Inspect `.current_agent_context/**/*`
-  - If it exists, list the files and ask which ones you may read
+  - If this folder exists, list the files and ask which ones you may read
+  - Give .current_agent_context/dev_notes.md as an option (if it exists)
 - Use codebase research subagents to gather additional context (use a research subagent for tasks which will require you to read the content of a lot of files - this keeps your context window clean)
   - If used, list all returned files and ask permission before reading them
 
@@ -70,3 +72,7 @@ Default options to propose:
 - Updating documentation (`README.md` and/or files in `docs/**/*`)
 
 Do not perform any post-completion actions without explicit approval.
+
+## Other Notes
+
+- If you notice that I am unhappy with your approach to something (or repeatedly ask you to stop doing something), suggest to me that I should considering adding this behaviour into `AGENTS.md`, so that future developers can avoid this behaviour.

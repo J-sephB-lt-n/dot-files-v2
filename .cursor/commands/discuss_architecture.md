@@ -96,4 +96,4 @@ Prompt me for my brain dump and then review it carefully, applying the rules out
 
 When we have together confirmed that we are finished, ask me where I would like to save this document. You can suggest `docs/architecture_design.md`.
 
-When we're completely finished, please write this entire conversation (verbatim) to `/docs/architecture_discussion.md`.
+When we're completely finished, please ask my permission to write this entire conversation (verbatim) to `/docs/architecture_discussion.md`.

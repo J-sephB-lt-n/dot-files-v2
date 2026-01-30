@@ -49,6 +49,6 @@ Prompt me for my brain dump and then review it carefully, applying the rules out
 - Milestones and phasing (rollout plan)
 - Open Questions / Future Considerations
 
-When we are finished, save the PRD document into `docs/PRD.md`
+When we have together confirmed that we are finished, ask me where I would like to save this document. You can suggest `docs/PRD.md`.
 
-Write my original brain dump to `/docs/original_brain_dump.md`
+When we're completely finished, please ask my permission to write this entire conversation (verbatim) to `/docs/prd_discussion.md`.
