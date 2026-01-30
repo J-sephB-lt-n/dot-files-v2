@@ -4,7 +4,14 @@ I am defining requirements for a new piece of code to be added to this codebase.
 
 Do the following (in exactly this order):
 
-1. gather context (ask for permission to run research subagents)
+1. Gather context
+
+- Ask my permission to read `README.md` (if it exists)
+- Ask my permission to read the files in `docs/**/*` (if they exist)
+- Ask my permission to see the layout of the whole codebase (``)
+- Ask my permission to read the files in `.current_agent_context/**/*` (if this folder exists)
+- If you deem them necessary, ask my permission to delegate context gathering tasks to codebase researcher subagents (see [Guide to using Codebase Research Subagents](#guide-to-using-codebase-research-subagents))
+
 2. fill in the template from the context yourself
 3. we discuss each section (with your recommendations you discovered/wrote)
 4. you ask me where to write it to
@@ -90,3 +97,16 @@ Critical for clarity and precision:
 
 - **Glossary** – terms & acronyms explained
 - **Data Dictionary** – clear definitions of data items used in requirements
+
+## Guide to using Codebase Research Subagents
+
+Delegate a research/exploration task to a codebase researcher subagent if any of the following apply:
+
+- Context cost is high i.e. the question requires reading many docs / long logs / multiple web pages that would bloat your own context window (you are a Large Language Model).
+- Deep factual lookup e.g. you are looking for stable facts, up-to-date API details, benchmark numbers, or library behaviour and you need a concise, verified summary as output.
+- Exploratory research e.g. evaluating multiple options, tradeoffs, or gathering citations and links (design choices, benchmarking results, algorithm selection).
+- Complex synthesis e.g. you require a short, information-dense deliverable (TL;DR + 3 recommended options + one best option + commands/code snippets).
+
+You may launch several parallel subagents - launch 1 subagent per distinct task.
+
+Give me the list of subagents you want to launch and ask my permission before launching them.
