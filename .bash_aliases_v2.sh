@@ -17,6 +17,7 @@ cursor_helper() {
 /more_solutions              (optional) (can run many times in same chat)
 /assess_solution             (optional)
 /research                    (optional)
+/discuss_requirements        (optional)
 /decompose_task              (optional)
 /write_code
 /code_review_agent_generated (optional) (for agent-written code)

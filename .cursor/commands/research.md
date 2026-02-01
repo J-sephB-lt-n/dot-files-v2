@@ -14,7 +14,7 @@ Now (in exactly this order) do the following:
 
 3. Ask my permission to see the layout of the whole codebase (`fd . --type f --exclude '.*' --exclude '__pycache__'`)
 4. If you think they will be helpful, ask my permission to delegate tasks to codebase researcher subagents (see [Guide to using Codebase Research Subagents](#guide-to-using-codebase-research-subagents))
-5. Summarise your findings and save them to a file. Ask me where you should save this file - you can suggest `.current_agent_context/background_context.md`
+5. Summarise your findings and save them to a file. Ask me where you should save this file - you can suggest `.current_agent_context/background_context.md`. If this file already exists, suggest appending your results to it.
 
 ## Guide to using Codebase Research Subagents
 

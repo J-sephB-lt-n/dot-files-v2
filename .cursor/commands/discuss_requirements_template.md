@@ -1,14 +1,16 @@
 # Define Requirements
 
-TODO: this is a work in progress
-
-I am defining requirements for a new piece of code to be added to this codebase.
+We are defining requirements for a new piece of code to be added to this codebase.
 
 Do the following (in exactly this order):
 
-1. TODO: something here about reading in `.current_agent_context/background_context.md` created by run of **/research** agent command
+1. Gather context: ask my permission to read the following files (if they exist):
 
-2. Populate a requirements document (don't write it to file yet) with sections as described in [Requirements Template Layout](#requirements-template-layout). Use the conext you have gathered to populate each section. Where you don't have enough information to populate a section accurately, leave a note of this and move on.
+- `README.md`
+- `docs/**/*`
+- `.current_agent_context/**/*`
+
+2. Populate a requirements document (don't write it to file yet) with sections as described in [Requirements Template Layout](#requirements-template-layout). Use the context you have gathered to populate each section. Where you don't have enough information to populate a section accurately, leave a note of this and move on.
 3. Step me through the template and finalise each section with me.
 4. Once we're both happy that we've comprehensively and precisely mapped out our requirements, ask me where I'd like the requirements saved to. Offer me the default option of `.current_agent_context/requirements.md`
 
