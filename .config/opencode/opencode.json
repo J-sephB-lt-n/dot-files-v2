@@ -12,10 +12,13 @@
       "models": {
         "bedrock.anthropic.claude-sonnet-4-5": {
           "name": "Claude Sonnet 4.5"
+        },
+        "vertex_ai.gemini-3-pro-preview": {
+          "name": "Gemini 3 Pro"
         }
       }
     }
   },
-
-  "model": "gaiss/bedrock.anthropic.claude-sonnet-4-5"
+  "model": "gaiss/bedrock.anthropic.claude-sonnet-4-5",
+  "instructions": ["~/.cursor/agents/*md", "~/.cursor/commands/*md"]
 }
