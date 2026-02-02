@@ -7,4 +7,4 @@ There may be important context on the problem in `.current_agent_context/backgro
 
 Then, list out possible solution approaches. List pros and cons of each approach.
 
-Please try to provide varied solutions covering the whole solution space.
+Please try to provide varied solutions covering the whole problem and solution space.
