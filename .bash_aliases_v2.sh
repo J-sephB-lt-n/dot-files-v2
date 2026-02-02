@@ -11,20 +11,29 @@ cursor_helper() {
   OR /code_review_joe        (optional) (for human-written code. More opinionated)
 
 -- BROWNFIELD CODING TASK --
-/research                    (optional)
+/research                       (optional)
 /discuss_potential_approaches_llm_general_knowledge (optional)
   OR /discuss_potential_approaches_framework_based  (optional)
-/more_solutions              (optional) (can run many times in same chat)
-/assess_solution             (optional)
-/research                    (optional)
-/discuss_requirements        (optional)
-/decompose_task              (optional)
+/more_solutions                 (optional) (can run many times in same chat)
+/assess_solution                (optional)
+/research                       (optional)
+/discuss_requirements_template  (optional)
+/decompose_task                 (optional)
 /write_code
-/code_review_agent_generated (optional) (for agent-written code)
-  OR /code_review_joe        (optional) (for human-written code. More opinionated)
+/code_review_agent_generated    (optional) (for agent-written code)
+  OR /code_review_joe           (optional) (for human-written code. More opinionated)
 
 -- SUBAGENTS -- 
 * Codebase Researcher Subagent
+
+-- PERSISTENT AGENT CONTEXT --
+README.md
+docs/PRD.md
+docs/architecture_design.md
+.current_agent_context/background_context.md
+.current_agent_context/requirements.md
+.current_agent_context/features_list.json
+.current_agent_context/dev_notes.md
 
 For further detail, see obsidian note "Joe's AI Coding Strategy 2026-01"
 
