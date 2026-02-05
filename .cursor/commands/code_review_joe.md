@@ -17,6 +17,9 @@ Then, ask me which of the following aspects I want included in the code review:
 - Code has not considered all edge cases (e.g. an unintended code path is executed under unexpected conditions)
 - Documentation within the code (e.g. module, class, method, function docstrings) are up to date (e.g. describe what the actual code is doing now, not what it used to do)
 - There is any use of global state which could have been avoided
+- All caught exceptions log the full stack trace
+- Python imports are always at the top of the .py script
+- There is opaque and/or fragile path handling (e.g. `Path(__file__).parent.parent.parent` or manual string handling of paths or use of `os.getcwd()` or nested `os.path.dirname(os.path.dirname(os.path.dirname(path)))` etc.)
 
 Once I've told you which aspects I want included, confirm the list with me again. Then, perform the code review on these aspects.
 
