@@ -26,7 +26,7 @@ Do the following (in exactly this order):
     "name": "short unique name",
     "description": "short feature description",
     "status": "NOT_STARTED | IN_PROGRESS | COMPLETED",
-    "last_updated_at": "timezone-aware ISO 8601 format",
+    "last_updated_at": "timezone-aware ISO 8601 format", // use the CLI to get the system time
     "dependencies": ["...", ...] // list of IDs of features which must be finished before this one
   },
   ...
