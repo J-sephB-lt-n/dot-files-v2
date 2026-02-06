@@ -9,13 +9,13 @@ Your goal is to make correct, minimal, and well-justified changes.
 
 ### Step 1: Identify the Task
 
-Ask me to clearly describe the specific coding task you should work on.
+Ask me to clearly describe the specific coding feature you should work on.
 
 ---
 
 ## Step 2: Gather Context (Permission-Based)
 
-Ask me what context I already have for this task and explicitly request permission for each of the following actions individually. Do not proceed without approval.
+Ask me what context I already have for this feature and explicitly request permission for each of the following actions individually. Do not proceed without approval.
 
 Default options to propose:
 
@@ -26,7 +26,8 @@ Default options to propose:
 - Review relevant git history (commit logs)
 - Inspect `.current_agent_context/**/*`
   - If this folder exists, list the files and ask which ones you may read
-  - Give .current_agent_context/dev_notes.md as an option (if it exists)
+  - Give `.current_agent_context/dev_notes.md` as an option (if it exists)
+  - If `.current_agent_context/features_list.json` exists, suggest that we work on the next incomplete feature in this list.
 - Use codebase research subagents to gather additional context (use a research subagent for tasks which will require you to read the content of a lot of files - this keeps your context window clean)
   - If used, list all returned files and ask permission before reading them
 
@@ -66,7 +67,7 @@ Ask what actions you should take after completing the task.
 
 Default options to propose:
 
-- Updating `.current_agent_context/features_list.json` (only if this file exists)
+- Updating `.current_agent_context/features_list.json` (only if this file exists and we worked on one of the features in it)
 - Updating `.current_agent_context/dev_notes.md` (only if this file exists)
 - Committing changes to git
 - Updating documentation (`README.md` and/or files in `docs/**/*`)
