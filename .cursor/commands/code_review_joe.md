@@ -21,6 +21,8 @@ Then, ask me which of the following aspects I want included in the code review:
 - Python imports are always at the top of the .py script
 - There is opaque and/or fragile path handling (e.g. `Path(__file__).parent.parent.parent` or manual string handling of paths or use of `os.getcwd()` or nested `os.path.dirname(os.path.dirname(os.path.dirname(path)))` etc.). Paths should be represented as Path objects and never (os-incompatible) strings.
 - Any use of the (no longer required) Dict, List, Tuple, Optional etc. from typing module (should use dict, list, tuple, | None etc.)
+- Identification of any usage of exec() or eval()
+- Identification of user inputs being used directly without being sanitised (e.g. SQL injection, LLM prompt injection etc.)
 
 Once I've told you which aspects I want included, confirm the list with me again. Then, perform the code review on these aspects.
 
