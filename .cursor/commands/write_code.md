@@ -70,7 +70,7 @@ Default options to propose:
 - Updating `.current_agent_context/features_list.json` (only if this file exists and we worked on one of the features in it)
 - Updating `.current_agent_context/dev_notes.md` (only if this file exists)
 - Committing changes to git
-- Updating documentation (`README.md` and/or files in `docs/**/*`)
+- It is very important that the documentation in this application stays consistent and up-to-date. If you have encountered any inconsistencies in the documentation which should be resolved, or if you have anything significant to add or update, then please suggest to me that we do so (core project documentation is likely `README.md` and/or files in `docs/**/*`)
 
 Do not perform any post-completion actions without explicit approval.
 
