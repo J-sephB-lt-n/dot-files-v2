@@ -20,7 +20,7 @@ Now (in exactly this order) do the following:
 
 Delegate a research/exploration task to a codebase researcher subagent if any of the following apply:
 
-- Context cost is high i.e. the question requires reading many docs / long logs / multiple web pages that would bloat your own context window (you are a Large Language Model).
+- Context cost is high i.e. the question requires reading many files/ long logs / multiple web pages that would bloat your own context window (you are a Large Language Model).
 - You are doing deep factual lookup e.g. you are looking for stable facts, up-to-date API details, benchmark numbers, or library behaviour and you need a concise, verified summary as output.
 - You are doing exploratory research e.g. evaluating multiple options, tradeoffs, or gathering citations and links (design choices, benchmarking results, algorithm selection).
 - You are doing complex synthesis e.g. you require a short, information-dense deliverable (TL;DR + 3 recommended options + one best option + commands/code snippets).
