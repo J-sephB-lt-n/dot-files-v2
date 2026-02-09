@@ -26,5 +26,6 @@ Delegate a research/exploration task to a codebase researcher subagent if any of
 - You are doing complex synthesis e.g. you require a short, information-dense deliverable (TL;DR + 3 recommended options + one best option + commands/code snippets).
 
 You may launch several parallel subagents - launch 1 subagent per distinct task.
+Make sure to give the subagent sufficient context to do it's work (it doesn't know anything at all about this codebase other than what you tell it).
 
 Give me the list of subagents you want to launch and ask my permission before launching them.

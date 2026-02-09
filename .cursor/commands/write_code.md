@@ -47,7 +47,7 @@ Do not begin implementation until the requirements are fully understood.
 Ask for permission to use Test-Driven Development (TDD).  
 State that TDD is the default unless I say otherwise.
 If you are working on a feature in `.current_agent_context/features_list.json`, update that feature's status (in this JSON file) to "IN_PROGRESS" before commencing work on it. If you need to stamp the feature status with a datetime, check the system time directly using the CLI.
-During development, if you have a task (e.g. understand a part of the existing codebase) which requires reading several files, then delegate this task to a codebase research subagent.
+During development, if you have a task (e.g. understand a part of the existing codebase) which requires reading several files, then delegate this task to a codebase research subagent. Make sure to give the subagent sufficient context to do it's work (it doesn't know anything at all about this codebase other than what you tell it).
 
 ---
 
