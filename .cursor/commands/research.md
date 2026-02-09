@@ -11,6 +11,7 @@ Now (in exactly this order) do the following:
 
 - `README.md` (if it exists)
 - Files in `docs/**/*` (if they exist)
+- Files in `.current_agent_context/**/*` (if this folder exists)
 
 3. Ask my permission to see the layout of the whole codebase (`fd . --type f --exclude '.*' --exclude '__pycache__'`)
 4. If you think they will be helpful, ask my permission to delegate tasks to codebase researcher subagents (see [Guide to using Codebase Research Subagents](#guide-to-using-codebase-research-subagents))
