@@ -6,9 +6,11 @@ cursor_helper() {
 /discuss_prd                 (or /discuss_requirements if smaller task)
 /discuss_architecture        (optional)
 /decompose_task              (optional)
+/is_everything_clear         (optional) prompts LLM to ask clarifying questions
 /write_code
-/code_review_agent_generated (optional) (for agent-written code)
-  OR /code_review_joe        (optional) (for human-written code. More opinionated)
+/save_context                (optional) summarise current context to file for new agent
+/code_review_agent_generated (optional) for agent-written code
+  OR /code_review_joe        (optional) for human-written code. More opinionated)
 
 -- BROWNFIELD CODING TASK --
 /research                       (optional)
@@ -19,9 +21,11 @@ cursor_helper() {
 /research                       (optional)
 /discuss_requirements_template  (optional)
 /decompose_task                 (optional)
+/is_everything_clear            (optional) prompts LLM to ask clarifying questions
 /write_code
-/code_review_agent_generated    (optional) (for agent-written code)
-  OR /code_review_joe           (optional) (for human-written code. More opinionated)
+/save_context                   (optional) summarise current context to file for new agent
+/code_review_agent_generated    (optional) for agent-written code
+  OR /code_review_joe           (optional) for human-written code. More opinionated.
 
 -- SUBAGENTS -- 
 * Codebase Researcher Subagent
@@ -30,8 +34,8 @@ cursor_helper() {
 README.md
 docs/PRD.md
 docs/architecture_design.md
-docs/api_ref/README.md                        (index of API docs)
-docs/api_ref/<lib-name>/<topic-name>.md       (specific API functionality reference e.g. /polars/csv.md)
+docs/api_refs/README.md                        (index of API docs)
+docs/api_refs/<lib-name>/<topic-name>.md       (specific API functionality reference e.g. /polars/csv.md)
 .current_agent_context/background_context.md
 .current_agent_context/requirements.md
 .current_agent_context/features_list.json
