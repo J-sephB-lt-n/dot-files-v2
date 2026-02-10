@@ -30,6 +30,8 @@ cursor_helper() {
 README.md
 docs/PRD.md
 docs/architecture_design.md
+docs/api_ref/README.md                        (index of API docs)
+docs/api_ref/<lib-name>/<topic-name>.md       (specific API functionality reference e.g. /polars/csv.md)
 .current_agent_context/background_context.md
 .current_agent_context/requirements.md
 .current_agent_context/features_list.json
@@ -514,7 +516,7 @@ alias urrf='uv run ruff format'
 # screen management #
 alias cl='clear'
 alias cll="clear && ls -lah"
-alias clct='clear && tree -C -a -I .git -I .mypy_cache -I .pytest_cache -I .ruff_cache -I .venv -I __pycache__ -I node_modules -I target -I venv'
+alias clct='clear && tree -a -I .git -I .mypy_cache -I .pytest_cache -I .ruff_cache -I .venv -I __pycache__ -I node_modules -I target -I venv'
 
 # task warrior #
 task_warrior_helper() {
