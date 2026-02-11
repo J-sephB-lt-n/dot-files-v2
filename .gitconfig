@@ -1,11 +1,16 @@
 [user]
 ; 	email = someone@something.com
-	name = J-sephB-lt-n
+	name = Joseph Bolton
 
 [alias]
   lol = log --oneline --decorate # got this from https://www.youtube.com/watch?v=DZI0Zl-1JqQ
   graph = log --oneline --graph --decorate # got this from https://www.youtube.com/watch?v=DZI0Zl-1JqQ
+
 [init]
 	defaultBranch = main
+
 [credential]
 	helper = cache --timeout=28800
+
+[includeIf "gitdir:~/experiments/"]
+  path = ~/.gitconfig-personal
