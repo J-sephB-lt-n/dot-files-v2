@@ -863,3 +863,9 @@ tmr_delete() {
 		echo "deleted timer [$1]"
 	fi
 }
+
+url_to_text() {
+	# url_to_text https://www.google.com | less
+	# url_to_text https://www.google.com > output.txt
+	curl -sL "$1" | pandoc -f html -t plain
+}
