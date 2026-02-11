@@ -204,6 +204,8 @@ pwdc() {
 	fi
 }
 
+alias listfiles="fd . --type f --exclude '.*' --exclude '__pycache__'"
+
 load-dotenv() {
 	if [[ $# -eq 0 ]]; then
 		# show this help message if no path to .env file provided #
