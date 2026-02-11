@@ -18,6 +18,7 @@ Then, ask me which of the following aspects I want included in the code review:
 - Conformist: adherence to the existing patterns in the codebase.
 - External documentation: the new code does not contradict or diverge from the formal documentation in the codebase (ask me which files are applicable).
 - Internal documentation: documentation in the code itself (e.g. docstrings, comments) accurately describes what the code is doing.
+- Adherence to the requirements in AGENTS.md
 - Ask me whether there is anything else specific that I should review for.
 
 Once I've told you which aspects I want included, confirm the list with me again. Then, perform the code review on these aspects.
