@@ -507,6 +507,10 @@ pdf_helper() {
   # (this keeps the full Table of Contents - even deleted pages)  #
   qpdf input.pdf --pages . 2-5 -- output.pdf
 
+  # Remove the Table of Contents from a PDF #
+  # (this recreates the whole PDF, but only includes the page content)
+  qpdf --empty --pages input.pdf 1-z -- output.pdf
+
 EOF
 }
 
