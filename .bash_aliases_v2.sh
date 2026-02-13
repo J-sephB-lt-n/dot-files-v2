@@ -11,6 +11,7 @@ cursor_helper() {
 /save_context                (optional) summarise current context to file for new agent
 /code_review_agent_generated (optional) for agent-written code
   OR /code_review_joe        (optional) for human-written code. More opinionated)
+/local_docs_cleanup             (optional)
 
 -- BROWNFIELD CODING TASK --
 /research                       (optional)
@@ -26,6 +27,7 @@ cursor_helper() {
 /save_context                   (optional) summarise current context to file for new agent
 /code_review_agent_generated    (optional) for agent-written code
   OR /code_review_joe           (optional) for human-written code. More opinionated.
+/local_docs_cleanup             (optional)
 
 -- SUBAGENTS -- 
 * Codebase Researcher Subagent
