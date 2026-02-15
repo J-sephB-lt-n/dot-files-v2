@@ -18,8 +18,8 @@ ExpiringData = namedtuple(
 )
 
 ZAR_PER_USD: Final[ExpiringData] = ExpiringData(
-    last_updated_date=datetime.date(2025, 11, 26),
-    value=17.15,
+    last_updated_date=datetime.date(2025, 2, 13),
+    value=16.05,
 )
 
 COST_PER_MILLION_TOKENS: Final[dict] = {
@@ -55,6 +55,14 @@ COST_PER_MILLION_TOKENS: Final[dict] = {
             ),
             "output": ExpiringData(
                 last_updated_date=datetime.date(2025, 11, 26), value=0.66
+            ),
+        },
+        "gpt-5-mini": {
+            "input": ExpiringData(
+                last_updated_date=datetime.date(2026, 2, 13), value=0.25
+            ),
+            "output": ExpiringData(
+                last_updated_date=datetime.date(2026, 2, 13), value=2.0
             ),
         },
     },
