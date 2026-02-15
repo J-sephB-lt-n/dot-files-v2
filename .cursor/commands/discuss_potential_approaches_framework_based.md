@@ -38,6 +38,6 @@ Then, ask me which of the following methods I would like us to use to systematic
   - Operability: Logging / metrics / tracing, Rollbacks, Feature flags, Disaster recovery
   - Evolution: Versioning, Migration strategy, Backward compatibility
 
-Once I've chosen a method, talk me through implementing this method through a guided discussion.
+Once I've chosen a method, first explain to me the philosophy of this method and how to implement it, then talk me through an implementation of it to my problem through a guided discussion.
 
-Our goal is to explore the solution space as comprehensively as possible.
+Our goal is to explore the problem space and solution space as comprehensively as possible.
