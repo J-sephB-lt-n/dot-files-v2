@@ -7,11 +7,14 @@ Your task is to gather context on a specific topic.
 Now (in exactly this order) do the following:
 
 1. Ask me what the topic/scope that I'd like researched is, and ask me to provide as much information as possible (tell me that this can be unstructured text, links or anything else).
-2. Ask my permission to read the following files:
+2. Ask my permission to read (in full) the following:
 
 - `README.md` (if it exists)
 - Files in `docs/**/*` (if they exist)
 - Files in `.current_agent_context/**/*` (if this folder exists)
+- The project git logs
+
+List out all of the filepaths for me so that I can tell you precisely which files to read.
 
 3. Ask my permission to see the layout of the whole codebase (`fd . --type f --exclude '.*' --exclude '__pycache__'`)
 4. If you think they will be helpful, ask my permission to delegate tasks to codebase researcher subagents (see [Guide to using Codebase Research Subagents](#guide-to-using-codebase-research-subagents))
