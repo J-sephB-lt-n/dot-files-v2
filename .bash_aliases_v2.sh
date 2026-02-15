@@ -2,6 +2,9 @@ alias poetry_run_pylint_recursive='poetry run pylint --rcfile .pylintrc --recurs
 
 cursor_helper() {
 	cat <<EOF
+-- GENERAL AGENT WORKFLOW --
+research -> ideate -> spec -> plan -> execute -> review
+
 -- GREENFIELD CODING TASK --
 /discuss_prd                 (or /discuss_requirements if smaller task)
 /discuss_architecture        (optional)
