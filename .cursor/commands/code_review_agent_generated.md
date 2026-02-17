@@ -15,6 +15,7 @@ Then, ask me which of the following aspects I want included in the code review:
 
 - Architecture: adherence to the application architecture (ask me if you are unclear what the chosen codebase architecture is and what the application architecture goals are).
 - Code correctness: does the new code do what was stated in the requirements? (ask me for the requirements documents)
+- Code pragmatism: does the code do what it is required to do in a clean, straightforward and non-convoluted way?
 - Conformist: adherence to the existing patterns in the codebase.
 - External documentation: the new code does not contradict or diverge from the formal documentation in the codebase (ask me which files are applicable).
 - Internal documentation: documentation in the code itself (e.g. docstrings, comments) accurately describes what the code is doing.
