@@ -11,3 +11,4 @@ Specifically, do the following:
 - Ensure that in-line code comments have not diverged from the code itself (i.e. the comments still align with what the code is actually doing).
 - Ask me if I'd like you to run `uv run ty check` on the required files to check that the type annotations are correct.
 - Add `typing.NewType`s and update type annotations to become self-documenting e.g. `dict[UserId, UserMetadata]` rather than `dict[str, dict]`
+- Ask me which project docs exist which this code should align with/adhere to. Then check that this python script(s) has not diverged from what is described/mandated in that documentation.
