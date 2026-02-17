@@ -6,14 +6,15 @@ cursor_helper() {
 research -> ideate -> spec -> plan -> execute -> review
 
 -- GREENFIELD CODING TASK --
-/discuss_prd                 (or /discuss_requirements if smaller task)
-/discuss_architecture        (optional)
-/decompose_task              (optional)
-/is_everything_clear         (optional) prompts LLM to ask clarifying questions
+/discuss_prd                    (or /discuss_requirements if smaller task)
+/discuss_architecture           (optional)
+/decompose_task                 (optional)
+/is_everything_clear            (optional) prompts LLM to ask clarifying questions
 /write_code
-/save_context                (optional) summarise current context to file for new agent
-/code_review_agent_generated (optional) for agent-written code
-  OR /code_review_joe        (optional) for human-written code. More opinionated)
+/save_context                   (optional) summarise current context to file for new agent
+/local_docs_cleanup             (optional)
+/code_review_agent_generated    (optional) for agent-written code
+  OR /code_review_joe           (optional) for human-written code. More opinionated)
 /local_docs_cleanup             (optional)
 
 -- BROWNFIELD CODING TASK --
@@ -28,9 +29,9 @@ research -> ideate -> spec -> plan -> execute -> review
 /is_everything_clear            (optional) prompts LLM to ask clarifying questions
 /write_code
 /save_context                   (optional) summarise current context to file for new agent
+/local_docs_cleanup             (optional)
 /code_review_agent_generated    (optional) for agent-written code
   OR /code_review_joe           (optional) for human-written code. More opinionated.
-/local_docs_cleanup             (optional)
 
 -- SUBAGENTS -- 
 * Codebase Researcher Subagent
@@ -41,10 +42,10 @@ docs/PRD.md
 docs/architecture_design.md
 docs/api_refs/README.md                        (index of API docs)
 docs/api_refs/<lib-name>/<topic-name>.md       (specific API functionality reference e.g. /polars/csv.md)
-.current_agent_context/background_context.md
-.current_agent_context/requirements.md
-.current_agent_context/features_list.json
-.current_agent_context/dev_notes.md
+.current_agent_context/background_context.md   (research done prior to defining task requirements)
+.current_agent_context/requirements.md         (comprehensive task requirements spec)
+.current_agent_context/features_list.json      (planning artifact - partitioning of task into units of work)
+.current_agent_context/dev_notes.md            (scratchpad for inter-dev communication)
 
 For further detail, see obsidian note "Joe's AI Coding Strategy 2026-01"
 
