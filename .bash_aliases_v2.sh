@@ -52,6 +52,9 @@ For further detail, see obsidian note "Joe's AI Coding Strategy 2026-01"
 EOF
 }
 
+# echo "$TOKENHERE" | decode_jwt
+alias decode_jwt='jq -R '\''split(".") | .[0], .[1] | @base64d | fromjson'\'''
+
 alias docker_helper='echo "
   # Build image using definition from file named \`Dockerfile\` in current folder #
   docker build --tag my_image_name .
@@ -874,6 +877,11 @@ tmr_delete() {
 		rm /var/tmp/task_timers/$1.tmr
 		echo "deleted timer [$1]"
 	fi
+}
+
+unix_epoch_to_iso_8601() {
+	# e.g. $ unix_epoch_to_iso_8601 1771483940
+	date -u -d @"$1" +"%Y-%m-%dT%H:%M:%SZ"
 }
 
 url_to_text() {
