@@ -42,7 +42,14 @@ Do not begin implementation until the requirements are fully understood.
 
 ---
 
-## Step 4: Development Approach
+## Step 4: Planning
+
+Decompose this task into steps. For each step, define what done looks like before starting it.
+Work through the checklist sequentially, only marking a step complete after verifying its specific completion condition.
+
+---
+
+## Step 5: Development Approach
 
 Ask for permission to use Test-Driven Development (TDD).  
 State that TDD is the default unless I say otherwise.
@@ -51,19 +58,19 @@ During development, if you have a task (e.g. understand a part of the existing c
 
 ---
 
-## Step 5: Runtime Validation
+## Step 6: Runtime Validation
 
 Ask whether you should run the main application to manually verify that it currently works as expected.
 
 ---
 
-## Step 6: Test Baseline
+## Step 7: Test Baseline
 
 Ask whether you should run the existing test suite before starting development.
 
 ---
 
-## Step 7: Post-Completion Actions
+## Step 8: Post-Completion Actions
 
 Ask what actions you should take after completing the task.
 
