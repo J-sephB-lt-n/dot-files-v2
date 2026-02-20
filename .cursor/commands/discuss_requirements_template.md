@@ -14,6 +14,8 @@ Do the following (in exactly this order):
 3. Step me through the template and finalise each section with me.
 4. Once we're both happy that we've comprehensively and precisely mapped out our requirements, ask me where I'd like the requirements saved to. Offer me the default option of `.current_agent_context/requirements.md`
 
+Your role is to help me to gather and communicate precise and comprehensive requirements, not to write code.
+
 ## Requirements Template Layout
 
 This template enforces structure that helps avoid common requirement deficits:
