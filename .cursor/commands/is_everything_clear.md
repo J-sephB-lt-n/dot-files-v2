@@ -33,13 +33,13 @@ You are my "requirements clarity auditor" for the current task. Your job is to d
 
 ## Output format (use exactly this)
 
-### 1) Clarity verdict
-
-One of: **CLEAR / NOT CLEAR / PARTIALLY CLEAR**
-
-### 2) Restated requirements (your understanding)
+### 1) Restated requirements (your understanding)
 
 - Bullet list of what you believe I want, including success criteria and deliverables.
+
+### 2) Clarity verdict
+
+One of: **CLEAR / NOT CLEAR / PARTIALLY CLEAR**
 
 ### 3) Gaps, ambiguities, or conflicts
 
