@@ -12,7 +12,13 @@
       },
       "models": {
         "bedrock.anthropic.claude-sonnet-4-6": {
-          "name": "Claude Opus 4.6"
+          "name": "Claude Opus 4.6",
+          "options": {
+            "thinking": {
+              "type": "enabled",
+              "budget_tokens": 12000
+            }
+          }
         },
         "bedrock.anthropic.claude-sonnet-4-5": {
           "name": "Claude Sonnet 4.5"
