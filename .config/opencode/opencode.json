@@ -7,9 +7,13 @@
       "name": "gaiss",
       "options": {
         "baseURL": "{env:OPENAI_BASE_URL}",
-        "apiKey": "{env:OPENAI_API_KEY}"
+        "apiKey": "{env:OPENAI_API_KEY}",
+        "includeUsage": true
       },
       "models": {
+        "bedrock.anthropic.claude-sonnet-4-6": {
+          "name": "Claude Opus 4.6"
+        },
         "bedrock.anthropic.claude-sonnet-4-5": {
           "name": "Claude Sonnet 4.5"
         },
@@ -19,6 +23,5 @@
       }
     }
   },
-  "model": "gaiss/bedrock.anthropic.claude-sonnet-4-5",
-  "instructions": ["~/.cursor/agents/*md", "~/.cursor/commands/*md"]
+  "model": "bedrock.anthropic.claude-sonnet-4-6"
 }
