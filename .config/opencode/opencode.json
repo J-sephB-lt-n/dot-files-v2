@@ -1,6 +1,13 @@
 {
   "$schema": "https://opencode.ai/config.json",
 
+  "permission": {
+    "*": "ask",
+    "bash": {
+      "sudo *": "deny"
+    }
+  },
+
   "provider": {
     "gaiss": {
       "npm": "@ai-sdk/openai-compatible",
