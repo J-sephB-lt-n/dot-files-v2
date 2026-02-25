@@ -25,6 +25,14 @@
               "type": "enabled",
               "budget_tokens": 12000
             }
+          },
+          "limit": {
+            "context": 200000,
+            "output": 64000
+          },
+          "cost": {
+            "input": 3,
+            "output": 15
           }
         },
         "bedrock.anthropic.claude-sonnet-4-5": {
@@ -36,5 +44,5 @@
       }
     }
   },
-  "model": "bedrock.anthropic.claude-sonnet-4-6"
+  "model": "gaiss/bedrock.anthropic.claude-sonnet-4-6"
 }
