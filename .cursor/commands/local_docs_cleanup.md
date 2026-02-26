@@ -14,6 +14,7 @@ For each file do the following:
 - Ask me if I'd like you to run `uv run ty check` on the required files to check that the type annotations are correct.
 - Add `typing.NewType`s and update type annotations to become self-documenting e.g. `dict[UserId, UserMetadata]` rather than `dict[str, dict]`
 - Ask me which project docs exist which this code should align with/adhere to. Then check that this python script(s) has not diverged from what is described/mandated in that documentation. Suggest to me `README.md`, files in `docs/` (list the files for me) and files in `.current_agent_context/` (list the files for me) as potential options.
+- All class attributes whose names are not trivially self-documenting should have a description (e.g. use pydantic.Field in a pydantic.BaseModel)
 
 Please ask me for permission before doing any of the following:
 
