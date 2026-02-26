@@ -25,6 +25,7 @@ Then, ask me which of the following aspects I want included in the code review:
 - Identification of any usage of exec() or eval()
 - Identification of user inputs being used directly without being sanitised (e.g. SQL injection, LLM prompt injection etc.)
 - Variables, functions and methods not intended for use outside of the script should be marked as private i.e. "\_name"
+- Identification of parts of the functionality which could (or should) be versioned (e.g. prompts, schemas, domain models etc.)
 
 Once I've told you which aspects I want included, confirm the list with me again. Then, perform the code review on these aspects.
 
