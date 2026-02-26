@@ -24,6 +24,7 @@ Then, ask me which of the following aspects I want included in the code review:
 - Logical bugs: there are explicit or subtle errors in logic within the code, either under all paths or under specific paths.
 - Fragile design: are there any patterns being used which are likely to lead to bugs or hard-to-maintain code as the codebase grows?
 - Ask me whether there is anything else specific that I should review for.
+- Identification of dead code which is no longer accessed or used.
 
 Once I've told you which aspects I want included, confirm the list with me again. Then, perform the code review on these aspects.
 
