@@ -16,6 +16,11 @@ For each file do the following:
 - Ask me which project docs exist which this code should align with/adhere to. Then check that this python script(s) has not diverged from what is described/mandated in that documentation. Suggest to me `README.md`, files in `docs/` (list the files for me) and files in `.current_agent_context/` (list the files for me) as potential options.
 - All class attributes whose names are not trivially self-documenting should have a description (e.g. use pydantic.Field in a pydantic.BaseModel)
 
+Bear in mind that documentation in code should never simply repeat what can be read from the immediate code itself. Code documentation/comments should only:
+
+1. Document things in the code which cannot be inferred by reading the code adjacent to the documentation.
+2. Document at a high level what a large amount of code is doing (so that users need only read the interface documentation and not implementation itself).
+
 Please ask me for permission before doing any of the following:
 
 - Reading a file
