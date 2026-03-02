@@ -65,6 +65,14 @@ COST_PER_MILLION_TOKENS: Final[dict] = {
                 last_updated_date=datetime.date(2026, 2, 13), value=2.0
             ),
         },
+        "gpt-5.1": {
+            "input": ExpiringData(
+                last_updated_date=datetime.date(2026, 2, 23), value=1.25
+            ),
+            "output": ExpiringData(
+                last_updated_date=datetime.date(2026, 2, 23), value=10.0
+            ),
+        },
     },
     "anthropic": {
         # https://www.anthropic.com/pricing#anthropic-api
