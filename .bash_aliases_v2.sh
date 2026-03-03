@@ -37,15 +37,18 @@ research -> ideate -> spec -> plan -> execute -> review
 * Codebase Researcher Subagent
 
 -- PERSISTENT AGENT CONTEXT --
-README.md
-docs/PRD.md
-docs/architecture_design.md
+[ GLOBAL ]
+README.md                                      (global app documentation entrypoint)
+docs/PRD.md                                    (global app business/domain requirements - what the app must do and why)
+docs/architecture_design.md                    (global app architecture goals and patterns)
 docs/api_refs/README.md                        (index of API docs)
 docs/api_refs/<lib-name>/<topic-name>.md       (specific API functionality reference e.g. /polars/csv.md)
-.current_agent_context/background_context.md   (research done prior to defining task requirements)
-.current_agent_context/requirements.md         (comprehensive task requirements spec)
-.current_agent_context/features_list.json      (planning artifact - partitioning of task into units of work)
+[ scoped to current feature/task ]
+.current_agent_context/background_context.md   (research done prior to defining requirements for current task)
+.current_agent_context/requirements.md         (comprehensive requirements spec for current task)
+.current_agent_context/features_list.json      (planning artifact - partitioning of current task into distinct units of work)
 .current_agent_context/dev_notes.md            (scratchpad for inter-dev communication)
+.current_agent_context/context_checkpoint.md   (artifact created by /save_context)
 
 For further detail, see obsidian note "Joe's AI Coding Strategy 2026-01"
 
