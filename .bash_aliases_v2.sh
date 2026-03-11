@@ -264,6 +264,8 @@ EOF
 	fi
 }
 
+alias microsoft_graph_explorer_token='az login && az account get-access-token --resource-type ms-graph --query accessToken --output tsv'
+
 zip_helper() {
 	cat <<EOF
   # add files to zip file #
