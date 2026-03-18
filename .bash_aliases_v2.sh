@@ -62,6 +62,9 @@ alias docker_helper='echo "
   # Build image using definition from file named \`Dockerfile\` in current folder #
   docker build --tag my_image_name .
 
+  # View list of built images #
+  docker images
+
   # Run image \`my_image_name\` interactively (i.e. enter the running container and give me a bash terminal) #
   docker run -it --name my_container_name my_image_name bash
 
