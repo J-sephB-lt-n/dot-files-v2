@@ -17,6 +17,10 @@ For PDFs without copyable text (text in the PDF is contained within images), the
 
 Both text and non-text PDFs can contain an [embedded Table of Contents](#embedded-table-of-contents).
 
+### General Approach
+
+TODO
+
 ### Text Extraction and FTS-indexing
 
 Run the following python code to extract the text from each page of your PDF file, write this extracted text to a local sqlite database, and index these page texts for Full-Text Search (FTS).
@@ -50,7 +54,7 @@ def open_db(path: Path):
         conn.close()
 
 
-with open_db(Path("{{your_temp_pdf_folder}}/page.sqlite")) as conn:
+with open_db(Path("{{your_temp_pdf_folder}}/pages.sqlite")) as conn:
     conn.execute("""
     CREATE VIRTUAL TABLE pages USING fts5(
         page_num  UNINDEXED
@@ -64,7 +68,7 @@ with open_db(Path("{{your_temp_pdf_folder}}/page.sqlite")) as conn:
     )
 ```
 
-If your system does not have poppler `pdftotext` installed, then you can use `pymupdf` as a replacement (although note that the visual layout is objectively inferior using `pymupdf`):
+If your system does not have poppler `pdftotext` installed, then you can use `pymupdf` as a replacement (although note that the visual layout is objectively inferior using `pymupdf`) like this:
 
 ```python
 import pymupdf
@@ -72,6 +76,33 @@ import pymupdf
 with pymupdf.open("path/to/your/file.pdf") as pdf:
   pages: list[str] = [page.get_text(sort=True) for page in pdf]
 ```
+
+You can see a specific full page of text like this:
+
+```bash
+sqlite3 -noheader -batch {{your_temp_pdf_folder}}/pages.sqlite \
+  "SELECT page_text FROM pages WHERE page_num = 69;"
+```
+
+You can use Free-Text Search (sqlite fts5) to find relevant parts of the document like this:
+
+```bash
+sqlite3 -noheader {{your_temp_pdf_folder}}/pages.sqlite <<EOF
+.mode list
+.separator ''
+
+SELECT
+    '<page-' || page_num || '>' || char(10) ||
+    snippet(pages, 1, '[', ']', '…', 12) || char(10) ||
+    '</page-' || page_num || '>' || char(10)
+FROM pages
+WHERE pages MATCH '(report OR summary) AND budget* AND "cash flow" NOT draft'
+ORDER BY rank   -- this is BM25 rank
+LIMIT 20;
+EOF
+```
+
+**IMPORTANT**: The sqlite fts5 **snippet()** function shows you only the _first_ match on the page, so you should still read the full page text of the matching page (the first match might be irrelevant to the question you are trying to answer, but this does not mean that the answer to your question isn't somewhere else on the same page - outside of the **snippet()** you are seeing).
 
 ### Embedded Table of Contents
 
