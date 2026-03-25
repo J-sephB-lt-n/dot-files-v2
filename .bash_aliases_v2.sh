@@ -269,6 +269,8 @@ EOF
 
 alias microsoft_graph_explorer_token='az login && az account get-access-token --resource-type ms-graph --query accessToken --output tsv'
 
+alias ntvf='nvim "$(tv files)"'
+
 zip_helper() {
 	cat <<EOF
   # add files to zip file #
@@ -544,6 +546,7 @@ alias urrf='uv run ruff format'
 alias cl='clear'
 alias cll="clear && ls -lah"
 alias clct='clear && tree -a -I .git -I .mypy_cache -I .pytest_cache -I .ruff_cache -I .venv -I __pycache__ -I node_modules -I target -I venv'
+alias clctr='clct -C | less -R'
 
 # task warrior #
 task_warrior_helper() {
