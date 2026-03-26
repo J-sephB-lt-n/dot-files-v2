@@ -13,9 +13,9 @@ research -> ideate -> spec -> plan -> execute -> review
 /write_code
 /save_context                   (optional) summarise current context to file for new agent
 /local_docs_cleanup             (optional)
+/maintain_project_docs          (optional)
 /code_review_agent_generated    (optional) for agent-written code
   OR /code_review_joe           (optional) for human-written code. More opinionated)
-/local_docs_cleanup             (optional)
 
 -- BROWNFIELD CODING TASK --
 /research                       (optional)
@@ -30,6 +30,7 @@ research -> ideate -> spec -> plan -> execute -> review
 /write_code
 /save_context                   (optional) summarise current context to file for new agent
 /local_docs_cleanup             (optional)
+/maintain_project_docs          (optional)
 /code_review_agent_generated    (optional) for agent-written code
   OR /code_review_joe           (optional) for human-written code. More opinionated.
 
