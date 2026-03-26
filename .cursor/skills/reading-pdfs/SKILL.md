@@ -18,6 +18,7 @@ Suggested Approach:
 5. The method you use to explore/navigate the PDF content depends on the type of PDF:
    - If the PDF is primarily a text PDF, navigate the PDF using the approach described in [Text Extraction and FTS-indexing](#text-extraction-and-fts-indexing). You _may_ also use [Extract Page Images](#extract-page-images) if the PDF has complex layout, tables or important visual elements, although you should try to avoid this if possible because the page-image-based approach is highly inefficient compared to the text-based approach (page images cannot be searched, images take up a LOT of memory and space, and viewing page images will quickly exhaust your context window).
    - If the PDF content is primarily image-based, then navigate the PDF using the approach described in [Extract Page Images](#extract-page-images). Be careful because page images use a lot of memory and space and viewing page images will quickly exhaust your context window.
+   - If the PDF is mixed, use the text-based approach as your primary method, but fall back to page images for specific pages that have low text content but high image content.
 6. If the PDF has no [Embedded Table of Contents](#embedded-table-of-contents), then explore the early pages in the PDF to look for a Table of Contents within the text itself.
 7. Use an [iterative search strategy](#iterative-search-strategy) to find the answer we are looking for in the PDF.
 8. After we are finished with the PDF, then please delete the temporary files in \_your temp pdf folder (definitely don't delete the original PDF file, though). If you are not clear whether we are finished investigating the PDF yet or not, ask me.
@@ -61,7 +62,8 @@ with pymupdf.open("path/to/your/file.pdf") as pdf:
   print(f"- Total number of images (whole document): {n_images:,}")
   print(f"- Average (mean) number of words per page: {n_words/n_pages:,.2f}")
   print(f"- Average (mean) number of images per page: {n_images/n_pages:,.2f}")
-  print(f"- Average (mean) number of words per image: {n_words/n_images:,.2f}")
+  if n_images > 0:
+    print(f"- Average (mean) number of words per image: {n_words/n_images:,.2f}")
   print(f"- Pages with no text: {n_pages_with_no_text}/{n_pages} ({100*n_pages_with_no_text/n_pages:.2f}%)")
   print(f"PDF metadata extracted by pymupdf: {json.dumps(pdf.metadata, default=str, indent=4)}")
   print("</pdf-metadata-summary>")
@@ -86,6 +88,8 @@ result = subprocess.run(
 )
 
 pages: list[str] = result.stdout.split("\f")
+if pages and pages[-1].strip() == "":
+    pages.pop()
 
 @contextmanager
 def open_db(path: Path):
@@ -160,7 +164,7 @@ If there is an embedded Table of Contents ("bookmarks") within the PDF (in my ex
 import pymupdf
 
 with pymupdf.open("path/to/your/input.pdf") as pdf:
-  toc: list[int, str, int] = pdf.get_toc() # list[heading_level, title, page_num]
+  toc: list[tuple[int, str, int]] = pdf.get_toc() # list[heading_level, title, page_num]
 
 if toc:
   print("[HEADING_LEVEL, TITLE, PAGE_NUMBER]")
@@ -243,7 +247,7 @@ with pymupdf.open("/path/to/your/input.pdf") as pdf:
 sudo apt install poppler-utils
 
 # Python
-uv tool install pymupdf pillow
+uv run --with pymupdf --with Pillow script.py
 ```
 
 SQLite ships with Python's standard library - no install needed.
