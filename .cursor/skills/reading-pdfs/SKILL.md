@@ -18,7 +18,15 @@ Suggested Approach:
 5. The method you use to explore/navigate the PDF content depends on the type of PDF:
    - If the PDF is primarily a text PDF, navigate the PDF using the approach described in [Text Extraction and FTS-indexing](#text-extraction-and-fts-indexing). You _may_ also use [Extract Page Images](#extract-page-images) if the PDF has complex layout, tables or important visual elements, although you should try to avoid this if possible because the page-image-based approach is highly inefficient compared to the text-based approach (page images cannot be searched, images take up a LOT of memory and space, and viewing page images will quickly exhaust your context window).
    - If the PDF content is primarily image-based, then navigate the PDF using the approach described in [Extract Page Images](#extract-page-images). Be careful because page images use a lot of memory and space and viewing page images will quickly exhaust your context window.
-6. After we are finished with the PDF, then please delete the temporary files in \_your temp pdf folder (definitely don't delete the original PDF file, though). If you are not clear whether we are finished investigating the PDF yet or not, ask me.
+6. If the PDF has no [Embedded Table of Contents](#embedded-table-of-contents), then explore the early pages in the PDF to look for a Table of Contents within the text itself.
+7. Use an [iterative search strategy](#iterative-search-strategy) to find the answer we are looking for in the PDF.
+8. After we are finished with the PDF, then please delete the temporary files in \_your temp pdf folder (definitely don't delete the original PDF file, though). If you are not clear whether we are finished investigating the PDF yet or not, ask me.
+
+### Iterative Search Strategy
+
+1. Identify candidate relevant pages using the Table of Contents and (if available) FTS search.
+2. Read the candidate pages
+3. Repeat until confident or no new results. If FTS search is available, try reformulating the search query.
 
 ### Extract PDF Metadata
 
@@ -46,7 +54,7 @@ with pymupdf.open("path/to/your/file.pdf") as pdf:
   n_chars: int = sum(page["n_chars"] for page in page_metrics)
   n_images: int = sum(page["n_images"] for page in page_metrics)
   print("<pdf-metadata-summary>")
-  print(f"- PDF contains an embedded table of contents: {bool(pdf.get_toc()}")
+  print(f"- PDF contains an embedded table of contents: {bool(pdf.get_toc())}")
   print(f"- Total number of pages: {n_pages:,}")
   print(f"- Total number of words (whole document): {n_words:,}")
   print(f"- Total number characters (whole document): {n_chars:,}")
@@ -63,14 +71,14 @@ with pymupdf.open("path/to/your/file.pdf") as pdf:
 
 Run the following python code to extract the text from each page of your PDF file, write this extracted text to a local sqlite database, and index these text pages for Full-Text Search (FTS).
 
-```bash
+```python
 import sqlite3
 import subprocess
 from contextlib import contextmanager
 from pathlib import Path
 
 result = subprocess.run(
-    ["pdftotext", "-enc", "UTF-8", "-eol", "unix", "-layout", "input.pdf", "-"],
+    ["pdftotext", "-enc", "UTF-8", "-eol", "unix", "-layout", "path/to/your/input.pdf", "-"],
     check=True,
     stdout=subprocess.PIPE,
     stderr=subprocess.PIPE,
@@ -97,7 +105,7 @@ with open_db(Path("{{your_temp_pdf_folder}}/pages.sqlite")) as conn:
     CREATE VIRTUAL TABLE pages USING fts5(
         page_num  UNINDEXED
       , page_text
-      , tokenize = 'porter unicode61' -- use just tokenize='unicode61' if not english
+      , tokenize = 'porter unicode61' -- use tokenize = 'unicode61' if not english PDF
     )
     """)
     conn.executemany(
@@ -142,7 +150,7 @@ EOF
 
 **IMPORTANT**: The sqlite fts5 **snippet()** function shows you only the _first_ match on the page, so you should still read the full page text of the matching page (the first match might be irrelevant to the question you are trying to answer, but this does not mean that the answer to your question isn't somewhere else on the same page - outside of the **snippet()** you are seeing).
 
-Because FTS is keyword-based (not semantic), you should include a lot of synonyms (and multiple forms of the same word) in your search queries e.g. "anonymisation OR anonymization OR anonymise OR anonymize OR anonymising OR anonymizing OR anonymised OR anonymized OR identification OR de-identification OR identify OR identified OR identifiable OR pseudonymisation OR pseudonymization OR pseudonymise OR pseudonymize OR mask OR masking OR obfuscate OR obfuscation".
+Because FTS is keyword-based (not semantic), you should include a lot of synonyms, abbreviations, and multiple forms of the same word in your search queries e.g. "anonymisation OR anonymization OR anonymise OR anonymize OR anonymising OR anonymizing OR anonymised OR anonymized OR identification OR de-identification OR identify OR identified OR identifiable OR pseudonymisation OR pseudonymization OR pseudonymise OR pseudonymize OR mask OR masking OR obfuscate OR obfuscation".
 
 ### Embedded Table of Contents
 
@@ -151,7 +159,7 @@ If there is an embedded Table of Contents ("bookmarks") within the PDF (in my ex
 ```python
 import pymupdf
 
-with pymupdf.open("path/to/your/file.pdf") as pdf:
+with pymupdf.open("path/to/your/input.pdf") as pdf:
   toc: list[int, str, int] = pdf.get_toc() # list[heading_level, title, page_num]
 
 if toc:
@@ -184,7 +192,7 @@ PAGE_IMAGES_DIR.mkdir(exist_ok=True)
 
 with pymupdf.open("/path/to/your/input.pdf") as pdf:
     if PAGE_NUMS_TO_EXPORT is None:
-        PAGE_NUMS_TO_EXPORT = range(1, len(pdf))
+        PAGE_NUMS_TO_EXPORT = range(1, len(pdf)+1)
     for page_num in PAGE_NUMS_TO_EXPORT:
         page: pymupdf.Page = pdf[page_num - 1]
         page_pixmap: pymupdf.Pixmap = page.get_pixmap(
@@ -239,3 +247,10 @@ uv tool install pymupdf pillow
 ```
 
 SQLite ships with Python's standard library - no install needed.
+
+## Requirements
+
+When answering:
+
+- Always cite page numbers
+- Prefer multiple sources if available
