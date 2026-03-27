@@ -740,6 +740,13 @@ postgres_helper() {
 EOF
 }
 
+parquet_helper() {
+	cat <<EOF
+    # uv tool install duckdb-cli
+    uvx --from duckdb-cli duckdb -c 'SELECT * FROM "./path/to/myfile.parquet" LIMIT 10;'
+EOF
+}
+
 prompt_format() {
 	# example structure for a LLM prompt #
 	cat <<EOF
