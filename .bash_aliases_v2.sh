@@ -743,7 +743,12 @@ EOF
 parquet_helper() {
 	cat <<EOF
     # uv tool install duckdb-cli
-    uvx --from duckdb-cli duckdb -c 'SELECT * FROM "./path/to/myfile.parquet" LIMIT 10;'
+    uvx --from duckdb-cli duckdb -c "
+      SELECT *
+      FROM 'competency_deduplication_history_df.parquet'
+      WHERE competency_is_deduplicated = true
+      LIMIT 5;
+    "
 EOF
 }
 
