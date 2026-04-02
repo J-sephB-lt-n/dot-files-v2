@@ -1,7 +1,7 @@
 alias poetry_run_pylint_recursive='poetry run pylint --rcfile .pylintrc --recursive=y .'
 
 cursor_helper() {
-	cat <<EOF
+  cat <<EOF
 -- GENERAL AGENT WORKFLOW --
 research -> ideate -> spec -> plan -> execute -> review
 
@@ -111,24 +111,24 @@ alias docling_helper='echo "
 alias file_sizes='du -ah . | sort -hr'
 
 findfile() {
-	# find files using an interactive file picker with fuzzy find #
-	#   Example usage:
-	#     $ findfile        # just lists selected filepaths (can pipe to something else)
-	#     $ findfile ~/nvim-linux64/bin/nvim   # open selected files with neovim
+  # find files using an interactive file picker with fuzzy find #
+  #   Example usage:
+  #     $ findfile        # just lists selected filepaths (can pipe to something else)
+  #     $ findfile ~/nvim-linux64/bin/nvim   # open selected files with neovim
 
-	local open_command="$1"
-	local filepaths=()
+  local open_command="$1"
+  local filepaths=()
 
-	readarray -t filepaths < <(fd --type f | fzf --multi --preview 'bat --style=numbers --color=always {}') || return
+  readarray -t filepaths < <(fd --type f | fzf --multi --preview 'bat --style=numbers --color=always {}') || return
 
-	# exit if no files selected #
-	[[ ${#filepaths[@]} -eq 0 ]] && return
+  # exit if no files selected #
+  [[ ${#filepaths[@]} -eq 0 ]] && return
 
-	if [[ -n "$open_command" ]]; then
-		"$open_command" "${filepaths[@]}"
-	else
-		printf '%s\n' "${filepaths[@]}"
-	fi
+  if [[ -n "$open_command" ]]; then
+    "$open_command" "${filepaths[@]}"
+  else
+    printf '%s\n' "${filepaths[@]}"
+  fi
 }
 
 alias find_helper='echo "
@@ -165,7 +165,7 @@ alias grep_helper='echo "
 "'
 
 jq_helper() {
-	cat <<EOF
+  cat <<EOF
 
   # basic JSONL usage #
   jq . myfile.jsonl         # or 'cat myfile.jsonl | jq .'
@@ -213,19 +213,19 @@ alias ll='ls -lah'
 alias lls="ls -lahS"
 alias lsd="ls -d */" # list only directories
 pwdc() {
-	if uname -r | grep -q "WSL"; then
-		pwd | clip.exe
-	else
-		echo "platform not supported"
-	fi
+  if uname -r | grep -q "WSL"; then
+    pwd | clip.exe
+  else
+    echo "platform not supported"
+  fi
 }
 
 alias listfiles="fd . --type f --exclude '.*' --exclude '__pycache__'"
 
 load-dotenv() {
-	if [[ $# -eq 0 ]]; then
-		# show this help message if no path to .env file provided #
-		cat <<'EOF'
+  if [[ $# -eq 0 ]]; then
+    # show this help message if no path to .env file provided #
+    cat <<'EOF'
 Usage:
   load-dotenv <path-to-env-file>
 
@@ -237,35 +237,35 @@ Example:
   load-dotenv .env
   load-dotenv .env.local
 EOF
-		return 0
-	fi
+    return 0
+  fi
 
-	local env_file="$1"
+  local env_file="$1"
 
-	if [[ ! -f "$env_file" ]]; then
-		echo "❌ $env_file not found"
-		return 1
-	fi
+  if [[ ! -f "$env_file" ]]; then
+    echo "❌ $env_file not found"
+    return 1
+  fi
 
-	# Capture existing env var names
-	local before after added
-	before=$(printenv | cut -d= -f1 | sort)
+  # Capture existing env var names
+  local before after added
+  before=$(printenv | cut -d= -f1 | sort)
 
-	# Load .env
-	export $(grep -v '^\s*#' "$env_file" | xargs)
+  # Load .env
+  export $(grep -v '^\s*#' "$env_file" | xargs)
 
-	# Capture env var names after
-	after=$(printenv | cut -d= -f1 | sort)
+  # Capture env var names after
+  after=$(printenv | cut -d= -f1 | sort)
 
-	# Diff to find added/changed vars
-	added=$(comm -13 <(echo "$before") <(echo "$after"))
+  # Diff to find added/changed vars
+  added=$(comm -13 <(echo "$before") <(echo "$after"))
 
-	if [[ -n "$added" ]]; then
-		echo "✅ Loaded variables from $env_file:"
-		echo "$added"
-	else
-		echo "ℹ️ No new variables added from $env_file"
-	fi
+  if [[ -n "$added" ]]; then
+    echo "✅ Loaded variables from $env_file:"
+    echo "$added"
+  else
+    echo "ℹ️ No new variables added from $env_file"
+  fi
 }
 
 alias microsoft_graph_explorer_token='az login && az account get-access-token --resource-type ms-graph --query accessToken --output tsv'
@@ -273,7 +273,7 @@ alias microsoft_graph_explorer_token='az login && az account get-access-token --
 alias ntvf='nvim "$(tv files)"'
 
 zip_helper() {
-	cat <<EOF
+  cat <<EOF
   # add files to zip file #
   zip my_archive.zip file1 file2 file3
 
@@ -289,44 +289,44 @@ EOF
 alias wslpaste='powershell.exe Get-Clipboard | sed "s/\r$//" | xargs -0 printf "%s"'
 
 savepath() {
-	# save current directory path to memory (under provided name)
-	if [ -z "$1" ]; then
-		echo "Usage: savepath <name>"
-		return 1
-	fi
-	local savename="SAVEDPATH_${1}"
-	echo "saving path $(pwd) to environment variable ${savename}"
-	export $savename=$(pwd)
+  # save current directory path to memory (under provided name)
+  if [ -z "$1" ]; then
+    echo "Usage: savepath <name>"
+    return 1
+  fi
+  local savename="SAVEDPATH_${1}"
+  echo "saving path $(pwd) to environment variable ${savename}"
+  export $savename=$(pwd)
 }
 listpath() {
-	echo 'listing saved paths (i.e. variables in ENV with prefix SAVEDPATH_)'
-	env | grep 'SAVEDPATH_' | cut -c 11-
+  echo 'listing saved paths (i.e. variables in ENV with prefix SAVEDPATH_)'
+  env | grep 'SAVEDPATH_' | cut -c 11-
 }
 getpath() {
-	if [ -z "$1" ]; then
-		echo "Usage: getpath <name>"
-		return 1
-	fi
-	local savedpath=$(env | grep "SAVEDPATH_$1=" | sed "s:^.*=::")
-	echo "navigating to ${savedpath}"
-	cd $(echo $savedpath)
+  if [ -z "$1" ]; then
+    echo "Usage: getpath <name>"
+    return 1
+  fi
+  local savedpath=$(env | grep "SAVEDPATH_$1=" | sed "s:^.*=::")
+  echo "navigating to ${savedpath}"
+  cd $(echo $savedpath)
 }
 delpath() {
-	if [ -z "$1" ]; then
-		echo "Usage: delpath <name>"
-		return 1
-	fi
-	echo "Removing saved path $1"
-	unset SAVEDPATH_$1
+  if [ -z "$1" ]; then
+    echo "Usage: delpath <name>"
+    return 1
+  fi
+  echo "Removing saved path $1"
+  unset SAVEDPATH_$1
 }
 
 rmaf() {
-	# delete all instances of file with this name (also looks in all subdirectories)
-	find . -type f -name "${1}" -exec rm -f '{}' +
+  # delete all instances of file with this name (also looks in all subdirectories)
+  find . -type f -name "${1}" -exec rm -f '{}' +
 }
 rmad() {
-	# delete all instances of directory with this name (also looks in all subdirectories)
-	find . -type d -name "${1}" -exec rm -rf {} \;
+  # delete all instances of directory with this name (also looks in all subdirectories)
+  find . -type d -name "${1}" -exec rm -rf {} \;
 }
 
 # git #
@@ -344,8 +344,8 @@ alias grs="git restore --staged"
 alias grs.="git restore --staged ."
 alias gst="git status"
 git_helper() {
-	# examples of useful git workflows #
-	cat <<EOF
+  # examples of useful git workflows #
+  cat <<EOF
   
   # show all changes between 2 different branches (including committed) #
   git diff other-branch-name # compare current branch to other branch
@@ -386,7 +386,7 @@ EOF
 }
 
 git_worktree_helper() {
-	cat <<EOF
+  cat <<EOF
   # for a more thorough example, see: https://github.com/J-sephB-lt-n/Git-worktree-example
   
   # update all local views of remote (or git fetch origin <branch name>) 
@@ -416,23 +416,23 @@ EOF
 }
 
 google_search() {
-	if [ "$#" -ne 2 ]; then
-		echo "Usage: google_search <URL> <format>"
-		echo 'Examples:'
-		echo ' $ google_search "my query" html'
-		echo ' $ google_search "my query" lynx-browser-view'
-		echo ' $ google_search "my query" python-bs4'
-		return 1
-	fi
-	local search_query=$(printf '%s' "$1" | jq -sRr @uri)
-	local output_format=$2
-	local url="https://www.google.com/search?q=${search_query}"
-	if [ "$output_format" == "html" ]; then
-		lynx -dump -source $url
-	elif [ "$output_format" == "lynx-browser-view" ]; then
-		lynx -dump $url
-	elif [ "$output_format" == "python-bs4" ]; then
-		lynx -dump -source $url | python3 -c '
+  if [ "$#" -ne 2 ]; then
+    echo "Usage: google_search <URL> <format>"
+    echo 'Examples:'
+    echo ' $ google_search "my query" html'
+    echo ' $ google_search "my query" lynx-browser-view'
+    echo ' $ google_search "my query" python-bs4'
+    return 1
+  fi
+  local search_query=$(printf '%s' "$1" | jq -sRr @uri)
+  local output_format=$2
+  local url="https://www.google.com/search?q=${search_query}"
+  if [ "$output_format" == "html" ]; then
+    lynx -dump -source $url
+  elif [ "$output_format" == "lynx-browser-view" ]; then
+    lynx -dump $url
+  elif [ "$output_format" == "python-bs4" ]; then
+    lynx -dump -source $url | python3 -c '
 import json
 import sys
 from urllib.parse import urlparse
@@ -471,23 +471,23 @@ print(
     indent=4
   )
 )'
-	else
-		echo "output format '$output_format' not supported"
-	fi
+  else
+    echo "output format '$output_format' not supported"
+  fi
 }
 
 # misc #
 timer() {
-	# example usage: timer && sleep 5 && timer
-	if [[ -z "${TIMER_START}" ]]; then
-		export TIMER_START=$EPOCHREALTIME
-	else
-		local seconds_elapsed=$(echo "$EPOCHREALTIME - $TIMER_START" | bc)
-		local minutes_elapsed=$(echo "scale=2; $seconds_elapsed / 60" | bc)
-		echo "total time elapsed in minutes: $minutes_elapsed"
-		echo "total time elapsed in seconds: $seconds_elapsed"
-		unset TIMER_START
-	fi
+  # example usage: timer && sleep 5 && timer
+  if [[ -z "${TIMER_START}" ]]; then
+    export TIMER_START=$EPOCHREALTIME
+  else
+    local seconds_elapsed=$(echo "$EPOCHREALTIME - $TIMER_START" | bc)
+    local minutes_elapsed=$(echo "scale=2; $seconds_elapsed / 60" | bc)
+    echo "total time elapsed in minutes: $minutes_elapsed"
+    echo "total time elapsed in seconds: $seconds_elapsed"
+    unset TIMER_START
+  fi
 }
 
 # navigation #
@@ -499,20 +499,20 @@ alias ......='cd ../../../../..'
 
 # networking
 checkcert() {
-	# e.g. checkcert www.google.com
-	# this function from: https://stackoverflow.com/questions/21181231/server-certificate-verification-failed-cafile-etc-ssl-certs-ca-certificates-c/67698986#67698986
-	echo -n |
-		openssl s_client -showcerts -servername $1 \
-			-connect $1:443 2>/dev/null |
-		tac |
-		awk '/-END CERTIFICATE-/{f=1} f;/-BEGIN CERTIFICATE-/{exit}' |
-		tac |
-		openssl x509 -noout -subject -issuer
+  # e.g. checkcert www.google.com
+  # this function from: https://stackoverflow.com/questions/21181231/server-certificate-verification-failed-cafile-etc-ssl-certs-ca-certificates-c/67698986#67698986
+  echo -n |
+    openssl s_client -showcerts -servername $1 \
+      -connect $1:443 2>/dev/null |
+    tac |
+    awk '/-END CERTIFICATE-/{f=1} f;/-BEGIN CERTIFICATE-/{exit}' |
+    tac |
+    openssl x509 -noout -subject -issuer
 }
 
 # PDF files #
 pdf_helper() {
-	cat <<EOF
+  cat <<EOF
 
   sudo apt install pdftk
   
@@ -538,8 +538,8 @@ EOF
 alias pri='poetry run ipython'
 alias uri='uv run ipython'
 uvrn() {
-	# e.g. uvrn 3.13 python -m venv .venv
-	uv run --no-project --python "${1}" "${@:2}"
+  # e.g. uvrn 3.13 python -m venv .venv
+  uv run --no-project --python "${1}" "${@:2}"
 }
 alias urrf='uv run ruff format'
 
@@ -551,7 +551,7 @@ alias clctr='clct -C | less -R'
 
 # task warrior #
 task_warrior_helper() {
-	cat <<EOF
+  cat <<EOF
   task add Task Description Here
   task ID done
 
@@ -602,43 +602,43 @@ EOF
 }
 
 function list_llms() {
-	# list all models using /v1/models endpoint of an openai-compatible API
-	if [[ -z "$OPENAI_BASE_URL" ]]; then
-		echo "Error: OPENAI_BASE_URL environment variable is not set." >&2
-		return 1
-	fi
+  # list all models using /v1/models endpoint of an openai-compatible API
+  if [[ -z "$OPENAI_BASE_URL" ]]; then
+    echo "Error: OPENAI_BASE_URL environment variable is not set." >&2
+    return 1
+  fi
 
-	# Strip trailing slash
-	local base_url="${OPENAI_BASE_URL%/}"
+  # Strip trailing slash
+  local base_url="${OPENAI_BASE_URL%/}"
 
-	if [[ -z "$OPENAI_API_KEY" ]]; then
-		echo "Error: OPENAI_API_KEY environment variable is not set." >&2
-		return 1
-	fi
+  if [[ -z "$OPENAI_API_KEY" ]]; then
+    echo "Error: OPENAI_API_KEY environment variable is not set." >&2
+    return 1
+  fi
 
-	local response
-	if ! response=$(curl -s -w "%{http_code}" \
-		-H "Authorization: Bearer $OPENAI_API_KEY" \
-		"$base_url/v1/models"); then
-		echo "Error: Failed to connect to $base_url/v1/models" >&2
-		return 1
-	fi
+  local response
+  if ! response=$(curl -s -w "%{http_code}" \
+    -H "Authorization: Bearer $OPENAI_API_KEY" \
+    "$base_url/v1/models"); then
+    echo "Error: Failed to connect to $base_url/v1/models" >&2
+    return 1
+  fi
 
-	local http_code="${response: -3}"
-	local body="${response%???}"
+  local http_code="${response: -3}"
+  local body="${response%???}"
 
-	if [[ "$http_code" -ne 200 ]]; then
-		echo "Error: HTTP $http_code" >&2
-		echo "$body" >&2
-		return 1
-	fi
+  if [[ "$http_code" -ne 200 ]]; then
+    echo "Error: HTTP $http_code" >&2
+    echo "$body" >&2
+    return 1
+  fi
 
-	# Parse and print each model ID
-	echo "$body" | jq -r '.data[].id' | sort
+  # Parse and print each model ID
+  echo "$body" | jq -r '.data[].id' | sort
 }
 
 llm_chat_completion_helper() {
-	cat <<EOT
+  cat <<EOT
   # Example usage of llm_chat_completion() function #
 
   llm_chat_completion "Tell me something interesting"
@@ -658,68 +658,68 @@ EOT
 }
 
 llm_chat_completion() {
-	# Example usage:
-	#   llm_chat_completion "Tell me something interesting"
-	#   echo "<doc>$(cat myfile.txt)</doc> Please summarise the contents of doc" | llm_chat_completion
-	#   for more examples, run `llm_chat_completion_helper`
+  # Example usage:
+  #   llm_chat_completion "Tell me something interesting"
+  #   echo "<doc>$(cat myfile.txt)</doc> Please summarise the contents of doc" | llm_chat_completion
+  #   for more examples, run `llm_chat_completion_helper`
 
-	: "${OPENAI_BASE_URL:?Error: OPENAI_BASE_URL environment variable is not set}"
-	: "${OPENAI_API_KEY:?Error: OPENAI_API_KEY environment variable is not set}"
-	: "${OPENAI_DEFAULT_MODEL:?Error: OPENAI_DEFAULT_MODEL environment variable is not set}"
+  : "${OPENAI_BASE_URL:?Error: OPENAI_BASE_URL environment variable is not set}"
+  : "${OPENAI_API_KEY:?Error: OPENAI_API_KEY environment variable is not set}"
+  : "${OPENAI_DEFAULT_MODEL:?Error: OPENAI_DEFAULT_MODEL environment variable is not set}"
 
-	echo "using model [${OPENAI_DEFAULT_MODEL}]"
+  echo "using model [${OPENAI_DEFAULT_MODEL}]"
 
-	local prompt line
+  local prompt line
 
-	if [ $# -gt 0 ]; then
-		prompt="$*"
-	else
-		prompt="$(cat)"
-	fi
+  if [ $# -gt 0 ]; then
+    prompt="$*"
+  else
+    prompt="$(cat)"
+  fi
 
-	# OpenAI-compatible streaming request
-	curl -sN "${OPENAI_BASE_URL}/v1/chat/completions" \
-		-H "Authorization: Bearer ${OPENAI_API_KEY}" \
-		-H "Content-Type: application/json" \
-		-d "$(jq -n \
-			--arg model "$OPENAI_DEFAULT_MODEL" \
-			--arg content "$prompt" \
-			'{model:$model,messages:[{role:"user",content:$content}],stream:true}')" |
-		sed 's/^data: //' |
-		while IFS= read -r line; do
-			[[ $line == "[DONE]" ]] && break # skip sentinel
-			jq -rj '.choices[0].delta.content // empty' <<<"$line"
-		done
-	printf '\n'
+  # OpenAI-compatible streaming request
+  curl -sN "${OPENAI_BASE_URL}/v1/chat/completions" \
+    -H "Authorization: Bearer ${OPENAI_API_KEY}" \
+    -H "Content-Type: application/json" \
+    -d "$(jq -n \
+      --arg model "$OPENAI_DEFAULT_MODEL" \
+      --arg content "$prompt" \
+      '{model:$model,messages:[{role:"user",content:$content}],stream:true}')" |
+    sed 's/^data: //' |
+    while IFS= read -r line; do
+      [[ $line == "[DONE]" ]] && break # skip sentinel
+      jq -rj '.choices[0].delta.content // empty' <<<"$line"
+    done
+  printf '\n'
 }
 
 file_contents_to_md() {
-	# accepts a list of filepaths and dumps file contents into a single markdown string
-	# Example usage:
-	#   findfile | file_contents_to_md | less    # or cat
-	local file
-	while IFS= read -r file; do
-		# Skip empty lines
-		[[ -z "$file" ]] && continue
+  # accepts a list of filepaths and dumps file contents into a single markdown string
+  # Example usage:
+  #   findfile | file_contents_to_md | less    # or cat
+  local file
+  while IFS= read -r file; do
+    # Skip empty lines
+    [[ -z "$file" ]] && continue
 
-		# If the file doesn't exist or isn't readable, warn and skip
-		if [[ ! -r "$file" ]]; then
-			echo "# $file" >&2
-			echo "⚠️ Cannot read file: $file" >&2
-			continue
-		fi
+    # If the file doesn't exist or isn't readable, warn and skip
+    if [[ ! -r "$file" ]]; then
+      echo "# $file" >&2
+      echo "⚠️ Cannot read file: $file" >&2
+      continue
+    fi
 
-		# Print the header, code fence, contents, and closing fence
-		printf '# %s\n' "$file"
-		printf '```\n'
-		cat "$file"
-		printf '```\n\n'
-	done
+    # Print the header, code fence, contents, and closing fence
+    printf '# %s\n' "$file"
+    printf '```\n'
+    cat "$file"
+    printf '```\n\n'
+  done
 }
 
 postgres_helper() {
-	# useful CLI commands related to postgreSQL #
-	cat <<EOF
+  # useful CLI commands related to postgreSQL #
+  cat <<EOF
 
   # postgres+pgvector ephemeral local container #
   docker run \\
@@ -741,7 +741,7 @@ EOF
 }
 
 parquet_helper() {
-	cat <<EOF
+  cat <<EOF
     # uv tool install duckdb-cli
     uvx --from duckdb-cli duckdb -c "
       SELECT *
@@ -753,9 +753,10 @@ EOF
 }
 
 prompt_format() {
-	# example structure for a LLM prompt #
-	cat <<EOF
+  # example structure for a LLM prompt #
+  cat <<EOF
 
+  Background: describe the context/domain within which this task resides
   Task: describe what is required.
   Input: what are the inputs to the task (e.g. multiple CSV files, all same columns)
   Constraints: describe the limits
@@ -768,148 +769,148 @@ EOF
 # TASK TIMER #
 # timer state is stored in /var/tmp/task_timers/
 if [[ ! -e /var/tmp/task_timers/ ]]; then
-	echo "creating directory /var/tmp/task_timers/"
-	mkdir /var/tmp/task_timers/
+  echo "creating directory /var/tmp/task_timers/"
+  mkdir /var/tmp/task_timers/
 fi
 seconds_to_human_readable() {
-	# from https://unix.stackexchange.com/questions/27013/displaying-seconds-as-days-hours-mins-seconds
-	local T=$(awk -v num=$1 'BEGIN {printf "%.0f", num}')
-	local D=$((T / 60 / 60 / 24))
-	local H=$((T / 60 / 60 % 24))
-	local M=$((T / 60 % 60))
-	local S=$((T % 60))
-	(($D > 0)) && printf '%d days ' $D
-	(($H > 0)) && printf '%d hours ' $H
-	(($M > 0)) && printf '%d minutes ' $M
-	(($D > 0 || $H > 0 || $M > 0))
-	printf '%d seconds\n' $S
+  # from https://unix.stackexchange.com/questions/27013/displaying-seconds-as-days-hours-mins-seconds
+  local T=$(awk -v num=$1 'BEGIN {printf "%.0f", num}')
+  local D=$((T / 60 / 60 / 24))
+  local H=$((T / 60 / 60 % 24))
+  local M=$((T / 60 % 60))
+  local S=$((T % 60))
+  (($D > 0)) && printf '%d days ' $D
+  (($H > 0)) && printf '%d hours ' $H
+  (($M > 0)) && printf '%d minutes ' $M
+  (($D > 0 || $H > 0 || $M > 0))
+  printf '%d seconds\n' $S
 }
 tmr_go() { # start specific timer
-	# e.g. tmr_go task1
-	local timer_description=$2
-	if [[ $timer_description == *"|"* ]]; then
-		echo "ERROR: timer description may not contain pipe symbol"
-		return 0
-	fi
-	if [[ -z "${timer_description}" ]]; then
-		local timer_description="no_description"
-	fi
-	if [[ ! -f /var/tmp/task_timers/$1.tmr ]]; then
-		echo -n "${timer_description}|${EPOCHREALTIME}" >/var/tmp/task_timers/$1.tmr
-		echo "started timer [$1]"
-	else
-		local latest_entry=$(tail -n 1 /var/tmp/task_timers/$1.tmr)
-		local n_entries=$(echo $latest_entry | awk -F '|' '{print NF}')
-		#n_entries=$(awk "{print NF}" <<< "$latest_entry")
-		if [[ n_entries -eq 2 ]]; then
-			echo "timer [$1] is already running"
-		else
-			echo -n "${timer_description}|${EPOCHREALTIME}" >>/var/tmp/task_timers/$1.tmr
-			echo "started timer [$1]"
-		fi
-	fi
+  # e.g. tmr_go task1
+  local timer_description=$2
+  if [[ $timer_description == *"|"* ]]; then
+    echo "ERROR: timer description may not contain pipe symbol"
+    return 0
+  fi
+  if [[ -z "${timer_description}" ]]; then
+    local timer_description="no_description"
+  fi
+  if [[ ! -f /var/tmp/task_timers/$1.tmr ]]; then
+    echo -n "${timer_description}|${EPOCHREALTIME}" >/var/tmp/task_timers/$1.tmr
+    echo "started timer [$1]"
+  else
+    local latest_entry=$(tail -n 1 /var/tmp/task_timers/$1.tmr)
+    local n_entries=$(echo $latest_entry | awk -F '|' '{print NF}')
+    #n_entries=$(awk "{print NF}" <<< "$latest_entry")
+    if [[ n_entries -eq 2 ]]; then
+      echo "timer [$1] is already running"
+    else
+      echo -n "${timer_description}|${EPOCHREALTIME}" >>/var/tmp/task_timers/$1.tmr
+      echo "started timer [$1]"
+    fi
+  fi
 }
 tmr_stop() { # stop specific timer
-	# e.g. tmr_stop task1
-	if [[ ! -f /var/tmp/task_timers/$1.tmr ]]; then
-		echo "timer [$1] does not exist"
-	else
-		local latest_entry=$(tail -n 1 /var/tmp/task_timers/$1.tmr)
-		local n_entries=$(echo $latest_entry | awk -F '|' '{print NF}')
-		if [[ $n_entries -eq 2 ]]; then
-			echo "|${EPOCHREALTIME}" >>/var/tmp/task_timers/$1.tmr
-			echo "stopped timer [$1]"
-		else
-			echo "timer [$1] is already stopped"
-		fi
-	fi
+  # e.g. tmr_stop task1
+  if [[ ! -f /var/tmp/task_timers/$1.tmr ]]; then
+    echo "timer [$1] does not exist"
+  else
+    local latest_entry=$(tail -n 1 /var/tmp/task_timers/$1.tmr)
+    local n_entries=$(echo $latest_entry | awk -F '|' '{print NF}')
+    if [[ $n_entries -eq 2 ]]; then
+      echo "|${EPOCHREALTIME}" >>/var/tmp/task_timers/$1.tmr
+      echo "stopped timer [$1]"
+    else
+      echo "timer [$1] is already stopped"
+    fi
+  fi
 }
 tmr_view() { # view specific timer
-	# e.g. tmr_view task1
-	if [[ ! -f /var/tmp/task_timers/$1.tmr ]]; then
-		echo "timer [$1] does not exist"
-	else
-		echo ""
-		echo "--Summary of Timer [$1]--"
-		echo ""
-		local total_n_seconds=0
-		while read line || [[ -n $line ]]; do
-			n_entries=$(echo $line | awk -F '|' '{print NF}')
-			if [[ $n_entries -eq 3 ]]; then
-				timer_description=$(echo $line | cut -d "|" -f 1)
-				start_utc=$(echo $line | cut -d "|" -f 2)
-				end_utc=$(echo $line | cut -d "|" -f 3)
-				echo -n "* ["$(perl -le 'print scalar localtime $ARGV[0]' $start_utc)"]"
-				echo -n " --> "
-				echo "["$(perl -le 'print scalar localtime $ARGV[0]' $end_utc)"]"
-				if [[ $timer_description != "no_description" ]]; then
-					echo "       \"${timer_description}\""
-				else
-					echo "       <no timer description>"
-				fi
-				n_seconds=$(echo "($end_utc - $start_utc)/1" | bc)
-				total_n_seconds=$(echo "$total_n_seconds + $n_seconds" | bc)
-				echo -n "       ("
-				echo -n $(seconds_to_human_readable ${n_seconds})
-				echo ")"
-			else
-				timer_description=$(echo $line | cut -d "|" -f 1)
-				start_utc=$(echo $line | cut -d "|" -f 2)
-				end_utc=$EPOCHREALTIME
-				echo -n "* ["$(perl -le 'print scalar localtime $ARGV[0]' $start_utc)"]"
-				echo -n " --> "
-				echo "<currently running>"
-				if [[ $timer_description != "no_description" ]]; then
-					echo "       \"${timer_description}\""
-				else
-					echo "       <no timer description>"
-				fi
-				n_seconds=$(echo "($end_utc - $start_utc)/1" | bc)
-				total_n_seconds=$(echo "$total_n_seconds + $n_seconds" | bc)
-				echo -n "       ("
-				echo -n $(seconds_to_human_readable ${n_seconds})
-				echo ")"
-			fi
-		done <<<$(cat /var/tmp/task_timers/$1.tmr)
-		echo ""
-		echo "TOTAL TIME: "$(seconds_to_human_readable ${total_n_seconds})
-	fi
+  # e.g. tmr_view task1
+  if [[ ! -f /var/tmp/task_timers/$1.tmr ]]; then
+    echo "timer [$1] does not exist"
+  else
+    echo ""
+    echo "--Summary of Timer [$1]--"
+    echo ""
+    local total_n_seconds=0
+    while read line || [[ -n $line ]]; do
+      n_entries=$(echo $line | awk -F '|' '{print NF}')
+      if [[ $n_entries -eq 3 ]]; then
+        timer_description=$(echo $line | cut -d "|" -f 1)
+        start_utc=$(echo $line | cut -d "|" -f 2)
+        end_utc=$(echo $line | cut -d "|" -f 3)
+        echo -n "* ["$(perl -le 'print scalar localtime $ARGV[0]' $start_utc)"]"
+        echo -n " --> "
+        echo "["$(perl -le 'print scalar localtime $ARGV[0]' $end_utc)"]"
+        if [[ $timer_description != "no_description" ]]; then
+          echo "       \"${timer_description}\""
+        else
+          echo "       <no timer description>"
+        fi
+        n_seconds=$(echo "($end_utc - $start_utc)/1" | bc)
+        total_n_seconds=$(echo "$total_n_seconds + $n_seconds" | bc)
+        echo -n "       ("
+        echo -n $(seconds_to_human_readable ${n_seconds})
+        echo ")"
+      else
+        timer_description=$(echo $line | cut -d "|" -f 1)
+        start_utc=$(echo $line | cut -d "|" -f 2)
+        end_utc=$EPOCHREALTIME
+        echo -n "* ["$(perl -le 'print scalar localtime $ARGV[0]' $start_utc)"]"
+        echo -n " --> "
+        echo "<currently running>"
+        if [[ $timer_description != "no_description" ]]; then
+          echo "       \"${timer_description}\""
+        else
+          echo "       <no timer description>"
+        fi
+        n_seconds=$(echo "($end_utc - $start_utc)/1" | bc)
+        total_n_seconds=$(echo "$total_n_seconds + $n_seconds" | bc)
+        echo -n "       ("
+        echo -n $(seconds_to_human_readable ${n_seconds})
+        echo ")"
+      fi
+    done <<<$(cat /var/tmp/task_timers/$1.tmr)
+    echo ""
+    echo "TOTAL TIME: "$(seconds_to_human_readable ${total_n_seconds})
+  fi
 }
 tmr_ls() { # list all timers
-	echo "--ALL TIMERS--"
-	n_timers=$(find /var/tmp/task_timers/ -type f -name "*.tmr" | wc -l)
-	if [[ $n_timers -eq 0 ]]; then
-		echo "There are no timers"
-	else
-		for timer_filepath in /var/tmp/task_timers/*.tmr; do
-			timer_name=$(echo $timer_filepath | sed "s/\/var\/tmp\/task_timers\/\(.*\).tmr$/\1/")
-			latest_entry=$(tail -n 1 $timer_filepath)
-			n_entries=$(echo $latest_entry | awk -F '|' '{print NF}')
-			if [[ $n_entries -eq 2 ]]; then
-				echo "[$timer_name] <currently running>"
-			else
-				echo "[$timer_name]"
-			fi
-		done
-	fi
+  echo "--ALL TIMERS--"
+  n_timers=$(find /var/tmp/task_timers/ -type f -name "*.tmr" | wc -l)
+  if [[ $n_timers -eq 0 ]]; then
+    echo "There are no timers"
+  else
+    for timer_filepath in /var/tmp/task_timers/*.tmr; do
+      timer_name=$(echo $timer_filepath | sed "s/\/var\/tmp\/task_timers\/\(.*\).tmr$/\1/")
+      latest_entry=$(tail -n 1 $timer_filepath)
+      n_entries=$(echo $latest_entry | awk -F '|' '{print NF}')
+      if [[ $n_entries -eq 2 ]]; then
+        echo "[$timer_name] <currently running>"
+      else
+        echo "[$timer_name]"
+      fi
+    done
+  fi
 }
 tmr_delete() {
-	# e.g. tmr_delete task1
-	if [[ ! -f /var/tmp/task_timers/$1.tmr ]]; then
-		echo "timer [$1] does not exist"
-	else
-		rm /var/tmp/task_timers/$1.tmr
-		echo "deleted timer [$1]"
-	fi
+  # e.g. tmr_delete task1
+  if [[ ! -f /var/tmp/task_timers/$1.tmr ]]; then
+    echo "timer [$1] does not exist"
+  else
+    rm /var/tmp/task_timers/$1.tmr
+    echo "deleted timer [$1]"
+  fi
 }
 
 unix_epoch_to_iso_8601() {
-	# e.g. $ unix_epoch_to_iso_8601 1771483940
-	date -u -d @"$1" +"%Y-%m-%dT%H:%M:%SZ"
+  # e.g. $ unix_epoch_to_iso_8601 1771483940
+  date -u -d @"$1" +"%Y-%m-%dT%H:%M:%SZ"
 }
 
 url_to_text() {
-	# url_to_text https://www.google.com | less
-	# url_to_text https://www.google.com > output.txt
-	curl -sL "$1" | pandoc -f html -t plain
+  # url_to_text https://www.google.com | less
+  # url_to_text https://www.google.com > output.txt
+  curl -sL "$1" | pandoc -f html -t plain
 }
