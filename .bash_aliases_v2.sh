@@ -749,6 +749,15 @@ parquet_helper() {
       WHERE competency_is_deduplicated = true
       LIMIT 5;
     "
+
+    # list the columns in the table and their types #
+    uvx --from duckdb-cli duckdb -c "
+      DESCRIBE 
+      SELECT *
+      FROM 'competency_deduplication_history_df.parquet'
+      ;
+    "
+    
 EOF
 }
 
