@@ -765,12 +765,15 @@ prompt_format() {
   # example structure for a LLM prompt #
   cat <<EOF
 
+  Role: specific persona you want the LLM to emulate (affects response style, length, format etc.)
   Background: describe the context/domain within which this task resides
   Task: describe what is required.
   Input: what are the inputs to the task (e.g. multiple CSV files, all same columns)
+  Assumptions: what is assumed to be true
   Constraints: describe the limits
-  Output: describe required output format
+  Output: describe required output length/format/schema
   Verify: describe how to verify that the proposed solution works
+  Examples: show the model what good and bad output looks like
   
 EOF
 }
