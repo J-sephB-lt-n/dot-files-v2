@@ -5,7 +5,7 @@ model: inherit # cursor-only
 readonly: true # cursor-only
 is_background: false # cursor-only
 mode: all # mode: subagent # opencode-only
-permissions: # opencode-only
+permission: # opencode-only
   edit: deny # opencode-only
   read: allow # opencode-only
 ---
