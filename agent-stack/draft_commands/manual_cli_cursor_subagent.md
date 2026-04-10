@@ -1,0 +1,23 @@
+# Launch a Subagent
+
+Launch a subagent in the background from the terminal using this command:
+
+```bash
+mkdir -p ./tmp_subagent_output &&
+cursor-agent -p '<describe the task to the subagent here>' \
+  --model claude-4.5-opus-high \
+  > /dev/null 2>&1 & \
+  echo $! > ./tmp_subagent_output/<your-chosen-subagent-name>.pid
+```
+
+Instruct the agent to write it's final findings in an information-dense markdown file in ./tmp_subagent_output/. The goal is maximum useful information in as few lines as possible.
+
+You can find the process ID (PID) of your subagent inside the .pid file which you specified in the subagent launch command.
+
+I may ask you at any future stage to check the status of your subagents, and you should use the following command to do so:
+
+```bash
+kill -0 '<your agent PID here>' 2>/dev/null && \
+  echo 'subagent <your-chosen-subagent-name> is still busy.' ||
+  echo 'agent <your-chosen-subagent-name> is finished.'
+```
