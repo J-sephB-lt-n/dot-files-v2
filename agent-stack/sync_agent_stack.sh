@@ -21,6 +21,15 @@ if [ -n "${OPENCODE_GLOBAL_CONFIG_DIR}" ]; then
     cp "$filepath" "$dest_filepath"
     set +x
   done
+
+  # --- SKILLS --- #
+  find ./skills -name '*.md' -type f | while IFS= read -r filepath; do
+    skill_dir=$(dirname "$filepath")
+    skill_name=$(basename "$skill_dir")
+    set -x
+    cp -r "$skill_dir/." "$OPENCODE_GLOBAL_CONFIG_DIR/skills/$skill_name/"
+    set +x
+  done
 fi
 
 if [ -n "${CURSOR_GLOBAL_CONFIG_DIR}" ]; then
@@ -40,6 +49,15 @@ if [ -n "${CURSOR_GLOBAL_CONFIG_DIR}" ]; then
     dest_filepath="$CURSOR_GLOBAL_CONFIG_DIR/commands/$dest_filename"
     set -x
     cp "$filepath" "$dest_filepath"
+    set +x
+  done
+
+  # --- SKILLS --- #
+  find ./skills -name '*.md' -type f | while IFS= read -r filepath; do
+    skill_dir=$(dirname "$filepath")
+    skill_name=$(basename "$skill_dir")
+    set -x
+    cp -r "$skill_dir/." "$CURSOR_GLOBAL_CONFIG_DIR/skills/$skill_name/"
     set +x
   done
 fi
