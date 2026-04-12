@@ -18,7 +18,7 @@ List out all of the filepaths for me so that I can tell you precisely which file
 
 3. Ask my permission to see the layout of the whole codebase (`fd . --type f --exclude '.*' --exclude '__pycache__'`)
 4. Ask me clarifying questions and go back and forth with me to interrogate what I already know about this topic.
-5. If you think they will be helpful, ask my permission to delegate tasks to codebase researcher subagents (see [Guide to using Codebase Research Subagents](#guide-to-using-codebase-research-subagents))
+5. Perform your research, exploring first widely then deeply. Perform multiple iterations of research, each complete round of exploration informing where and how you will search in the next iteration. Do not stop exploring and testing until you are confident that you have the correct answers. If you think they will be helpful, ask my permission to delegate subtasks to codebase researcher subagents (see [Guide to using Codebase Research Subagents](#guide-to-using-codebase-research-subagents))
 6. Summarise your findings and save them to a file. Ask me where you should save this file - you can suggest `.current_agent_context/background_context.md`. If this file already exists, suggest appending your results to it.
 
 ## Guide to using Codebase Research Subagents
