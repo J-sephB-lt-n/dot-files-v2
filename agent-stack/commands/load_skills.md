@@ -9,13 +9,13 @@ Now do the following:
 2. List the paths of all files with name `SKILL.md` in that folder using:
 
    ```bash
-   find "$(pwd)" -type f -name "SKILL.md"
+   find "{{root-skills-folder-here}}" -type f -name "SKILL.md"
    ```
 
 3. For each file discovered this way named `SKILL.md`, read only the front-matter using:
 
    ```bash
-   sed -n '1{/^---$/!q}; /^---$/,/^---$/p' {{path-to-SKILL-here.md}}
+   sed -n '1{/^---\s*$/!q}; /^---\s*$/,/^---\s*$/p' {{path/to/SKILL.md}}
    ```
 
 These `SKILLS.md` files are very useful documentation but they are also very long documents, so it's important that you don't read them (aside from their front-matter) unless you encounter a situation in which you require that particular "skill" (knowledge/information).
