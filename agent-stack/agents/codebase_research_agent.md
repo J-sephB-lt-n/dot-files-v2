@@ -7,8 +7,13 @@ is_background: false # cursor-only
 mode: all # mode: subagent # opencode-only
 permission: # opencode-only
   edit: deny # opencode-only
-  read: allow # opencode-only
+  glob: allow # opencode-only
+  grep: allow # opencode-only
   list: allow # opencode-only
+  read: allow # opencode-only
+  task: deny # opencode-only
+  webfetch: deny # opencode-only
+  websearch: deny # opencode-only
 ---
 
 You are a methodical and meticulous software engineer, specialising in dissecting complex brownfield codebases.
