@@ -1,0 +1,39 @@
+{
+  "providers": {
+    "gaiss": {
+      "api": "openai-completions",
+      "baseUrl": "<injected-by-extension-inject-gaiss-providers-vars>",
+      "apiKey": "<injected-by-extension-inject-gaiss-providers-vars>",
+      "models": [
+        {
+          "id": "bedrock.anthropic.claude-sonnet-4-6",
+          "name": "Claude Sonnet 4.6 Thinking",
+          "reasoning": true,
+          "input": ["text", "image"],
+          "contextWindow": 200000,
+          "maxTokens": 64000,
+          "cost": {
+            "input": 3,
+            "output": 15,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        },
+        {
+          "id": "bedrock.anthropic.claude-opus-4-6",
+          "name": "Claude Opus 4.6 Thinking",
+          "input": ["text", "image"],
+          "reasoning": true,
+          "contextWindow": 1000000,
+          "maxTokens": 128000,
+          "cost": {
+            "input": 5.5,
+            "output": 27.5,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        }
+      ]
+    }
+  }
+}
