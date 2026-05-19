@@ -14,3 +14,6 @@
 
 [includeIf "gitdir:~/experiments/"]
   path = ~/.gitconfig-personal
+
+[includeIf "gitdir:~/time-tracking/"]
+  path = ~/.gitconfig-personal
