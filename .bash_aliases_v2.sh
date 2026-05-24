@@ -382,6 +382,10 @@ git_helper() {
   git restore --staged path/to/file   # if file is staged
   git restore path/to/file            # discard
   git restore .                       # get state of all tracked files at last commit
+
+  # delete branch by index
+  git branch | sed -n '3p' | xargs git branch -D   # '2p' for print 2nd element, '3p' for 3rd element etc.
+  git branch | fzf | xargs --no-run-if-empty git branch -D
 EOF
 }
 
