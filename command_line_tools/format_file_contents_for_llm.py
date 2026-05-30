@@ -1,71 +1,39 @@
 #!/usr/bin/env python3
 r"""
 Example usage:
-$ format_file_contents_for_llm --dry_run '.*\.md' '.*llm.*'
-$ format_file_contents_for_llm '.*\.md' '.*llm.*'
+    ls *.py | format_file_contents_for_llm
+    find ./somedir ./some/other/path \( -name '*.md' -or -name '*.txt' \) | format_file_contents_for_llm
 
 Place this script (without .py) in /usr/local/bin/ to make this script globally available
 (might also need `sudo chmod +x /usr/local/bin/format_file_contents_for_llm`
 """
 
-import argparse
-import re
+import sys
 from pathlib import Path
+from typing import Sequence
 
-def format_file_contents_for_llm(
-    start_dir: str = ".",
-    regex_patterns: list[str] = [".*"],
-    dry_run: bool = False,
-) -> str:
-    """Finds all filepaths matching one or more of the regex patterns \
-then formats their contents as markdown for inclusion in a LLM prompt"""
-    filepaths_to_include: list[Path] = []
-    for path in Path(start_dir).rglob("*"):
-        if path.is_file() and any(
-            [re.search(pattern, str(path)) for pattern in regex_patterns]
-        ):
-            filepaths_to_include.append(path)
 
-    if dry_run:
-        print("The following files would be processed:")
-        for filepath in filepaths_to_include:
-            print("\t", filepath)
-        exit()
-
-    output_str = ""
-
-    for filepath in filepaths_to_include:
-        with open(filepath, "r", encoding="utf-8") as file:
-            file_contents: str = file.read()
-        output_str += f"""
-[{filepath.name}]({filepath})
-```
-{file_contents}
-```
+def format_file_contents_for_llm(filepaths: Sequence[Path]) -> str:
+    """
+    Return a single string containing the combined text content
+    of each file in `filepaths`, which each file's text content enclosed
+    in <filename>...</filename> tags.
+    """
+    return "\n\n".join(
+        f"""
+<file path="{filepath}">
+{filepath.read_text(encoding='utf-8')}
+</file>
 """
-
-    return output_str
+        for filepath in filepaths
+    )
 
 
 if __name__ == "__main__":
     # if this script is being run as a CLI tool #
-    arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument(
-        "-d",
-        "--dry_run",
-        help="Describe what would be run but doesn't actually run it",
-        action="store_true",
-    )
-    arg_parser.add_argument("regex_patterns", nargs=argparse.REMAINDER)
-    args = arg_parser.parse_args()
-
-    output: str
-    if args.regex_patterns:
-        output = format_file_contents_for_llm(
-            dry_run=args.dry_run, regex_patterns=args.regex_patterns
-        )
-    else:
-        output = format_file_contents_for_llm(
-            dry_run=args.dry_run,
-        )
+    filepath_strings: list[str] = [
+        s for s in sys.stdin.read().splitlines() if s.strip()
+    ]
+    filepaths: list[Path] = [Path(s) for s in filepath_strings]
+    output: str = format_file_contents_for_llm(filepaths)
     print(output)
