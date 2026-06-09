@@ -930,3 +930,5 @@ url_to_text() {
   # url_to_text https://www.google.com > output.txt
   curl -sL "$1" | pandoc -f html -t plain
 }
+
+alias gpg-practice='gpgconf --kill gpg-agent && echo test | gpg --clearsign >/dev/null'
