@@ -958,6 +958,7 @@ tmux_helper() {
   ctrl + b &    # kill current window
   tmux kill-session -t <session-name>   # kill session <session-name>
   tmux kill-server    # everything dies
+  tmux select-pane -T "your pane name here"   # set pane name
 EOF
 }
 
