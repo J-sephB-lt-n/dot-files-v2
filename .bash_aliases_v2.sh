@@ -920,6 +920,47 @@ tmr_delete() {
   fi
 }
 
+pass_helper() {
+  cat <<EOF
+    # pass stores passwords as a filesystem
+    pass init <YOUR_GPG_KEY>
+    pass ls
+    # view a password:
+    pass pass/word/path
+    pass -c pass/word/path
+  
+    pass insert pass/word/path
+    pass edit pass/word/path
+    pass rm pass/word/path
+    pass mv s/r/c d/e/s/t  # can also move a folder
+EOF
+}
+
+tmux_helper() {
+  cat <<EOF
+  tmux  # starts a new session
+  tmux new -s <session-name>  # starts a new session with name <session-name>
+  tmux ls   # list available sessions
+  tmux attach -t <session-name>   # attach to an existing session
+  ctrl + b d  # detach from tmux (sessions remain running in the background)
+  ctrl + b c  # new window
+  ctrl + b n  # next window
+  ctrl + b p  # previous window
+  ctrl + b <num>  # go to window by number
+  ctrl + b w  # list windows
+  ctrl + b ,  # rename window
+  ctrl + b "  # horizontal split (new pane)
+  ctrl + b %  # vertical split (new pane)
+  ctrl + b <arrow>  # navigate between panes
+  ctrl + d    # close pane
+  ctrl+b : resize-pane (-R, -L, -U, -D) <num>   # resize pane
+  ctrl + b [  # scroll mode (exit with 'q')
+  ctrl + b &    # kill current window
+  tmux kill-session -t <session-name>   # kill session <session-name>
+  tmux kill-server    # everything dies
+EOF
+}
+
 unix_epoch_to_iso_8601() {
   # e.g. $ unix_epoch_to_iso_8601 1771483940
   date -u -d @"$1" +"%Y-%m-%dT%H:%M:%SZ"
