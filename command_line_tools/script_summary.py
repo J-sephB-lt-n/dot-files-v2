@@ -182,7 +182,68 @@ def format_args(src: bytes, args_node: Node) -> str:
 type _Summary = tuple[list[str], list[dict], list[dict], list[dict], list[dict]]
 
 
-def py_summary(src: bytes, root: Node) -> _Summary:
+def _py_docstring(src: bytes, body: Node) -> str | None:
+    """Return the docstring text from a Python function/class body node, or None.
+
+    The docstring is the first expression_statement child whose value is a
+    string literal.
+
+    Args:
+        src: Raw source bytes of the file.
+        body: The block / suite node that is the function or class body.
+
+    Returns:
+        The stripped docstring text, or None if no docstring is present.
+    """
+    for child in body.named_children:
+        if child.type == "expression_statement":
+            for sub in child.named_children:
+                if sub.type == "string":
+                    raw = text(src, sub)
+                    # Strip surrounding quotes (""", ''', ", ')
+                    for q in ('"""', "'''", '"', "'"):
+                        if raw.startswith(q) and raw.endswith(q) and len(raw) > 2 * len(q) - 1:
+                            return raw[len(q) : -len(q)].strip()
+                    return raw.strip()
+        break  # docstring must be the very first statement
+    return None
+
+
+def _jsdoc_comment(src: bytes, node: Node) -> str | None:
+    """Return the JSDoc comment text for a JS/TS node, or None.
+
+    Walks backwards through the node's preceding siblings to find an
+    immediately adjacent ``/** ... */`` block comment.
+
+    Args:
+        src: Raw source bytes of the file.
+        node: The function, class, or method declaration node.
+
+    Returns:
+        The stripped JSDoc text (without the /** */ delimiters), or None.
+    """
+    parent = node.parent
+    if parent is None:
+        return None
+    siblings = parent.children
+    idx = next((i for i, c in enumerate(siblings) if c.id == node.id), None)
+    if idx is None:
+        return None
+    # Scan backwards; skip only whitespace/newline nodes (unnamed)
+    for i in range(idx - 1, -1, -1):
+        sib = siblings[i]
+        if sib.is_named:
+            break  # named non-comment node — no JSDoc
+        raw = text(src, sib).strip()
+        if raw.startswith("/**") and raw.endswith("*/"):
+            inner = raw[3:-2].strip()
+            # Strip leading " * " from each line
+            lines = [ln.strip().lstrip("* ").lstrip("*") for ln in inner.splitlines()]
+            return "\n".join(lines).strip()
+    return None
+
+
+def py_summary(src: bytes, root: Node, include_docstrings: bool = True) -> _Summary:
     """Extract imports, functions, methods, classes, and calls from a Python AST.
 
     Methods are distinguished from standalone functions by checking whether their
@@ -191,6 +252,7 @@ def py_summary(src: bytes, root: Node) -> _Summary:
     Args:
         src: Raw source bytes of the file.
         root: Root node of the parsed Tree-sitter tree.
+        include_docstrings: When True, attach docstrings to entries.
 
     Returns:
         A tuple of (imports, functions, methods, classes, calls).
@@ -209,13 +271,17 @@ def py_summary(src: bytes, root: Node) -> _Summary:
             name_node = child_by_field(n, "name")
             supers = child_by_field(n, "superclasses")
             cls_name = text(src, name_node) if name_node else "<anonymous>"
-            classes.append(
-                {
-                    "name": cls_name,
-                    "args": text(src, supers) if supers else "",
-                    "line": n.start_point[0] + 1,
-                }
-            )
+            entry: dict = {
+                "name": cls_name,
+                "args": text(src, supers) if supers else "",
+                "line": n.start_point[0] + 1,
+            }
+            if include_docstrings:
+                body = child_by_field(n, "body")
+                doc = _py_docstring(src, body) if body else None
+                if doc:
+                    entry["docstring"] = doc
+            classes.append(entry)
             for child in n.children:
                 _visit(child, cls_name)
             return  # children already visited above
@@ -228,6 +294,11 @@ def py_summary(src: bytes, root: Node) -> _Summary:
                 "args": text(src, params) if params else "()",
                 "line": n.start_point[0] + 1,
             }
+            if include_docstrings:
+                body = child_by_field(n, "body")
+                doc = _py_docstring(src, body) if body else None
+                if doc:
+                    entry["docstring"] = doc
             if class_name is not None:
                 methods.append({**entry, "class": class_name})
             else:
@@ -252,7 +323,7 @@ def py_summary(src: bytes, root: Node) -> _Summary:
     return imports, funcs, methods, classes, calls
 
 
-def js_ts_summary(src: bytes, root: Node) -> _Summary:
+def js_ts_summary(src: bytes, root: Node, include_docstrings: bool = True) -> _Summary:
     """Extract imports, functions, methods, classes, and calls from a JS/TS AST.
 
     Methods (method_definition, public_field_definition) are always children of
@@ -261,6 +332,7 @@ def js_ts_summary(src: bytes, root: Node) -> _Summary:
     Args:
         src: Raw source bytes of the file.
         root: Root node of the parsed Tree-sitter tree.
+        include_docstrings: When True, attach JSDoc comments to entries.
 
     Returns:
         A tuple of (imports, functions, methods, classes, calls).
@@ -270,6 +342,13 @@ def js_ts_summary(src: bytes, root: Node) -> _Summary:
     methods: list[dict] = []
     classes: list[dict] = []
     calls: list[dict] = []
+
+    def _maybe_doc(node: Node) -> dict:
+        if include_docstrings:
+            doc = _jsdoc_comment(src, node)
+            if doc:
+                return {"docstring": doc}
+        return {}
 
     def _visit(n: Node, class_name: str | None) -> None:
         if n.type == "import_statement":
@@ -284,6 +363,7 @@ def js_ts_summary(src: bytes, root: Node) -> _Summary:
                     "name": cls_name,
                     "args": f"extends {text(src, heritage)}" if heritage else "",
                     "line": n.start_point[0] + 1,
+                    **_maybe_doc(n),
                 }
             )
             for child in n.children:
@@ -307,11 +387,14 @@ def js_ts_summary(src: bytes, root: Node) -> _Summary:
                 params = child_by_field(value, "parameters") or child_by_field(
                     value, "parameter"
                 )
+                # JSDoc lives on the parent variable_declaration, not the declarator
+                doc_node = n.parent if n.parent else n
                 funcs.append(
                     {
                         "name": name,
                         "args": text(src, params) if params else "()",
                         "line": value.start_point[0] + 1,
+                        **(_maybe_doc(doc_node)),
                     }
                 )
                 # Recurse into the function body only, skipping the function node
@@ -332,6 +415,7 @@ def js_ts_summary(src: bytes, root: Node) -> _Summary:
                     "name": text(src, name_node) if name_node else "<anonymous>",
                     "args": text(src, params) if params else "()",
                     "line": n.start_point[0] + 1,
+                    **_maybe_doc(n),
                 }
             )
 
@@ -343,6 +427,7 @@ def js_ts_summary(src: bytes, root: Node) -> _Summary:
                     "name": text(src, name_node),
                     "args": text(src, params) if params else "()",
                     "line": n.start_point[0] + 1,
+                    **_maybe_doc(n),
                 }
                 if class_name is not None:
                     methods.append({**entry, "class": class_name})
@@ -356,6 +441,7 @@ def js_ts_summary(src: bytes, root: Node) -> _Summary:
                     "name": "<arrow_function>",
                     "args": text(src, params) if params else "()",
                     "line": n.start_point[0] + 1,
+                    **_maybe_doc(n),
                 }
             )
 
@@ -425,7 +511,15 @@ def main() -> None:
         default=False,
         help="Include the 'Functions/methods called' section in output",
     )
+    ap.add_argument(
+        "--no-docs",
+        action="store_true",
+        default=False,
+        help="Omit docstrings (Python) and JSDoc comments (JS/TS) from output",
+    )
     args = ap.parse_args()
+
+    include_docs = not args.no_docs
 
     path = args.file
     lang = LANG_BY_SUFFIX.get(path.suffix.lower())
@@ -438,18 +532,26 @@ def main() -> None:
     root = tree.root_node
 
     if lang == "python":
-        imports, funcs, methods, classes, calls = py_summary(src, root)
+        imports, funcs, methods, classes, calls = py_summary(src, root, include_docstrings=include_docs)
+        module_doc = _py_docstring(src, root) if include_docs else None
     else:
-        imports, funcs, methods, classes, calls = js_ts_summary(src, root)
+        imports, funcs, methods, classes, calls = js_ts_summary(src, root, include_docstrings=include_docs)
+        module_doc = None
 
-    result = {
+    result: dict = {
         "file": str(path),
         "language": lang,
-        "imports": unique(imports),
-        "functions": unique(funcs),
-        "methods": unique(methods),
-        "classes": unique(classes),
     }
+    if module_doc:
+        result["module_docstring"] = module_doc
+    result.update(
+        {
+            "imports": unique(imports),
+            "functions": unique(funcs),
+            "methods": unique(methods),
+            "classes": unique(classes),
+        }
+    )
     if args.include_calls:
         result["calls"] = unique(calls)
 
@@ -458,30 +560,36 @@ def main() -> None:
         return
 
     print(f"# Summary: {path}\n")
-    print("## Imports")
 
+    if module_doc:
+        print(f"**Module:** {module_doc}\n")
+
+    print("## Imports")
     print("\n".join(f"- {x}" for x in result["imports"]) or "- None")
+
+    def _fmt_entry(e: dict, prefix: str = "") -> str:
+        line = f"- {prefix}{e['name']}{e['args']}  [line {e['line']}]"
+        if "docstring" in e:
+            first_line = e["docstring"].splitlines()[0] if e["docstring"] else ""
+            line += f"\n  _{first_line}_"
+        return line
 
     print("\n## Function definitions")
     print(
-        "\n".join(
-            f"- {f['name']}{f['args']}  [line {f['line']}]" for f in result["functions"]
-        )
+        "\n".join(_fmt_entry(f) for f in result["functions"])
         or "- None"
     )
 
     print("\n## Class definitions")
     print(
-        "\n".join(
-            f"- {c['name']}{c['args']}  [line {c['line']}]" for c in result["classes"]
-        )
+        "\n".join(_fmt_entry(c) for c in result["classes"])
         or "- None"
     )
 
     print("\n## Class method definitions")
     print(
         "\n".join(
-            f"- {m['class']}.{m['name']}{m['args']}  [line {m['line']}]"
+            _fmt_entry(m, prefix=f"{m['class']}.")
             for m in result["methods"]
         )
         or "- None"
