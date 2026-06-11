@@ -562,16 +562,23 @@ def main() -> None:
     print(f"# Summary: {path}\n")
 
     if module_doc:
-        print(f"**Module:** {module_doc}\n")
+        first_line = module_doc.splitlines()[0] if module_doc else ""
+        print(f'"""{first_line}"""\n')
 
     print("## Imports")
     print("\n".join(f"- {x}" for x in result["imports"]) or "- None")
 
+    def _fmt_doc(doc: str) -> str:
+        first_line = doc.splitlines()[0] if doc else ""
+        if lang == "python":
+            return f'  """{first_line}"""'
+        else:
+            return f"  /** {first_line} */"
+
     def _fmt_entry(e: dict, prefix: str = "") -> str:
         line = f"- {prefix}{e['name']}{e['args']}  [line {e['line']}]"
         if "docstring" in e:
-            first_line = e["docstring"].splitlines()[0] if e["docstring"] else ""
-            line += f"\n  _{first_line}_"
+            line += f"\n{_fmt_doc(e['docstring'])}"
         return line
 
     print("\n## Function definitions")
