@@ -2,7 +2,9 @@
 r"""
 Example usage:
     ls *.py | format_file_contents_for_llm
-    find ./somedir ./some/other/path \( -name '*.md' -or -name '*.txt' \) | format_file_contents_for_llm
+    ls *.py | format_file_contents_for_llm | clip.exe # on WSL, pipe straight to clipboard
+    find ./somedir ./some/other/path -type f \( -name '*.md' -or -name '*.txt' \) | format_file_contents_for_llm
+    find . -type f | fzf -m | format_file_contents_for_llm
 
 Place this script (without .py) in /usr/local/bin/ to make this script globally available
 (might also need `sudo chmod +x /usr/local/bin/format_file_contents_for_llm`
