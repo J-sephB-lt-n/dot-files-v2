@@ -304,6 +304,29 @@ def py_summary(src: bytes, root: Node, include_docstrings: bool = True) -> _Summ
             else:
                 funcs.append(entry)
 
+        elif n.type == "lambda":
+            # Resolve the name from the enclosing assignment if possible,
+            # e.g. `f = lambda x: x` → name "f"; otherwise "<lambda>".
+            params = child_by_field(n, "parameters")
+            # lambda_parameters has no surrounding parens, so add them.
+            args_str = f"({text(src, params)})" if params else "()"
+            name = "<lambda>"
+            parent = n.parent
+            if parent is not None and parent.type == "assignment":
+                left = child_by_field(parent, "left")
+                if left is not None:
+                    name = text(src, left)
+            entry = {
+                "name": name,
+                "args": args_str,
+                "line": n.start_point[0] + 1,
+            }
+            if class_name is not None:
+                methods.append({**entry, "class": class_name})
+            else:
+                funcs.append(entry)
+            return  # don't recurse — lambda body has no nested defs of interest
+
         elif n.type == "call":
             fn = child_by_field(n, "function")
             args_node = child_by_field(n, "arguments")
@@ -517,6 +540,12 @@ def main() -> None:
         default=False,
         help="Omit docstrings (Python) and JSDoc comments (JS/TS) from output",
     )
+    ap.add_argument(
+        "--include-anonymous",
+        action="store_true",
+        default=False,
+        help="Include anonymous lambdas (<lambda>) and arrow functions (<arrow_function>) in output",
+    )
     args = ap.parse_args()
 
     include_docs = not args.no_docs
@@ -537,6 +566,11 @@ def main() -> None:
     else:
         imports, funcs, methods, classes, calls = js_ts_summary(src, root, include_docstrings=include_docs)
         module_doc = None
+
+    _ANONYMOUS_NAMES = {"<lambda>", "<arrow_function>"}
+    if not args.include_anonymous:
+        funcs = [f for f in funcs if f["name"] not in _ANONYMOUS_NAMES]
+        methods = [m for m in methods if m["name"] not in _ANONYMOUS_NAMES]
 
     result: dict = {
         "file": str(path),
