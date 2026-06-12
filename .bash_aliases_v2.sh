@@ -930,6 +930,7 @@ pass_helper() {
     pass -c pass/word/path
   
     pass insert pass/word/path
+    pass insert --multiline pass/word/path  # a block of text
     pass edit pass/word/path
     pass rm pass/word/path
     pass mv s/r/c d/e/s/t  # can also move a folder
