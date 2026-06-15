@@ -954,7 +954,7 @@ tmux_helper() {
   ctrl + b %  # vertical split (new pane)
   ctrl + b <arrow>  # navigate between panes
   ctrl + q + <num>  # navigate to pane by number
-  ctrl + d    # close pane
+  ctrl + b x # kill pane (confirm with $(y))
   ctrl+b : resize-pane (-R, -L, -U, -D) <num>   # resize pane
   ctrl + b [  # scroll mode (exit with 'q')
   ctrl + b &    # kill current window
