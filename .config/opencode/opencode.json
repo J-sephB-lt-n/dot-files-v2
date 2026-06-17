@@ -4,6 +4,7 @@
   "permission": {
     "edit": "ask",
     "bash": {
+      "*": "ask",
       "sudo *": "deny"
     }
   },
@@ -54,6 +55,9 @@
         },
         "bedrock.anthropic.claude-sonnet-4-5": {
           "name": "Claude Sonnet 4.5"
+        },
+        "openai.gpt-5.5": {
+          "name": "GPT 5.5"
         },
         "vertex_ai.anthropic.claude-opus-4": {
           "name": "Claude Opus 4"
