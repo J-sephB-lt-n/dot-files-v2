@@ -623,7 +623,7 @@ function list_llms() {
   local response
   if ! response=$(curl -s -w "%{http_code}" \
     -H "Authorization: Bearer $OPENAI_API_KEY" \
-    "$base_url/v1/models"); then
+    "$base_url/models"); then
     echo "Error: Failed to connect to $base_url/v1/models" >&2
     return 1
   fi
