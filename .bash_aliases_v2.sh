@@ -975,4 +975,4 @@ url_to_text() {
   curl -sL "$1" | pandoc -f html -t plain
 }
 
-alias gpg-practice='gpgconf --kill gpg-agent && echo test | gpg --clearsign >/dev/null'
+alias gpg-practice='gpgconf --kill gpg-agent && echo test | gpg --clearsign >/dev/null && gpg --decrypt ~/.practice-symmetric.gpg >/dev/null && gpgconf --kill gpg-agent'
