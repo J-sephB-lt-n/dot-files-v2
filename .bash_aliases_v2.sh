@@ -937,6 +937,14 @@ pass_helper() {
 EOF
 }
 
+redis_helper() {
+  cat <<EOF
+  # connect to redis CLI on redis running on docker container:
+  docker ps
+  docker exec -it <container-id> redis-cli
+EOF
+}
+
 tmux_helper() {
   cat <<EOF
   tmux  # starts a new session
