@@ -7,13 +7,14 @@
 #   "tree-sitter-python",
 #   "tree-sitter-javascript",
 #   "tree-sitter-typescript",
+#   "tree-sitter-c-sharp",
 # ]
 # ///
 
 """
-CLI tool giving a concise summary of a python, js or ts file by listing its imports,
-function definitions, class definitions, class method definitions, and
-function/method calls (using tree-sitter).
+CLI tool giving a concise summary of a python, js, ts, or C# file by listing its imports,
+function definitions, class definitions, class method definitions,
+function/method calls and attached code comments/docstrings (using tree-sitter).
 
 To make available globally:
     1. chmod +x script_summary.py
@@ -25,6 +26,7 @@ import argparse
 import json
 from pathlib import Path
 
+import tree_sitter_c_sharp as _tscs
 import tree_sitter_javascript as _tsjs
 import tree_sitter_python as _tspy
 import tree_sitter_typescript as _tsts
@@ -36,6 +38,7 @@ _LANGUAGES: dict[str, Language] = {
     "javascript": Language(_tsjs.language()),
     "typescript": Language(_tsts.language_typescript()),
     "tsx": Language(_tsts.language_tsx()),
+    "csharp": Language(_tscs.language()),
 }
 
 LANG_BY_SUFFIX: dict[str, str] = {
@@ -44,6 +47,8 @@ LANG_BY_SUFFIX: dict[str, str] = {
     ".jsx": "javascript",
     ".ts": "typescript",
     ".tsx": "tsx",
+    ".cs": "csharp",
+    ".csx": "csharp",
 }
 
 
@@ -202,10 +207,40 @@ def _py_docstring(src: bytes, body: Node) -> str | None:
                     raw = text(src, sub)
                     # Strip surrounding quotes (""", ''', ", ')
                     for q in ('"""', "'''", '"', "'"):
-                        if raw.startswith(q) and raw.endswith(q) and len(raw) > 2 * len(q) - 1:
+                        if (
+                            raw.startswith(q)
+                            and raw.endswith(q)
+                            and len(raw) > 2 * len(q) - 1
+                        ):
                             return raw[len(q) : -len(q)].strip()
                     return raw.strip()
         break  # docstring must be the very first statement
+    return None
+
+
+def _js_file_doc(src: bytes, root: Node) -> str | None:
+    """Return the file-level JSDoc comment from a JS/TS program node, or None.
+
+    Scans forward through the root's named children and returns the first
+    ``/** ... */`` block comment that appears before any import or declaration,
+    skipping only shebangs (``hash_bang_line``).
+
+    Args:
+        src: Raw source bytes of the file.
+        root: The ``program`` root node.
+
+    Returns:
+        The stripped JSDoc text (without ``/** */`` delimiters), or None.
+    """
+    for child in root.named_children:
+        if child.type == "hash_bang_line":
+            continue
+        raw = text(src, child).strip()
+        if child.type == "comment" and raw.startswith("/**") and raw.endswith("*/"):
+            inner = raw[3:-2].strip()
+            lines = [ln.strip().lstrip("* ").lstrip("*") for ln in inner.splitlines()]
+            return "\n".join(lines).strip() or None
+        break  # first non-shebang, non-comment node — no file-level doc
     return None
 
 
@@ -213,14 +248,67 @@ def _jsdoc_comment(src: bytes, node: Node) -> str | None:
     """Return the JSDoc comment text for a JS/TS node, or None.
 
     Walks backwards through the node's preceding siblings to find an
-    immediately adjacent ``/** ... */`` block comment.
+    immediately adjacent ``/** ... */`` block comment. Also checks the
+    parent ``export_statement``'s preceding siblings, so that JSDoc on
+    ``export function foo()`` / ``export class Bar`` is correctly resolved.
 
     Args:
         src: Raw source bytes of the file.
-        node: The function, class, or method declaration node.
+        node: The function, class, method, or type declaration node.
 
     Returns:
         The stripped JSDoc text (without the /** */ delimiters), or None.
+    """
+    def _extract_jsdoc(raw: str) -> str | None:
+        if raw.startswith("/**") and raw.endswith("*/"):
+            inner = raw[3:-2].strip()
+            lines = [ln.strip().lstrip("* ").lstrip("*") for ln in inner.splitlines()]
+            return "\n".join(lines).strip() or None
+        return None
+
+    def _scan_siblings(target: Node) -> str | None:
+        parent = target.parent
+        if parent is None:
+            return None
+        siblings = parent.children
+        idx = next((i for i, c in enumerate(siblings) if c.id == target.id), None)
+        if idx is None:
+            return None
+        # Scan backwards; skip unnamed whitespace nodes; stop on any named
+        # node that is not a comment (e.g. another declaration).
+        for i in range(idx - 1, -1, -1):
+            sib = siblings[i]
+            if not sib.is_named:
+                continue  # unnamed whitespace/punctuation — skip
+            raw = text(src, sib).strip()
+            if sib.type == "comment":
+                result = _extract_jsdoc(raw)
+                if result:
+                    return result
+                break  # non-JSDoc comment (e.g. //) — stop
+            break  # any other named node — stop
+        return None
+
+    # First try the node itself, then its parent export_statement (if any)
+    result = _scan_siblings(node)
+    if result is None and node.parent and node.parent.type == "export_statement":
+        result = _scan_siblings(node.parent)
+    return result
+
+
+def _cs_xml_doc(src: bytes, node: Node) -> str | None:
+    """Return the XML doc comment text immediately preceding a C# node, or None.
+
+    Collects consecutive ``///`` single-line comment siblings that appear
+    directly before the node (skipping no named nodes in between), strips the
+    ``///`` prefix from each line, and joins them into a single string.
+
+    Args:
+        src: Raw source bytes of the file.
+        node: The declaration node (class, method, property, enum, …).
+
+    Returns:
+        The joined doc-comment text, or None if no ``///`` block precedes the node.
     """
     parent = node.parent
     if parent is None:
@@ -229,18 +317,298 @@ def _jsdoc_comment(src: bytes, node: Node) -> str | None:
     idx = next((i for i, c in enumerate(siblings) if c.id == node.id), None)
     if idx is None:
         return None
-    # Scan backwards; skip only whitespace/newline nodes (unnamed)
+    # Collect consecutive /// comment siblings immediately before this node.
+    doc_lines: list[str] = []
     for i in range(idx - 1, -1, -1):
         sib = siblings[i]
-        if sib.is_named:
-            break  # named non-comment node — no JSDoc
+        if not sib.is_named:
+            continue  # skip whitespace tokens
         raw = text(src, sib).strip()
-        if raw.startswith("/**") and raw.endswith("*/"):
-            inner = raw[3:-2].strip()
-            # Strip leading " * " from each line
-            lines = [ln.strip().lstrip("* ").lstrip("*") for ln in inner.splitlines()]
-            return "\n".join(lines).strip()
-    return None
+        if sib.type == "comment" and raw.startswith("///"):
+            # Strip leading /// and optional single space
+            line = raw[3:]
+            if line.startswith(" "):
+                line = line[1:]
+            doc_lines.append(line)
+        else:
+            break  # non-doc-comment named node — stop
+    if not doc_lines:
+        return None
+    doc_lines.reverse()
+    return _cs_strip_xml_tags("\n".join(doc_lines)) or None
+
+
+def _cs_file_doc(src: bytes, root: Node) -> str | None:
+    """Return the file-level XML doc comment from a C# compilation_unit, or None.
+
+    File-level docs are consecutive ``///`` comment nodes at the very start of
+    the ``compilation_unit``, before any ``using_directive`` or
+    ``namespace_declaration``.
+
+    Args:
+        src: Raw source bytes of the file.
+        root: The ``compilation_unit`` root node.
+
+    Returns:
+        The stripped doc-comment text, or None.
+    """
+    doc_lines: list[str] = []
+    for child in root.children:
+        if not child.is_named:
+            continue
+        raw = text(src, child).strip()
+        if child.type == "comment" and raw.startswith("///"):
+            line = raw[3:]
+            if line.startswith(" "):
+                line = line[1:]
+            doc_lines.append(line)
+        else:
+            break  # first non-comment named node — stop
+    if not doc_lines:
+        return None
+    return _cs_strip_xml_tags("\n".join(doc_lines)) or None
+
+
+def _cs_strip_xml_tags(text_: str) -> str:
+    """Strip XML tags from a string, keeping their text content."""
+    import re
+    return re.sub(r"<[^>]+>", "", text_).strip()
+
+
+def _cs_attributes(src: bytes, node: Node) -> list[str]:
+    """Return a list of attribute strings for a C# declaration node.
+
+    Collects all ``attribute_list`` children of the node and renders each
+    attribute as its full source text (e.g. ``[HttpGet]``,
+    ``[Route("users")]``).
+
+    Args:
+        src: Raw source bytes of the file.
+        node: The declaration node whose attributes to collect.
+
+    Returns:
+        List of attribute strings, each including the surrounding brackets.
+    """
+    attrs: list[str] = []
+    for child in node.children:
+        if child.type == "attribute_list":
+            attrs.append(text(src, child).strip())
+    return attrs
+
+
+def _cs_modifiers(src: bytes, node: Node) -> list[str]:
+    """Return all modifier keywords for a C# declaration node.
+
+    Args:
+        src: Raw source bytes of the file.
+        node: The declaration node.
+
+    Returns:
+        List of modifier strings, e.g. ``["public", "async"]``.
+    """
+    mods: list[str] = []
+    for child in node.children:
+        if child.type == "modifier":
+            mods.append(text(src, child).strip())
+    return mods
+
+
+def cs_summary(src: bytes, root: Node, include_docstrings: bool = True) -> _Summary:
+    """Extract imports, functions, methods, classes, and properties from a C# AST.
+
+    Captures (per the C# summary checklist):
+    - ``using`` directives as imports
+    - Class / interface / enum / record / struct declarations (with attributes,
+      base list, modifiers, XML doc)
+    - Public/protected constructors and methods (with return type, parameters,
+      attributes, modifiers, XML doc)
+    - Public/protected properties (with type, accessor shape, attributes, XML doc)
+    - Enum members (with values)
+
+    Private members and method bodies are intentionally omitted.
+
+    Args:
+        src: Raw source bytes of the file.
+        root: Root node of the parsed Tree-sitter tree.
+        include_docstrings: When True, attach XML doc comments to entries.
+
+    Returns:
+        A tuple of (imports, functions, methods, classes, calls).
+        ``functions`` holds public/protected top-level or standalone members.
+        ``calls`` is always empty (not extracted for C#).
+    """
+    imports: list[str] = []
+    funcs: list[dict] = []
+    methods: list[dict] = []
+    classes: list[dict] = []
+    calls: list[dict] = []  # not extracted for C#
+
+    _PUBLIC_LIKE = {"public", "protected", "protected internal"}
+
+    def _is_visible(node: Node) -> bool:
+        mods = set(_cs_modifiers(src, node))
+        return bool(mods & _PUBLIC_LIKE)
+
+    def _maybe_doc(node: Node) -> dict:
+        if include_docstrings:
+            doc = _cs_xml_doc(src, node)
+            if doc:
+                return {"docstring": doc}
+        return {}
+
+    def _visit(n: Node, class_name: str | None) -> None:
+        # ── using directives ──────────────────────────────────────────────────
+        if n.type == "using_directive":
+            imports.append(text(src, n).strip())
+
+        # ── type declarations ─────────────────────────────────────────────────
+        elif n.type in {
+            "class_declaration",
+            "interface_declaration",
+            "enum_declaration",
+            "record_declaration",
+            "struct_declaration",
+        }:
+            name_node = n.child_by_field_name("name")
+            cls_name = text(src, name_node) if name_node else "<anonymous>"
+
+            mods = _cs_modifiers(src, n)
+            kw = n.type.replace("_declaration", "")  # "class", "interface", …
+
+            base_list_node = next(
+                (c for c in n.children if c.type == "base_list"), None
+            )
+            bases = text(src, base_list_node).lstrip(": ").strip() if base_list_node else ""
+
+            type_params_node = n.child_by_field_name("type_parameters")
+            generic = text(src, type_params_node) if type_params_node else ""
+
+            attrs = _cs_attributes(src, n)
+
+            entry: dict = {
+                "name": cls_name + generic,
+                "kind": kw,
+                "modifiers": mods,
+                "bases": bases,
+                "attributes": attrs,
+                "line": n.start_point[0] + 1,
+                **_maybe_doc(n),
+            }
+
+            # For enums, capture members inline
+            if n.type == "enum_declaration":
+                body = n.child_by_field_name("body")
+                if body:
+                    members: list[dict] = []
+                    for child in body.children:
+                        if child.type == "enum_member_declaration":
+                            m_name = child.child_by_field_name("name")
+                            m_val = child.child_by_field_name("value")
+                            m_entry: dict = {
+                                "name": text(src, m_name) if m_name else "?",
+                            }
+                            if m_val:
+                                m_entry["value"] = text(src, m_val).strip()
+                            if include_docstrings:
+                                m_doc = _cs_xml_doc(src, child)
+                                if m_doc:
+                                    m_entry["docstring"] = m_doc
+                            members.append(m_entry)
+                    entry["members"] = members
+
+            classes.append(entry)
+
+            # Recurse into body
+            body_field = n.child_by_field_name("body")
+            if body_field:
+                for child in body_field.children:
+                    _visit(child, cls_name)
+            return
+
+        # ── constructors ──────────────────────────────────────────────────────
+        elif n.type == "constructor_declaration":
+            if not _is_visible(n):
+                return
+            name_node = n.child_by_field_name("name")
+            params_node = n.child_by_field_name("parameters")
+            entry = {
+                "name": text(src, name_node) if name_node else "<ctor>",
+                "args": text(src, params_node).strip() if params_node else "()",
+                "modifiers": _cs_modifiers(src, n),
+                "attributes": _cs_attributes(src, n),
+                "line": n.start_point[0] + 1,
+                **_maybe_doc(n),
+            }
+            if class_name is not None:
+                methods.append({**entry, "class": class_name, "kind": "constructor"})
+            else:
+                funcs.append({**entry, "kind": "constructor"})
+
+        # ── methods ───────────────────────────────────────────────────────────
+        elif n.type == "method_declaration":
+            if not _is_visible(n):
+                return
+            name_node = n.child_by_field_name("name")
+            params_node = n.child_by_field_name("parameters")
+            ret_node = n.child_by_field_name("returns")
+            type_params_node = n.child_by_field_name("type_parameters")
+            generic = text(src, type_params_node) if type_params_node else ""
+            entry = {
+                "name": (text(src, name_node) if name_node else "<method>") + generic,
+                "args": text(src, params_node).strip() if params_node else "()",
+                "returns": text(src, ret_node).strip() if ret_node else "",
+                "modifiers": _cs_modifiers(src, n),
+                "attributes": _cs_attributes(src, n),
+                "line": n.start_point[0] + 1,
+                **_maybe_doc(n),
+            }
+            if class_name is not None:
+                methods.append({**entry, "class": class_name, "kind": "method"})
+            else:
+                funcs.append({**entry, "kind": "method"})
+
+        # ── properties ────────────────────────────────────────────────────────
+        elif n.type == "property_declaration":
+            if not _is_visible(n):
+                return
+            name_node = n.child_by_field_name("name")
+            type_node = n.child_by_field_name("type")
+            accessors_node = n.child_by_field_name("accessors")
+            # Summarise accessor shape: "{ get; set; }", "{ get; init; }", etc.
+            accessors_str = ""
+            if accessors_node:
+                acc_kws = []
+                for c in accessors_node.named_children:
+                    if c.type == "get_accessor_declaration":
+                        acc_kws.append("get")
+                    elif c.type == "set_accessor_declaration":
+                        acc_kws.append("set")
+                    elif c.type == "init_accessor_declaration":
+                        acc_kws.append("init")
+                accessors_str = (
+                    "{ " + "; ".join(acc_kws) + "; }" if acc_kws
+                    else text(src, accessors_node).strip()
+                )
+            entry = {
+                "name": text(src, name_node) if name_node else "<prop>",
+                "type": text(src, type_node).strip() if type_node else "",
+                "accessors": accessors_str,
+                "modifiers": _cs_modifiers(src, n),
+                "attributes": _cs_attributes(src, n),
+                "line": n.start_point[0] + 1,
+                **_maybe_doc(n),
+            }
+            if class_name is not None:
+                methods.append({**entry, "class": class_name, "kind": "property"})
+            else:
+                funcs.append({**entry, "kind": "property"})
+
+        else:
+            for child in n.children:
+                _visit(child, class_name)
+
+    _visit(root, class_name=None)
+    return imports, funcs, methods, classes, calls
 
 
 def py_summary(src: bytes, root: Node, include_docstrings: bool = True) -> _Summary:
@@ -393,6 +761,70 @@ def js_ts_summary(src: bytes, root: Node, include_docstrings: bool = True) -> _S
                 _visit(child, cls_name)
             return  # children already visited above
 
+        elif n.type == "interface_declaration":
+            name_node = child_by_field(n, "name")
+            heritage = child_by_field(n, "extends_clause")
+            iface_name = text(src, name_node) if name_node else "<anonymous>"
+            type_params = child_by_field(n, "type_parameters")
+            generic = text(src, type_params) if type_params else ""
+            classes.append(
+                {
+                    "name": iface_name + generic,
+                    "args": text(src, heritage).strip() if heritage else "",
+                    "line": n.start_point[0] + 1,
+                    **_maybe_doc(n),
+                }
+            )
+            body = child_by_field(n, "body")
+            if body:
+                for child in body.children:
+                    _visit(child, iface_name)
+            return
+
+        elif n.type in {"method_signature", "property_signature"}:
+            # Interface members (TS)
+            name_node = child_by_field(n, "name")
+            params = child_by_field(n, "parameters")
+            if name_node:
+                args = text(src, params) if params else ("" if n.type == "property_signature" else "()")
+                entry = {
+                    "name": text(src, name_node),
+                    "args": args,
+                    "line": n.start_point[0] + 1,
+                    **_maybe_doc(n),
+                }
+                if class_name is not None:
+                    methods.append({**entry, "class": class_name})
+                else:
+                    funcs.append(entry)
+
+        elif n.type == "type_alias_declaration":
+            # e.g. `type UserId = string` — capture as a class-like entry
+            name_node = child_by_field(n, "name")
+            type_params = child_by_field(n, "type_parameters")
+            generic = text(src, type_params) if type_params else ""
+            if name_node:
+                classes.append(
+                    {
+                        "name": text(src, name_node) + generic,
+                        "args": "type alias",
+                        "line": n.start_point[0] + 1,
+                        **_maybe_doc(n),
+                    }
+                )
+
+        elif n.type == "enum_declaration":
+            name_node = child_by_field(n, "name")
+            if name_node:
+                classes.append(
+                    {
+                        "name": text(src, name_node),
+                        "args": "enum",
+                        "line": n.start_point[0] + 1,
+                        **_maybe_doc(n),
+                    }
+                )
+
         elif n.type == "variable_declarator":
             # Attach the declarator name to a directly-assigned arrow or function
             # expression, e.g. `const foo = (x) => x` or `const foo = function() {}`.
@@ -446,9 +878,11 @@ def js_ts_summary(src: bytes, root: Node, include_docstrings: bool = True) -> _S
             name_node = child_by_field(n, "name")
             params = child_by_field(n, "parameters")
             if name_node:
+                # public_field_definition is a class property — omit args if no params
+                args = text(src, params) if params else ("" if n.type == "public_field_definition" else "()")
                 entry = {
                     "name": text(src, name_node),
-                    "args": text(src, params) if params else "()",
+                    "args": args,
                     "line": n.start_point[0] + 1,
                     **_maybe_doc(n),
                 }
@@ -521,7 +955,7 @@ def unique(items: list) -> list:
 def main() -> None:
     """Entry point: parse arguments, run analysis, and print the summary."""
     ap = argparse.ArgumentParser(
-        description="Summarize one Python/JS/TS file using Tree-sitter.",
+        description="Summarize one Python/JS/TS/C# file using Tree-sitter.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     ap.add_argument("file", type=Path)
@@ -538,7 +972,7 @@ def main() -> None:
         "--no-docs",
         action="store_true",
         default=False,
-        help="Omit docstrings (Python) and JSDoc comments (JS/TS) from output",
+        help="Omit docstrings (Python), JSDoc comments (JS/TS), and XML doc comments (C#) from output",
     )
     ap.add_argument(
         "--include-anonymous",
@@ -561,11 +995,20 @@ def main() -> None:
     root = tree.root_node
 
     if lang == "python":
-        imports, funcs, methods, classes, calls = py_summary(src, root, include_docstrings=include_docs)
+        imports, funcs, methods, classes, calls = py_summary(
+            src, root, include_docstrings=include_docs
+        )
         module_doc = _py_docstring(src, root) if include_docs else None
+    elif lang == "csharp":
+        imports, funcs, methods, classes, calls = cs_summary(
+            src, root, include_docstrings=include_docs
+        )
+        module_doc = _cs_file_doc(src, root) if include_docs else None
     else:
-        imports, funcs, methods, classes, calls = js_ts_summary(src, root, include_docstrings=include_docs)
-        module_doc = None
+        imports, funcs, methods, classes, calls = js_ts_summary(
+            src, root, include_docstrings=include_docs
+        )
+        module_doc = _js_file_doc(src, root) if include_docs else None
 
     _ANONYMOUS_NAMES = {"<lambda>", "<arrow_function>"}
     if not args.include_anonymous:
@@ -597,7 +1040,12 @@ def main() -> None:
 
     if module_doc:
         first_line = module_doc.splitlines()[0] if module_doc else ""
-        print(f'"""{first_line}"""\n')
+        if lang == "csharp":
+            print(f'/// {first_line}\n')
+        elif lang in ("javascript", "typescript", "tsx"):
+            print(f'/** {first_line} */\n')
+        else:
+            print(f'"""{first_line}"""\n')
 
     print("## Imports")
     print("\n".join(f"- {x}" for x in result["imports"]) or "- None")
@@ -606,31 +1054,58 @@ def main() -> None:
         first_line = doc.splitlines()[0] if doc else ""
         if lang == "python":
             return f'  """{first_line}"""'
+        elif lang == "csharp":
+            return f"  /// {first_line}"
         else:
             return f"  /** {first_line} */"
 
     def _fmt_entry(e: dict, prefix: str = "") -> str:
-        line = f"- {prefix}{e['name']}{e['args']}  [line {e['line']}]"
+        if lang == "csharp":
+            kind = e.get("kind", "")
+            attrs = e.get("attributes", [])
+            mods = " ".join(e.get("modifiers", []))
+            attrs_str = " ".join(attrs) + " " if attrs else ""
+
+            if kind == "property":
+                sig = f"{mods} {e.get('type', '')} {prefix}{e['name']} {e.get('accessors', '')}".strip()
+            elif kind in ("method", "constructor"):
+                ret = e.get("returns", "")
+                ret_str = f"{ret} " if ret else ""
+                sig = f"{mods} {ret_str}{prefix}{e['name']}{e['args']}".strip()
+            else:
+                # class / interface / enum / record / struct
+                bases = e.get("bases", "")
+                bases_str = f" : {bases}" if bases else ""
+                sig = f"{mods} {e.get('kind', '')} {prefix}{e['name']}{bases_str}".strip()
+
+            line = f"- {attrs_str}{sig}  [line {e['line']}]"
+        else:
+            line = f"- {prefix}{e['name']}{e['args']}  [line {e['line']}]"
+
         if "docstring" in e:
             line += f"\n{_fmt_doc(e['docstring'])}"
         return line
 
+    def _fmt_class_entry(e: dict) -> str:
+        lines = [_fmt_entry(e)]
+        # For C# enums, show members indented
+        if lang == "csharp" and "members" in e:
+            for m in e["members"]:
+                val_str = f" = {m['value']}" if "value" in m else ""
+                doc_str = f"  // {m['docstring'].splitlines()[0]}" if "docstring" in m else ""
+                lines.append(f"  - {m['name']}{val_str}{doc_str}")
+        return "\n".join(lines)
+
     print("\n## Function definitions")
-    print(
-        "\n".join(_fmt_entry(f) for f in result["functions"])
-        or "- None"
-    )
+    print("\n".join(_fmt_entry(f) for f in result["functions"]) or "- None")
 
     print("\n## Class definitions")
-    print(
-        "\n".join(_fmt_entry(c) for c in result["classes"])
-        or "- None"
-    )
+    print("\n".join(_fmt_class_entry(c) for c in result["classes"]) or "- None")
 
     print("\n## Class method definitions")
     print(
         "\n".join(
-            _fmt_entry(m, prefix=f"{m['class']}.")
+            _fmt_entry(m, prefix=f"{m['class']}." if "class" in m else "")
             for m in result["methods"]
         )
         or "- None"
