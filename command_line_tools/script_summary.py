@@ -339,11 +339,17 @@ def _cs_xml_doc(src: bytes, node: Node) -> str | None:
 
 
 def _cs_file_doc(src: bytes, root: Node) -> str | None:
-    """Return the file-level XML doc comment from a C# compilation_unit, or None.
+    """Return the file-level doc comment from a C# compilation_unit, or None.
 
-    File-level docs are consecutive ``///`` comment nodes at the very start of
-    the ``compilation_unit``, before any ``using_directive`` or
-    ``namespace_declaration``.
+    Accepts two forms, both of which must appear after all ``using`` directives
+    and before the first ``namespace`` or type declaration:
+
+    1. Consecutive ``///`` single-line XML doc comments (existing behaviour).
+    2. A single ``/* ... */`` block comment (e.g. a SignalR message-flow doc or
+       any other intentional file-level prose).  Block comments that appear
+       inside method or class bodies are excluded by the position constraint —
+       only a ``/* */`` node that is a direct child of ``compilation_unit``
+       after the ``using`` directives qualifies.
 
     Args:
         src: Raw source bytes of the file.
@@ -352,9 +358,26 @@ def _cs_file_doc(src: bytes, root: Node) -> str | None:
     Returns:
         The stripped doc-comment text, or None.
     """
+    _NON_DOC_TYPES = {
+        "namespace_declaration",
+        "file_scoped_namespace_declaration",
+        "class_declaration",
+        "interface_declaration",
+        "enum_declaration",
+        "record_declaration",
+        "struct_declaration",
+    }
     doc_lines: list[str] = []
+    block_doc: str | None = None
+
     for child in root.children:
         if not child.is_named:
+            continue
+        if child.type == "using_directive":
+            # Skip past using directives before looking for a doc comment.
+            # Reset any partial /// accumulation — usings may not precede ///.
+            doc_lines = []
+            block_doc = None
             continue
         raw = text(src, child).strip()
         if child.type == "comment" and raw.startswith("///"):
@@ -362,11 +385,18 @@ def _cs_file_doc(src: bytes, root: Node) -> str | None:
             if line.startswith(" "):
                 line = line[1:]
             doc_lines.append(line)
+        elif child.type == "comment" and raw.startswith("/*") and raw.endswith("*/") and not doc_lines:
+            # Single /* */ block comment — treat as file-level doc.
+            inner = raw[2:-2].strip()
+            block_doc = inner or None
         else:
-            break  # first non-comment named node — stop
-    if not doc_lines:
-        return None
-    return _cs_strip_xml_tags("\n".join(doc_lines)) or None
+            break  # first non-comment named node (namespace / type) — stop
+
+    if doc_lines:
+        return _cs_strip_xml_tags("\n".join(doc_lines)) or None
+    if block_doc:
+        return block_doc
+    return None
 
 
 def _cs_strip_xml_tags(text_: str) -> str:
@@ -714,11 +744,38 @@ def py_summary(src: bytes, root: Node, include_docstrings: bool = True) -> _Summ
     return imports, funcs, methods, classes, calls
 
 
+def _in_function_body(node: Node) -> bool:
+    """Return True if *node* is nested inside a function/method body.
+
+    Walks the ancestor chain and returns True as soon as a ``statement_block``
+    is found.  This distinguishes closures defined inside a function body from
+    genuine module-level (or class-level) declarations.
+
+    ``class_body`` is intentionally not treated as a function body — methods
+    defined directly on a class are always captured regardless.
+
+    Args:
+        node: The node to test.
+
+    Returns:
+        True if any ancestor is a ``statement_block``, False otherwise.
+    """
+    n = node.parent
+    while n is not None:
+        if n.type == "statement_block":
+            return True
+        n = n.parent
+    return False
+
+
 def js_ts_summary(src: bytes, root: Node, include_docstrings: bool = True) -> _Summary:
     """Extract imports, functions, methods, classes, and calls from a JS/TS AST.
 
     Methods (method_definition, public_field_definition) are always children of
     a class_body, so the enclosing class name is tracked via recursive descent.
+    Closures defined inside a function body (i.e. with a ``statement_block``
+    ancestor) are excluded — only module-level and class-level declarations are
+    captured.
 
     Args:
         src: Raw source bytes of the file.
@@ -828,6 +885,10 @@ def js_ts_summary(src: bytes, root: Node, include_docstrings: bool = True) -> _S
         elif n.type == "variable_declarator":
             # Attach the declarator name to a directly-assigned arrow or function
             # expression, e.g. `const foo = (x) => x` or `const foo = function() {}`.
+            # Skip closures defined inside a function body — they are implementation
+            # details, not module-level interface.
+            if _in_function_body(n):
+                return
             value = child_by_field(n, "value")
             if value and value.type in {"arrow_function", "function_expression"}:
                 var_name = child_by_field(n, "name")
@@ -863,6 +924,11 @@ def js_ts_summary(src: bytes, root: Node, include_docstrings: bool = True) -> _S
             "function_expression",
             "generator_function_declaration",
         }:
+            # Skip functions declared inside another function body.
+            if _in_function_body(n):
+                for child in n.children:
+                    _visit(child, class_name)
+                return
             name_node = child_by_field(n, "name")
             params = child_by_field(n, "parameters")
             funcs.append(
@@ -892,6 +958,9 @@ def js_ts_summary(src: bytes, root: Node, include_docstrings: bool = True) -> _S
                     funcs.append(entry)
 
         elif n.type == "arrow_function":
+            # Skip arrow functions inside a function body (closures / callbacks).
+            if _in_function_body(n):
+                return
             params = child_by_field(n, "parameters") or child_by_field(n, "parameter")
             funcs.append(
                 {
