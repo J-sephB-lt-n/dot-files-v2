@@ -83,6 +83,10 @@ alias docker_helper='echo "
   # (NOTE: there is also \`docker exec\` - go read about the differences) #
   docker attach my_container_name
 
+  # redis CLI example #
+  docker exec -it <container-id> redis-cli    # interactive
+  docker exec <container-id> redis-cli PING   # non-interactive
+
   # Delete the container \`my_container_name\` #
   # i.e. free up resources by erasing the container completely #
   docker rm my_container_name
@@ -934,14 +938,6 @@ pass_helper() {
     pass edit pass/word/path
     pass rm pass/word/path
     pass mv s/r/c d/e/s/t  # can also move a folder
-EOF
-}
-
-redis_helper() {
-  cat <<EOF
-  # connect to redis CLI on redis running on docker container:
-  docker ps
-  docker exec -it <container-id> redis-cli
 EOF
 }
 
