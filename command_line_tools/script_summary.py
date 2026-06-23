@@ -12,13 +12,13 @@
 # ///
 
 """
-CLI tool giving a concise summary of a python, js, ts, or C# file by listing its imports,
-function definitions, class definitions, class method definitions,
-function/method calls and attached code comments/docstrings (using tree-sitter).
+CLI tool which prints out the interfaces (and attached interface documentation) for
+a python (.py), javascript/typescript (.js/.jsx/.ts/.tsx) or a C# (.cs/.csx) file,
+omitting the implementation code. Uses treesitter.
 
 To make available globally:
     1. chmod +x script_summary.py
-    2. ln -s /home/josephbbolton/command_line_tools/script_summary.py ~/.local/bin/script_summary
+    2. ln -s /home/<your-username>/command_line_tools/script_summary.py ~/.local/bin/script_summary
     3. Now you can run `script_summary --help` from any folder
 """
 
@@ -259,6 +259,7 @@ def _jsdoc_comment(src: bytes, node: Node) -> str | None:
     Returns:
         The stripped JSDoc text (without the /** */ delimiters), or None.
     """
+
     def _extract_jsdoc(raw: str) -> str | None:
         if raw.startswith("/**") and raw.endswith("*/"):
             inner = raw[3:-2].strip()
@@ -385,7 +386,12 @@ def _cs_file_doc(src: bytes, root: Node) -> str | None:
             if line.startswith(" "):
                 line = line[1:]
             doc_lines.append(line)
-        elif child.type == "comment" and raw.startswith("/*") and raw.endswith("*/") and not doc_lines:
+        elif (
+            child.type == "comment"
+            and raw.startswith("/*")
+            and raw.endswith("*/")
+            and not doc_lines
+        ):
             # Single /* */ block comment — treat as file-level doc.
             inner = raw[2:-2].strip()
             block_doc = inner or None
@@ -402,6 +408,7 @@ def _cs_file_doc(src: bytes, root: Node) -> str | None:
 def _cs_strip_xml_tags(text_: str) -> str:
     """Strip XML tags from a string, keeping their text content."""
     import re
+
     return re.sub(r"<[^>]+>", "", text_).strip()
 
 
@@ -525,7 +532,9 @@ def cs_summary(src: bytes, root: Node, include_docstrings: bool = True) -> _Summ
             base_list_node = next(
                 (c for c in n.children if c.type == "base_list"), None
             )
-            bases = text(src, base_list_node).lstrip(": ").strip() if base_list_node else ""
+            bases = (
+                text(src, base_list_node).lstrip(": ").strip() if base_list_node else ""
+            )
 
             type_params_node = n.child_by_field_name("type_parameters")
             generic = text(src, type_params_node) if type_params_node else ""
@@ -633,7 +642,8 @@ def cs_summary(src: bytes, root: Node, include_docstrings: bool = True) -> _Summ
                     elif c.type == "init_accessor_declaration":
                         acc_kws.append("init")
                 accessors_str = (
-                    "{ " + "; ".join(acc_kws) + "; }" if acc_kws
+                    "{ " + "; ".join(acc_kws) + "; }"
+                    if acc_kws
                     else text(src, accessors_node).strip()
                 )
             entry = {
@@ -860,7 +870,11 @@ def js_ts_summary(src: bytes, root: Node, include_docstrings: bool = True) -> _S
             name_node = child_by_field(n, "name")
             params = child_by_field(n, "parameters")
             if name_node:
-                args = text(src, params) if params else ("" if n.type == "property_signature" else "()")
+                args = (
+                    text(src, params)
+                    if params
+                    else ("" if n.type == "property_signature" else "()")
+                )
                 entry = {
                     "name": text(src, name_node),
                     "args": args,
@@ -962,7 +976,11 @@ def js_ts_summary(src: bytes, root: Node, include_docstrings: bool = True) -> _S
             params = child_by_field(n, "parameters")
             if name_node:
                 # public_field_definition is a class property — omit args if no params
-                args = text(src, params) if params else ("" if n.type == "public_field_definition" else "()")
+                args = (
+                    text(src, params)
+                    if params
+                    else ("" if n.type == "public_field_definition" else "()")
+                )
                 entry = {
                     "name": text(src, name_node),
                     "args": args,
@@ -1127,9 +1145,9 @@ def main() -> None:
     if module_doc:
         first_line = module_doc.splitlines()[0] if module_doc else ""
         if lang == "csharp":
-            print(f'/// {first_line}\n')
+            print(f"/// {first_line}\n")
         elif lang in ("javascript", "typescript", "tsx"):
-            print(f'/** {first_line} */\n')
+            print(f"/** {first_line} */\n")
         else:
             print(f'"""{first_line}"""\n')
 
@@ -1162,7 +1180,9 @@ def main() -> None:
                 # class / interface / enum / record / struct
                 bases = e.get("bases", "")
                 bases_str = f" : {bases}" if bases else ""
-                sig = f"{mods} {e.get('kind', '')} {prefix}{e['name']}{bases_str}".strip()
+                sig = (
+                    f"{mods} {e.get('kind', '')} {prefix}{e['name']}{bases_str}".strip()
+                )
 
             line = f"- {attrs_str}{sig}  [line {e['line']}]"
         else:
@@ -1178,7 +1198,9 @@ def main() -> None:
         if lang == "csharp" and "members" in e:
             for m in e["members"]:
                 val_str = f" = {m['value']}" if "value" in m else ""
-                doc_str = f"  // {m['docstring'].splitlines()[0]}" if "docstring" in m else ""
+                doc_str = (
+                    f"  // {m['docstring'].splitlines()[0]}" if "docstring" in m else ""
+                )
                 lines.append(f"  - {m['name']}{val_str}{doc_str}")
         return "\n".join(lines)
 
