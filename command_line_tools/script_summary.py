@@ -474,10 +474,27 @@ def cs_summary(src: bytes, root: Node, include_docstrings: bool = True) -> _Summ
     calls: list[dict] = []  # not extracted for C#
 
     _PUBLIC_LIKE = {"public", "protected", "protected internal"}
+    _PRIVATE_LIKE = {"private", "private protected"}
 
     def _is_visible(node: Node) -> bool:
         mods = set(_cs_modifiers(src, node))
         return bool(mods & _PUBLIC_LIKE)
+
+    def _is_interface_member(node: Node) -> bool:
+        """Return True if node is a direct member of an interface body.
+
+        Interface members with no modifier are implicitly public and should be
+        shown.  Members with an explicit ``private`` modifier (C# 8 default
+        interface method implementations) are implementation details and should
+        be hidden.
+        """
+        parent = node.parent  # declaration_list
+        grandparent = parent.parent if parent else None
+        if grandparent is None or grandparent.type != "interface_declaration":
+            return False
+        # Explicitly private → treat as implementation detail, not visible
+        mods = set(_cs_modifiers(src, node))
+        return not bool(mods & _PRIVATE_LIKE)
 
     def _maybe_doc(node: Node) -> dict:
         if include_docstrings:
@@ -576,7 +593,7 @@ def cs_summary(src: bytes, root: Node, include_docstrings: bool = True) -> _Summ
 
         # ── methods ───────────────────────────────────────────────────────────
         elif n.type == "method_declaration":
-            if not _is_visible(n):
+            if not _is_visible(n) and not _is_interface_member(n):
                 return
             name_node = n.child_by_field_name("name")
             params_node = n.child_by_field_name("parameters")
@@ -599,7 +616,7 @@ def cs_summary(src: bytes, root: Node, include_docstrings: bool = True) -> _Summ
 
         # ── properties ────────────────────────────────────────────────────────
         elif n.type == "property_declaration":
-            if not _is_visible(n):
+            if not _is_visible(n) and not _is_interface_member(n):
                 return
             name_node = n.child_by_field_name("name")
             type_node = n.child_by_field_name("type")
