@@ -152,6 +152,8 @@ alias find_helper='echo "
 "'
 alias folder_size='du --human-readable --summarize'
 
+alias gitlogjsonl='git log --pretty=format:"%H%x1f%an%x1f%ae%x1f%aI%x1f%s%x1f%B%x1e" | jq -Rsc '"'"'split("\u001e")[:-1][] | split("\u001f") | {hash:.[0], author:.[1], email:.[2], date:.[3], title:.[4], body:.[5]}'"'"''
+
 alias grep_helper='echo "
   # search all files recursively for specified substring #
   # -r means recursive (not only current directory, but also subdirectories)
