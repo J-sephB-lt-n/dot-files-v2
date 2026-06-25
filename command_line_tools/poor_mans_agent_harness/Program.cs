@@ -19,8 +19,12 @@ class Program
             "init",
             "Start a new agent session (prints the LLM prompt to stdout)."
         );
+        var readCmd = new Command("read", "Read a file or list files in a directory.");
+        var editCmd = new Command("edit", "Exact string replacement in a file.");
 
         rootCmd.Add(initCmd);
+        rootCmd.Add(readCmd);
+        rootCmd.Add(editCmd);
 
         return rootCmd.Parse(args).Invoke();
     }
