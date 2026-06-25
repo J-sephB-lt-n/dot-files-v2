@@ -391,7 +391,10 @@ git_helper() {
 
   # delete branch by index
   git branch | sed -n '3p' | xargs git branch -D   # '2p' for print 2nd element, '3p' for 3rd element etc.
-  git branch | fzf | xargs --no-run-if-empty git branch -D
+  git branch | fzf -m | xargs --no-run-if-empty git branch -D   # fzf -m allows select multiple branches
+
+  # set file to state on other branch
+  git restore --source other-branch-name ./path/to/file.txt
 EOF
 }
 
