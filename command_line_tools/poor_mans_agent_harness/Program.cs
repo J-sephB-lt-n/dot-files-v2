@@ -1,7 +1,7 @@
 ﻿using System.CommandLine;
-using System.CommandLine.Parsing;
+using PoorMansAgent.Commands;
 
-namespace PoorMansAgentHarness;
+namespace PoorMansAgent;
 
 class Program
 {
@@ -9,22 +9,14 @@ class Program
     {
         var rootCmd = new RootCommand(
             """
-            ---Poor Man's Agent Harness---
-
-            Turn your chatbot into the world's worst coding agent.
+            --- Poor Man's Agent Harness (pma) ---
+            Turn your chatbot into almost a coding agent 
             """
         );
 
-        var initCmd = new Command(
-            "init",
-            "Start a new agent session (prints the LLM prompt to stdout)."
-        );
-        var readCmd = new Command("read", "Read a file or list files in a directory.");
-        var editCmd = new Command("edit", "Exact string replacement in a file.");
-
-        rootCmd.Add(initCmd);
-        rootCmd.Add(readCmd);
-        rootCmd.Add(editCmd);
+        // rootCmd.Add(initCmd);
+        rootCmd.Add(ReadCommand.Build());
+        // rootCmd.Add(editCmd);
 
         return rootCmd.Parse(args).Invoke();
     }
