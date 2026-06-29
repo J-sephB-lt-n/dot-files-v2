@@ -1,4 +1,5 @@
 using System.CommandLine;
+using PoorMansAgent.ReadTool;
 
 namespace PoorMansAgent.Commands;
 
@@ -6,7 +7,7 @@ internal static class ReadCommand
 {
     public static Command Build()
     {
-        var inputPathArg = new Argument<FileInfo>("inputPath")
+        var inputPathArg = new Argument<FileSystemInfo>("inputPath")
         {
             Description = "File or directory to read.",
             Arity = ArgumentArity.ExactlyOne,
@@ -35,7 +36,7 @@ internal static class ReadCommand
 
         command.SetAction(parseResult =>
         {
-            FileInfo inputPath = parseResult.GetValue(inputPathArg)!;
+            FileSystemInfo inputPath = parseResult.GetValue(inputPathArg)!;
             int offset = parseResult.GetValue(offsetOption);
             int limit = parseResult.GetValue(limitOption);
             string sessionId = parseResult.GetValue(idOption)!;
@@ -48,6 +49,9 @@ internal static class ReadCommand
                  sessionId: {sessionId}
                 """
             );
+
+            var readService = new ReadService();
+            Console.WriteLine(readService.Read(inputPath));
         });
 
         return command;
