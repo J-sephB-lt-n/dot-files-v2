@@ -943,6 +943,12 @@ pass_helper() {
     pass edit pass/word/path
     pass rm pass/word/path
     pass mv s/r/c d/e/s/t  # can also move a folder
+
+    # git
+    pass git status
+    pass git add .
+    pass git commit -m "..."
+    pass git push origin main
 EOF
 }
 
