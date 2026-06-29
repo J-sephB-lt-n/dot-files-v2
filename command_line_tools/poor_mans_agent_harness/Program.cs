@@ -15,7 +15,8 @@ class Program
         );
 
         // rootCmd.Add(initCmd);
-        rootCmd.Add(ReadCommand.Build());
+        rootCmd.Add(ReadFileCommand.Build());
+        // rootCmd.Add(GlobCommand.Build());
         // rootCmd.Add(editCmd);
 
         return rootCmd.Parse(args).Invoke();
