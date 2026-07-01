@@ -7,7 +7,7 @@ internal static class GlobCommand
 {
     public static Command Build()
     {
-        var pathArg = new Argument<DirectoryInfo>("path")
+        var dirArg = new Argument<DirectoryInfo>("dir")
         {
             Description = "The directory to search in",
             Arity = ArgumentArity.ExactlyOne,
@@ -25,13 +25,20 @@ internal static class GlobCommand
 
         var command = new Command("glob", "List file paths by glob pattern.")
         {
-            Arguments = { pathArg, globPatternArg },
+            Arguments = { dirArg, globPatternArg },
             Options = { maxDepthOption },
         };
 
         command.SetAction(parseResult =>
         {
-            Console.WriteLine("working so far");
+            DirectoryInfo dir = parseResult.GetValue(dirArg)!;
+            string globPattern = parseResult.GetValue(globPatternArg)!;
+            int maxDepth = parseResult.GetValue(maxDepthOption);
+            IEnumerable<string> files = PathFinder.Glob(dir, globPattern, maxDepth);
+            foreach (string file in files)
+            {
+                Console.WriteLine(file);
+            }
         });
 
         return command;
