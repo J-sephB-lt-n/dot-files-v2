@@ -34,10 +34,11 @@ internal static class GlobCommand
             DirectoryInfo dir = parseResult.GetValue(dirArg)!;
             string globPattern = parseResult.GetValue(globPatternArg)!;
             int maxDepth = parseResult.GetValue(maxDepthOption);
-            IEnumerable<string> files = PathFinder.Glob(dir, globPattern, maxDepth);
-            foreach (string file in files)
+            IEnumerable<GlobFileMatch> files = PathFinder.Glob(dir, globPattern, maxDepth);
+            foreach (GlobFileMatch m in files)
             {
-                Console.WriteLine(file);
+                Console.WriteLine(m.RelativePath);
+                Console.WriteLine(m);
             }
         });
 
