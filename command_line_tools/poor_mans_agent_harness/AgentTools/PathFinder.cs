@@ -22,18 +22,37 @@ internal static class PathFinder
         for (int depth = 1; depth <= maxDepth; depth++)
         {
             var remaining = new List<GlobFileMatch>();
+            var dirFileCounts = matches
+                // count (recursively) files per folder at this depth
+                .Where(m => m.RelativePathSegments.Count > depth)
+                .CountBy(m => String.Join("/", m.RelativePathSegments.Take(depth)))
+                .ToDictionary();
+            foreach (
+                var (bigDir, fileCount) in dirFileCounts.Where(x =>
+                    x.Value > maxFiles || depth == maxDepth
+                )
+            )
+            {
+                filePaths.Add($"{bigDir}/... ({fileCount} files)");
+            }
             foreach (var match in matches)
             {
                 if (match.RelativePathSegments.Count == depth)
                 {
                     filePaths.Add(match.RelativePath);
                 }
+                else if (
+                    dirFileCounts.GetValueOrDefault(
+                        String.Join("/", match.RelativePathSegments.Take(depth))
+                    ) > maxFiles
+                    || depth == maxDepth
+                ) { }
                 else
                 {
                     remaining.Add(match);
                 }
-                matches = remaining;
             }
+            matches = remaining;
         }
 
         return filePaths;
