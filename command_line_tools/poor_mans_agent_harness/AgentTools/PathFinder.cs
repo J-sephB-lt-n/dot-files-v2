@@ -3,20 +3,26 @@ using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
 
 namespace PoorMansAgent.AgentTools;
 
-public sealed record GlobFileMatch(
-    string RelativePath,
-    // string FullPath,
-    string RelativeDir,
-    FileInfo Info
-);
-
 internal static class PathFinder
 {
-    public static IEnumerable<GlobFileMatch> Glob(
-        DirectoryInfo dir,
-        string globPattern,
-        int maxDepth
-    )
+    private sealed record GlobFileMatch(
+        string RelativePath,
+        // string FullPath,
+        string RelativeDir,
+        FileInfo Info
+    );
+
+    public static IEnumerable<string> Glob(DirectoryInfo dir, string globPattern, int maxDepth)
+    {
+        IEnumerable<GlobFileMatch> all_matches = GetAllMatches(dir, globPattern);
+        // filtering steps to go here
+        IEnumerable<string> filepaths = all_matches.Select(x => x.RelativePath);
+
+        return filepaths;
+    }
+
+    /// Fetch ALL filepaths matching the glob pattern ``globPattern``
+    private static IEnumerable<GlobFileMatch> GetAllMatches(DirectoryInfo dir, string globPattern)
     {
         var matcher = new Matcher();
         matcher.AddInclude(globPattern);
@@ -32,6 +38,5 @@ internal static class PathFinder
                     Info: new FileInfo(Path.Combine(dir.FullName, match.Path))
                 );
             });
-        // IEnumerable<string> files = matcher.GetResultsInFullPath(dir.FullName);
     }
 }
