@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.Extensions.FileSystemGlobbing;
 using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
 
@@ -15,11 +16,27 @@ internal static class PathFinder
 
     public static IEnumerable<string> Glob(DirectoryInfo dir, string globPattern, int maxDepth)
     {
-        IEnumerable<GlobFileMatch> all_matches = GetAllMatches(dir, globPattern);
-        // filtering steps to go here
-        IEnumerable<string> filepaths = all_matches.Select(x => x.RelativePath);
+        int maxFiles = 50; // might make this a function arg later
+        var matches = GetAllMatches(dir, globPattern).ToList();
+        var filePaths = new List<string>();
+        for (int depth = 1; depth <= maxDepth; depth++)
+        {
+            var remaining = new List<GlobFileMatch>();
+            foreach (var match in matches)
+            {
+                if (match.RelativePathSegments.Count == depth)
+                {
+                    filePaths.Add(match.RelativePath);
+                }
+                else
+                {
+                    remaining.Add(match);
+                }
+                matches = remaining;
+            }
+        }
 
-        return filepaths;
+        return filePaths;
     }
 
     private static string[] SplitFilePath(string filepath)
@@ -39,7 +56,6 @@ internal static class PathFinder
             .Execute(dir_wrapper)
             .Files.Select(match =>
             {
-                Console.WriteLine(String.Join(", ", SplitFilePath(match.Path)));
                 return new GlobFileMatch(
                     RelativePath: match.Path,
                     RelativePathSegments: SplitFilePath(match.Path),
