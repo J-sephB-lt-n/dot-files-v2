@@ -7,9 +7,10 @@ internal static class PathFinder
 {
     private sealed record GlobFileMatch(
         string RelativePath,
+        IReadOnlyList<string> RelativePathSegments,
         // string FullPath,
-        string RelativeDir,
-        FileInfo Info
+        string RelativeDir
+    // FileInfo Info
     );
 
     public static IEnumerable<string> Glob(DirectoryInfo dir, string globPattern, int maxDepth)
@@ -19,6 +20,12 @@ internal static class PathFinder
         IEnumerable<string> filepaths = all_matches.Select(x => x.RelativePath);
 
         return filepaths;
+    }
+
+    private static string[] SplitFilePath(string filepath)
+    {
+        ArgumentNullException.ThrowIfNullOrEmpty(filepath);
+        return filepath.Replace("\\", "/").Split("/", StringSplitOptions.RemoveEmptyEntries);
     }
 
     /// Fetch ALL filepaths matching the glob pattern ``globPattern``
@@ -32,10 +39,12 @@ internal static class PathFinder
             .Execute(dir_wrapper)
             .Files.Select(match =>
             {
+                Console.WriteLine(String.Join(", ", SplitFilePath(match.Path)));
                 return new GlobFileMatch(
                     RelativePath: match.Path,
-                    RelativeDir: Path.GetDirectoryName(match.Path) ?? string.Empty,
-                    Info: new FileInfo(Path.Combine(dir.FullName, match.Path))
+                    RelativePathSegments: SplitFilePath(match.Path),
+                    RelativeDir: Path.GetDirectoryName(match.Path) ?? string.Empty
+                // Info: new FileInfo(Path.Combine(dir.FullName, match.Path))
                 );
             });
     }
