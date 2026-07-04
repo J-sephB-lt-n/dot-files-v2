@@ -14,10 +14,10 @@ class Program
             """
         );
 
-        // rootCmd.Add(initCmd);
+        rootCmd.Add(InitCommand.Build());
         rootCmd.Add(ReadFileCommand.Build());
         rootCmd.Add(GlobCommand.Build());
-        // rootCmd.Add(editCmd);
+        // rootCmd.Add(editCommand.Build());
 
         return rootCmd.Parse(args).Invoke();
     }

@@ -24,7 +24,7 @@ internal static class GlobCommand
         };
         var idOption = new Option<string>("--id")
         {
-            Description = "Unique session identifier",
+            Description = "Unique command identifier",
             Required = true,
         };
 
@@ -39,16 +39,26 @@ internal static class GlobCommand
             DirectoryInfo dir = parseResult.GetValue(dirArg)!;
             string globPattern = parseResult.GetValue(globPatternArg)!;
             int maxDepth = parseResult.GetValue(maxDepthOption);
-            IEnumerable<string> filepaths = PathFinder.Glob(dir, globPattern, maxDepth);
+            IEnumerable<string> filePaths = PathFinder.Glob(dir, globPattern, maxDepth);
             string commandId = parseResult.GetValue(idOption)!;
-            Console.WriteLine($"""<glob-result id="{commandId}" pattern="{globPattern}">""");
-            foreach (string f in filepaths)
-            {
-                Console.WriteLine(f);
-            }
-            Console.WriteLine("</glob-result>");
+            string result = WrapWithResultTags(filePaths, commandId, globPattern);
+            Console.WriteLine(result);
         });
 
         return command;
+    }
+
+    public static string WrapWithResultTags(
+        IEnumerable<string> filePaths,
+        string commandId,
+        string globPattern
+    )
+    {
+        string lines = string.Join(Environment.NewLine, filePaths);
+        return $"""
+            <glob-result id="{commandId}" pattern="{globPattern}">
+            {lines}
+            </glob-result>
+            """;
     }
 }
