@@ -47,14 +47,13 @@ internal static class ReadFileCommand
             FileInfo inputPath = parseResult.GetValue(inputPathArg)!;
             int offset = parseResult.GetValue(offsetOption);
             int limit = parseResult.GetValue(limitOption);
-            string sessionId = parseResult.GetValue(idOption)!;
+            string commandId = parseResult.GetValue(idOption)!;
 
             string fileContent = FileReader.ReadFile(file: inputPath, offset, limit);
             Console.WriteLine(
                 $"""
-                <read-result id="{sessionId}" file="{inputPath.Name}">
-                {fileContent}
-                </read-result>
+                <read-result id="{commandId}" file="{inputPath.Name}">
+                {fileContent}</read-result>
                 """
             );
         });

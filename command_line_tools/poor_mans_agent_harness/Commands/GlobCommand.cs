@@ -22,11 +22,16 @@ internal static class GlobCommand
             Description = "Maximum folder depth to traverse.",
             DefaultValueFactory = _ => 3,
         };
+        var idOption = new Option<string>("--id")
+        {
+            Description = "Unique session identifier",
+            Required = true,
+        };
 
         var command = new Command("glob", "List file paths by glob pattern.")
         {
             Arguments = { dirArg, globPatternArg },
-            Options = { maxDepthOption },
+            Options = { maxDepthOption, idOption },
         };
 
         command.SetAction(parseResult =>
@@ -35,10 +40,13 @@ internal static class GlobCommand
             string globPattern = parseResult.GetValue(globPatternArg)!;
             int maxDepth = parseResult.GetValue(maxDepthOption);
             IEnumerable<string> filepaths = PathFinder.Glob(dir, globPattern, maxDepth);
+            string commandId = parseResult.GetValue(idOption)!;
+            Console.WriteLine($"""<glob-result id="{commandId}" pattern="{globPattern}">""");
             foreach (string f in filepaths)
             {
                 Console.WriteLine(f);
             }
+            Console.WriteLine("</glob-result>");
         });
 
         return command;
