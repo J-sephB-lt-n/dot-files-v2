@@ -22,9 +22,42 @@ internal static class InitCommand
                 $"""
                 I have some work for you to do in my codebase.
 
+                You can read files in my codebase using:
+                ```bash
+                pma read path/to/file --offset 0 --limit 200 --id <unique-text>
+                ```
+                where --offset is the number of lines at the beginning to skip (default 0),
+                --limit is the number of lines to show (default 200, maximum 999) and --id 
+                is a unique identifier (I'll include it when I give the command result 
+                back to you).
+                File numbers are shown at the start of each line as "<num>: " (these line 
+                  numbers are not part of the actual file content).
+
+                You can list files using:
+                ```bash
+                pma glob <dir> '<glob-pattern>' --max-depth 3 --id <unique-text>
+                ```
+                where --max-depth controls how deep to traverse (default 3) and --id is a 
+                unique identifier I will include when I give you the command result.
+
+                You can also give me bash commands to run for you, but when you do always
+                explain to me what the command will do and why you are running it. Don't use 
+                bash for listing and reading files - use `pma glob` and `pma read` for that.
+
+                Please make it very clear what the commands are which you would like me to 
+                run. Feel free to tell me to run multiple commands (--id will help you 
+                    differentiate the outputs of the different commands).
+                In particular, please batch file reads if you know you are going to read 
+                multiple files e.g.
+                ```
+                pma read file1 --id read-file1 && pma read file2 --id read-file2 && pma read file3 --id read-file-3
+                ```
+
                 Here is the root layout of my codebase:
                 $ pma glob . '**/**' --max-depth 1 --id project-root-files
                 {globResult}
+
+                I will now describe your task.
                 """
             );
         });
