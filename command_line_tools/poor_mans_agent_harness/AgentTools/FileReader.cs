@@ -8,7 +8,7 @@ internal static class FileReader
     {
         if (!file.Exists)
         {
-            return $"File {file.FullName} does not exist.";
+            return $"File {file.ToString()} does not exist.";
         }
         else
         {

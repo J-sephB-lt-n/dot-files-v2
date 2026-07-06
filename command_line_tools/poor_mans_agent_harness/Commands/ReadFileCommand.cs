@@ -54,6 +54,7 @@ internal static class ReadFileCommand
                 $"""
                 <read-result id="{commandId}" file="{inputPath.Name}">
                 {fileContent}</read-result>
+
                 """
             );
         });

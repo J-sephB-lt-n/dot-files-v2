@@ -59,6 +59,7 @@ internal static class GlobCommand
             <glob-result id="{commandId}" pattern="{globPattern}">
             {lines}
             </glob-result>
+
             """;
     }
 }
