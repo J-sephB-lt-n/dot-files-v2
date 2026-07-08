@@ -18,6 +18,7 @@ class Program
         rootCmd.Add(ReadFileCommand.Build());
         rootCmd.Add(GlobCommand.Build());
         rootCmd.Add(EditFileCommand.Build());
+        rootCmd.Add(BashCommand.Build());
 
         return rootCmd.Parse(args).Invoke();
     }
