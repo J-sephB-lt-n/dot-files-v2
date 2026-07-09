@@ -14,18 +14,26 @@ public sealed record BashResult(BashRunStatus Status, int ExitCode, string StdOu
 internal static class BashRunner
 {
     // public static string RunBash(string? bashCommand, string? stdIn, string motivation)
-    public static BashResult RunBash(string bashCommand, string motivation)
+    public static BashResult RunBash(string bashCommand, string motivation, bool skipUserApproval)
     {
-        Console.WriteLine("Proposed bash command(s):");
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine(motivation);
-        Console.ForegroundColor = ConsoleColor.Yellow;
-        Console.WriteLine(bashCommand);
-        Console.ResetColor();
-        Console.WriteLine(
-            "Approve this command? [y/n] (anything other than 'y' is interpreted as no.)"
-        );
-        string? userInput = ReadApprovalFromTerminal();
+        string? userInput = null;
+        if (skipUserApproval)
+        {
+            userInput = "y";
+        }
+        else
+        {
+            Console.WriteLine("Proposed bash command(s):");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(motivation);
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(bashCommand);
+            Console.ResetColor();
+            Console.WriteLine(
+                "Approve this command? [y/n] (anything other than 'y' is interpreted as no.)"
+            );
+            userInput = ReadApprovalFromTerminal();
+        }
         if (string.Equals(userInput, "y", StringComparison.OrdinalIgnoreCase))
         {
             var result = RunBashAsync(bashCommand).GetAwaiter().GetResult();

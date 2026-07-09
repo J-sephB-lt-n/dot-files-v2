@@ -27,10 +27,22 @@ internal static class BashCommand
             Description = "Unique command identifier.",
             Required = true,
         };
+        var approveOption = new Option<bool>("--approve")
+        {
+            Description = "Approve without interactive terminal approval",
+            DefaultValueFactory = _ => false,
+        };
 
         var command = new Command("bash", "Execute bash command(s)")
         {
-            Options = { bashCommandOption, hasStdInFlagOption, motivationOption, idOption },
+            Options =
+            {
+                bashCommandOption,
+                hasStdInFlagOption,
+                motivationOption,
+                idOption,
+                approveOption,
+            },
         };
 
         command.Validators.Add(commandResult =>
@@ -53,7 +65,8 @@ internal static class BashCommand
             }
             string motivation = parseResult.GetValue(motivationOption)!;
             string commandId = parseResult.GetValue(idOption)!;
-            BashResult bashResult = BashRunner.RunBash(bashCommand!, motivation);
+            bool skipUserApproval = parseResult.GetValue(approveOption);
+            BashResult bashResult = BashRunner.RunBash(bashCommand!, motivation, skipUserApproval);
             Console.WriteLine(
                 $"""
                 <bash-result id="{commandId}">
