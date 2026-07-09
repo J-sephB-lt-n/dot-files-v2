@@ -12,10 +12,10 @@ internal static class BashCommand
             Description =
                 "Single bash command to run directly - akin to 'bash -c'. Cannot be used if --stdin is used.",
         };
-        var stdInOption = new Option<string>("--stdin")
+        var hasStdInFlagOption = new Option<bool>("--stdin")
         {
             Description =
-                "Bash command(s) to run from standard input. Cannot be used if --command is used.",
+                "Allows to provide bash command(s) from standard input (e.g. a heredoc). Cannot be used if --command is used.",
         };
         var motivationOption = new Option<string>("--motivation")
         {
@@ -30,22 +30,30 @@ internal static class BashCommand
 
         var command = new Command("bash", "Execute bash command(s)")
         {
-            Options = { bashCommandOption, stdInOption, motivationOption, idOption },
+            Options = { bashCommandOption, hasStdInFlagOption, motivationOption, idOption },
         };
 
         command.Validators.Add(commandResult =>
         {
             bool hasBashCommand = commandResult.GetValue(bashCommandOption) is not null;
-            bool hasStdIn = commandResult.GetValue(stdInOption) is not null;
+            bool hasStdIn = commandResult.GetValue(hasStdInFlagOption);
             if (hasBashCommand == hasStdIn)
             {
                 commandResult.AddError("Exactly one of --command or --stdin must be supplied.");
             }
         });
 
-        command.SetAction(parseResult =>
+        command.SetAction(async parseResult =>
         {
-            Console.WriteLine("TODO");
+            string? bashCommand = parseResult.GetValue(bashCommandOption);
+            bool hasStdIn = parseResult.GetValue(hasStdInFlagOption);
+            if (hasStdIn)
+            {
+                bashCommand = await Console.In.ReadToEndAsync();
+            }
+            string motivation = parseResult.GetValue(motivationOption)!;
+            string commandId = parseResult.GetValue(idOption)!;
+            BashRunner.RunBash(bashCommand!, motivation);
         });
 
         return command;

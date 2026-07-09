@@ -40,7 +40,18 @@ internal static class InitCommand
                 where --max-depth controls how deep to traverse (default 3) and --id is a 
                 unique identifier I will include when I give you the command result.
 
-                You can also give me bash commands to run for you, but when you do always
+                You can also give me bash commands to run for you, which you can do 2 
+                different ways:
+                ```bash
+                # Option 1: call like `bash -c` (single simple command)
+                pma bash --id <unique-text> --motivation 'explanation of what you propose to run, what it will do and why' --command 'grep -r --include="*.js" --exclude-dir=node_modules "handleSubmit" src/'
+                # Option 2: pass bash command(s) from stdin (longer command or multiple commands):
+                pma bash --id <unique-text> --motivation 'explanation of what you propose to run, what it will do and why' --stdin <<'EOF'
+                find . -name "*.js" -maxdepth 3
+                find . -type f -name "Dockerfile"
+                find . -type d -name "node_modules"
+                EOF
+                ```
                 explain to me what the command will do and why you are running it. Don't use 
                 bash for listing and reading files - use `pma glob` and `pma read` for that.
 
