@@ -53,7 +53,22 @@ internal static class BashCommand
             }
             string motivation = parseResult.GetValue(motivationOption)!;
             string commandId = parseResult.GetValue(idOption)!;
-            BashRunner.RunBash(bashCommand!, motivation);
+            BashResult bashResult = BashRunner.RunBash(bashCommand!, motivation);
+            Console.WriteLine(
+                $"""
+                <bash-result id="{commandId}">
+                    <status>{bashResult.Status}</status>
+                    <exit-code>{bashResult.ExitCode}</exit-code>
+                    <stdout>
+                    {bashResult.StdOut}
+                    </stdout>
+                    <stderr>
+                    {bashResult.StdErr}
+                    </stderr>
+                </bash-result>
+
+                """
+            );
         });
 
         return command;
