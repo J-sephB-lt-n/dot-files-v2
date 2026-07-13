@@ -14,26 +14,19 @@ public sealed record BashResult(BashRunStatus Status, int ExitCode, string StdOu
 internal static class BashRunner
 {
     // public static string RunBash(string? bashCommand, string? stdIn, string motivation)
-    public static BashResult RunBash(string bashCommand, string motivation, bool skipUserApproval)
+    public static BashResult RunBash(string bashCommand, string motivation)
     {
-        string? userInput = null;
-        if (skipUserApproval)
-        {
-            userInput = "y";
-        }
-        else
-        {
-            Console.WriteLine("Proposed bash command(s):");
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine(motivation);
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine(bashCommand);
-            Console.ResetColor();
-            Console.WriteLine(
-                "Approve this command? [y/n] (anything other than 'y' is interpreted as no.)"
-            );
-            userInput = ReadApprovalFromTerminal();
-        }
+        bool useColor = !Console.IsErrorRedirected;
+        string green = useColor ? "\x1b[32m" : "";
+        string yellow = useColor ? "\x1b[33m" : "";
+        string resetColor = useColor ? "\x1b[0m" : "";
+        Console.Error.WriteLine("Proposed bash command(s):");
+        Console.Error.WriteLine($"{yellow}{bashCommand}{resetColor}");
+        Console.Error.WriteLine($"{green}MOTIVATION: {motivation}{resetColor}");
+        Console.Error.WriteLine(
+            "Approve this command? [y/n] (anything other than 'y' is interpreted as no.)"
+        );
+        string? userInput = ReadApprovalFromTerminal();
         if (string.Equals(userInput, "y", StringComparison.OrdinalIgnoreCase))
         {
             var result = RunBashAsync(bashCommand).GetAwaiter().GetResult();
