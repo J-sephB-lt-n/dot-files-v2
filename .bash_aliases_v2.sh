@@ -278,19 +278,6 @@ alias microsoft_graph_explorer_token='az login && az account get-access-token --
 
 alias ntvf='nvim "$(tv files)"'
 
-zip_helper() {
-  cat <<EOF
-  # add files to zip file #
-  zip my_archive.zip file1 file2 file3
-
-  # add entire folder (and subfolders) to zip file #
-  zip -r my_archive.zip folder_name
-
-  # unzip #
-  unzip my_archive.zip -d /path/to/destination # omit -d part for unzip to current dir
-EOF
-}
-
 # paste from clipboard after removing windows carriage returns #
 alias wslpaste='powershell.exe Get-Clipboard | sed "s/\r$//" | xargs -0 printf "%s"'
 
@@ -991,3 +978,17 @@ url_to_text() {
 }
 
 alias gpg-practice='gpgconf --kill gpg-agent && echo test | gpg --clearsign >/dev/null && gpg --decrypt ~/.practice-symmetric.gpg >/dev/null && gpgconf --kill gpg-agent'
+
+zip_helper() {
+  cat <<EOF
+  # add files to zip file #
+  zip my_archive.zip file1 file2 file3
+
+  # add entire folder (and subfolders) to zip file #
+  zip -r my_archive.zip folder_name
+  zip -r my_archive.zip folder_name -x 'folder_name/.git/' -x 'folder_name/.git/*' # exclude certain folders/files
+
+  # unzip #
+  unzip my_archive.zip -d /path/to/destination # omit -d part for unzip to current dir
+EOF
+}
