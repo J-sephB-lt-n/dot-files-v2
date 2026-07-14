@@ -30,7 +30,7 @@ internal static class EditFileCommand
         var replaceAllOption = new Option<bool>("--replace-all")
         {
             Description = "If true, all occurrences of <old-text> are replaced.",
-            DefaultValueFactory = _ => true,
+            DefaultValueFactory = _ => false,
         };
 
         var command = new Command(
@@ -52,7 +52,8 @@ internal static class EditFileCommand
 
             string result = FileEditor.EditFile(filePath, oldString, newString, replaceAll);
             Console.WriteLine(
-                $"<edit-file-result file=\"{filePath.ToString()}\" replace-all={replaceAll}>"
+                $"<edit-file-result file=\"{filePath.ToString()}\" replace-all={replaceAll} "
+                    + $"id=\"{commandId}\">"
             );
             Console.WriteLine(result);
             Console.WriteLine("</edit-file-result>\n");
