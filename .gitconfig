@@ -10,7 +10,7 @@
 	defaultBranch = main
 
 [credential]
-	helper = cache --timeout=28800
+	helper = store
 
 [includeIf "gitdir:~/experiments/"]
   path = ~/.gitconfig-personal
