@@ -13,7 +13,6 @@ public sealed record BashResult(BashRunStatus Status, int ExitCode, string StdOu
 
 internal static class BashRunner
 {
-    // public static string RunBash(string? bashCommand, string? stdIn, string motivation)
     public static BashResult RunBash(string bashCommand, string motivation)
     {
         bool useColor = !Console.IsErrorRedirected;

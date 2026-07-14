@@ -40,8 +40,26 @@ internal static class InitCommand
                 where --max-depth controls how deep to traverse (default 3) and --id is a 
                 unique identifier I will include when I give you the command result.
 
-                You can also give me bash commands to run for you, which you can do 2 
-                different ways:
+                You can write a new file using:
+                ```bash
+                pma write <filepath> << 'EOF'
+                file
+                content
+                here
+                EOF
+                ```
+                For new folders, use `mkdir` via `pma bash`
+
+                To edit an existing file use:
+                ```bash
+                pma edit <filepath> --old-string 'existing-string' --new-string 'string-to-replace-with' --id <unique-text>
+                ```
+                This replaces --old-string with --new-string
+                If there are multiple occurences of --old-string then your edit will be 
+                rejected unless you additionally include flag --replace-all
+
+                You can give me bash commands to run for you, which you can do via 
+                --command or via --stdin:
                 ```bash
                 # Option 1: call like `bash -c` (single simple command)
                 pma bash --id <unique-text> --motivation 'explanation of what you propose to run, what it will do and why' --command 'grep -r --include="*.js" --exclude-dir=node_modules "handleSubmit" src/'
@@ -53,13 +71,14 @@ internal static class InitCommand
                 EOF
                 ```
                 explain to me what the command will do and why you are running it. Don't use 
-                bash for listing and reading files - use `pma glob` and `pma read` for that.
+                bash for listing, reading, writing or editing files - use `pma glob`, 
+                `pma read`, `pma write` and `pma edit` for those.
 
                 Please make it very clear what the commands are which you would like me to 
                 run. Feel free to tell me to run multiple commands (--id will help you 
                     differentiate the outputs of the different commands).
-                In particular, please batch file reads if you know you are going to read 
-                multiple files e.g.
+                In particular, for pma commands which you don't need to run sequentially, please 
+                batch them for me e.g.
                 ```
                 pma read file1 --id read-file1 && pma read file2 --id read-file2 && pma read file3 --id read-file-3
                 ```
