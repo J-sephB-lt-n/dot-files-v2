@@ -42,7 +42,7 @@ internal static class InitCommand
 
                 You can write a new file using:
                 ```bash
-                pma write <filepath> << 'EOF'
+                pma write <filepath> --id <unique text> << 'EOF'
                 file
                 content
                 here
