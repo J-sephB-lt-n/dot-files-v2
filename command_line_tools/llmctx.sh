@@ -37,6 +37,34 @@ create_base_dir_if_not_exists() {
   fi
 }
 
+insert_new_item() {
+  if [[ $# -ne 1 || -z "$1" ]]; then
+    echo 'Usage: llmctx insert item-name'
+    exit 1
+  fi
+  local itempath="$1"
+  echo "${itempath}"
+  local itemdir=""
+  local item_filename
+  item_filename=$(basename "${itempath}")
+  if [[ "${itempath}" == */* ]]; then
+    itemdir=$(dirname "${itempath}")
+  fi
+  if [[ -n "${itemdir}" ]]; then
+    mkdir -p "${LLMCTX_BASE_DIR}/${itemdir}"
+  fi
+  local item_filepath="${LLMCTX_BASE_DIR}/${itemdir}/${item_filename}.llmctx"
+  if [[ -f "${item_filepath}" ]]; then
+    echo "There is already a context item at path ${item_filepath}"
+    exit 1
+  fi
+  : >"${item_filepath}"
+  local text_editor="${VISUAL:-${EDITOR:-vi}}"
+  "${text_editor}" "${item_filepath}"
+
+  echo "Insert new context item ${item_filepath}"
+}
+
 main() {
   create_base_dir_if_not_exists
   case "${1:-}" in
@@ -45,6 +73,13 @@ main() {
     ;;
   version | --version)
     echo "${LLMCTX_VERSION}"
+    ;;
+  ls)
+    tree --noreport "${LLMCTX_BASE_DIR}"
+    ;;
+  insert)
+    shift
+    insert_new_item "$@"
     ;;
   *)
     echo "Unknown command: ${1:-}"
