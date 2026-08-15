@@ -23,16 +23,26 @@ help() {
     llmctx --help
     llmctx --version
     llmctx ls
-    llmctx insert item-name
-    llmctx show [--full] item-name
-    llmctx rm item-name
+    llmctx insert PATH
+    llmctx show [PATH ...]
+    llmctx select
+    llmctx rm [PATH ...]
 EOF
+}
+
+check_dependencies() {
+  for dep in tree fzf; do
+    if ! command -v "${dep}" 1>/dev/null 2>/dev/null; then
+      echo "missing required dependency: ${dep}"
+      exit 1
+    fi
+  done
 }
 
 create_base_dir_if_not_exists() {
   if [[ ! -d "${LLMCTX_BASE_DIR}" ]]; then
     echo "Base directory ${LLMCTX_BASE_DIR} does not exist - creating it..."
-    mkdir "${LLMCTX_BASE_DIR}"
+    mkdir -p "${LLMCTX_BASE_DIR}"
     echo "Created directory ${LLMCTX_BASE_DIR}"
   fi
 }
@@ -65,7 +75,38 @@ insert_new_item() {
   echo "Insert new context item ${item_filepath}"
 }
 
+show_items() {
+  for filepath in "$@"; do
+    local name
+    name="$(basename "${filepath}")"
+    name="${name%.*}"
+    echo "<context-item name=\"${name}\">"
+    cat "${LLMCTX_BASE_DIR}/${filepath}.llmctx"
+    echo "</context-item>"
+    echo ""
+  done
+}
+
+select_items() {
+  mapfile -t selected < <(
+    find "${LLMCTX_BASE_DIR}" -type f -name "*.llmctx" -printf "%P\n" | fzf -m | sed 's/\.llmctx$//'
+  )
+  show_items "${selected[@]}"
+}
+
+remove_items() {
+  for filepath in "$@"; do
+    local abs_path="${LLMCTX_BASE_DIR}/${filepath}.llmctx"
+    rm "${abs_path}"
+  done
+}
+
+cleanup_base_dir() {
+  find "${LLMCTX_BASE_DIR}" -mindepth 1 -type d -empty -delete
+}
+
 main() {
+  check_dependencies
   create_base_dir_if_not_exists
   case "${1:-}" in
   help | --help | '')
@@ -75,11 +116,23 @@ main() {
     echo "${LLMCTX_VERSION}"
     ;;
   ls)
-    tree --noreport "${LLMCTX_BASE_DIR}"
+    tree --noreport "${LLMCTX_BASE_DIR}" | sed 's/\.llmctx$//'
     ;;
   insert)
     shift
     insert_new_item "$@"
+    ;;
+  show)
+    shift
+    show_items "$@"
+    ;;
+  select)
+    select_items
+    ;;
+  rm)
+    shift
+    remove_items "$@"
+    cleanup_base_dir
     ;;
   *)
     echo "Unknown command: ${1:-}"
