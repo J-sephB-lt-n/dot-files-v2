@@ -76,13 +76,26 @@ insert_new_item() {
 }
 
 show_items() {
+  local missing_files=()
+  local filepath abs_path name
   for filepath in "$@"; do
-    local name
+    abs_path="${LLMCTX_BASE_DIR}/${filepath}.llmctx"
+    if [[ ! -f "${abs_path}" ]]; then
+      missing_files+=("${abs_path}")
+    fi
+  done
+  if (("${#missing_files[@]}" > 0)); then
+    echo 'The following files could not be found:' >&2
+    printf "  - %s\n" "${missing_files[@]}" >&2
+    exit 1
+  fi
+  for filepath in "$@"; do
+    abs_path="${LLMCTX_BASE_DIR}/${filepath}.llmctx"
     name="$(basename "${filepath}")"
     name="${name%.*}"
-    echo "<context-item name=\"${name}\">"
-    cat "${LLMCTX_BASE_DIR}/${filepath}.llmctx"
-    echo "</context-item>"
+    echo "<${name}>"
+    cat "${abs_path}"
+    echo "</${name}>"
     echo ""
   done
 }
@@ -97,11 +110,12 @@ select_items() {
 remove_items() {
   for filepath in "$@"; do
     local abs_path="${LLMCTX_BASE_DIR}/${filepath}.llmctx"
-    rm "${abs_path}"
+    if [[ -f "${abs_path}" ]]; then
+      rm "${abs_path}"
+    else
+      echo "FILE NOT FOUND: ${abs_path}"
+    fi
   done
-}
-
-cleanup_base_dir() {
   find "${LLMCTX_BASE_DIR}" -mindepth 1 -type d -empty -delete
 }
 
@@ -132,7 +146,6 @@ main() {
   rm)
     shift
     remove_items "$@"
-    cleanup_base_dir
     ;;
   *)
     echo "Unknown command: ${1:-}"
