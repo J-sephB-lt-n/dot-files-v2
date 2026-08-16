@@ -24,6 +24,7 @@ help() {
     llmctx --version
     llmctx ls
     llmctx insert PATH
+    llmctx edit PATH
     llmctx show [PATH ...]
     llmctx select
     llmctx rm [PATH ...]
@@ -49,11 +50,10 @@ create_base_dir_if_not_exists() {
 
 insert_new_item() {
   if [[ $# -ne 1 || -z "$1" ]]; then
-    echo 'Usage: llmctx insert item-name'
+    echo 'Usage: llmctx insert PATH'
     exit 1
   fi
   local itempath="$1"
-  echo "${itempath}"
   local itemdir=""
   local item_filename
   item_filename=$(basename "${itempath}")
@@ -71,8 +71,27 @@ insert_new_item() {
   : >"${item_filepath}"
   local text_editor="${VISUAL:-${EDITOR:-vi}}"
   "${text_editor}" "${item_filepath}"
+  echo "Inserted new context item ${item_filepath}"
+}
 
-  echo "Insert new context item ${item_filepath}"
+edit_item() {
+  if [[ $# -ne 1 || -z "$1" ]]; then
+    echo 'Usage: llmctx edit PATH'
+    exit 1
+  fi
+  local input="$1"
+  local abs_path="${LLMCTX_BASE_DIR}/${input}.llmctx"
+  if [[ ! -f "${abs_path}" ]]; then
+    echo "There is no item at path ${abs_path}"
+    exit 1
+  fi
+  local text_editor="${VISUAL:-${EDITOR:-vi}}"
+  if "${text_editor}" "${abs_path}"; then
+    echo "Successfully edited context item ${abs_path}"
+  else
+    echo "ERROR: failed to edit context item ${abs_path}" >&2
+    exit 1
+  fi
 }
 
 show_items() {
@@ -135,6 +154,10 @@ main() {
   insert)
     shift
     insert_new_item "$@"
+    ;;
+  edit)
+    shift
+    edit_item "$@"
     ;;
   show)
     shift
