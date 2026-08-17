@@ -149,7 +149,7 @@ main() {
     echo "${LLMCTX_VERSION}"
     ;;
   ls)
-    tree --noreport "${LLMCTX_BASE_DIR}" | sed 's/\.llmctx$//'
+    tree -C --noreport "${LLMCTX_BASE_DIR}" | sed 's/\.llmctx$//'
     ;;
   insert)
     shift
