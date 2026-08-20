@@ -28,6 +28,7 @@ help() {
     llmctx show [PATH ...]
     llmctx select
     llmctx rm [PATH ...]
+    llmctx git [...]
 EOF
 }
 
@@ -138,6 +139,13 @@ remove_items() {
   find "${LLMCTX_BASE_DIR}" -mindepth 1 -type d -empty -delete
 }
 
+init_llmctx_git_repo() {
+  if ! git -C "${LLMCTX_BASE_DIR}" 1>/dev/null 2>/dev/null; then
+    echo 'not git repo'
+  fi
+  echo "to be run: git -C ${LLMCTX_BASE_DIR}" "$@"
+}
+
 main() {
   check_dependencies
   create_base_dir_if_not_exists
@@ -169,6 +177,10 @@ main() {
   rm)
     shift
     remove_items "$@"
+    ;;
+  git)
+    shift
+    init_llmctx_git_repo "$@"
     ;;
   *)
     echo "Unknown command: ${1:-}"
