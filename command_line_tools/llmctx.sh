@@ -140,10 +140,12 @@ remove_items() {
 }
 
 init_llmctx_git_repo() {
-  if ! git -C "${LLMCTX_BASE_DIR}" 1>/dev/null 2>/dev/null; then
-    echo 'not git repo'
+  if [[ ! -d "${LLMCTX_BASE_DIR}/.git" ]]; then
+    echo "git repo not found in ${LLMCTX_BASE_DIR}" >&2
+    echo "git -C ${LLMCTX_BASE_DIR} init" >&2
+    git -C "${LLMCTX_BASE_DIR}" init
   fi
-  echo "to be run: git -C ${LLMCTX_BASE_DIR}" "$@"
+  git -C "${LLMCTX_BASE_DIR}" "$@"
 }
 
 main() {
