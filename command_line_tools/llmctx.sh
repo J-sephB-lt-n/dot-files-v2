@@ -145,6 +145,9 @@ init_llmctx_git_repo() {
     echo "git -C ${LLMCTX_BASE_DIR} init" >&2
     git -C "${LLMCTX_BASE_DIR}" init
   fi
+  printf 'git -C %q' "$LLMCTX_BASE_DIR" >&2
+  printf ' %q' "$@" >&2
+  printf '\n' >&2
   git -C "${LLMCTX_BASE_DIR}" "$@"
 }
 
