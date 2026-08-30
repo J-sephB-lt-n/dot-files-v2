@@ -10,6 +10,12 @@ import tempfile
 from pathlib import Path
 from textwrap import dedent
 
+# readline gives the input() prompt left/right arrow editing + history.
+try:
+    import readline  # noqa: F401
+except ImportError:  # pragma: no cover - readline is stdlib on Linux/macOS
+    pass
+
 # ── ANSI colours ──────────────────────────────────────────────────────────────
 
 _TTY = sys.stdout.isatty()
@@ -17,6 +23,18 @@ _TTY = sys.stdout.isatty()
 
 def _c(code: str, text: str) -> str:
     return f"\033[{code}m{text}\033[0m" if _TTY else text
+
+
+def rl_prompt(text: str, code: str = "1") -> str:
+    """Build a coloured input() prompt that readline measures correctly.
+
+    ANSI escapes must be wrapped in \\001 (start-ignore) / \\002 (end-ignore) so
+    readline treats them as zero-width; otherwise left/right arrow editing and
+    line wrapping become janky because the cursor column is miscounted.
+    """
+    if not _TTY:
+        return text
+    return f"\001\033[{code}m\002{text}\001\033[0m\002"
 
 
 def bold(t: str) -> str:   return _c("1", t)
@@ -1270,7 +1288,7 @@ def _phase_loop(
 
     while True:
         try:
-            user_input = input(bold(f"  [{phase}] > ")).strip()
+            user_input = input(rl_prompt(f"  [{phase}] > ")).strip()
         except (EOFError, KeyboardInterrupt):
             print()
             raise
