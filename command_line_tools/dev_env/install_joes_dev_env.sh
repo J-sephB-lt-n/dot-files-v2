@@ -16,4 +16,12 @@ install_if_not_exists() {
 }
 
 # droast #
-install_if_not_exists droast bash -c 'curl -fsL ewry.net/droast/install.sh | sh'
+install_if_not_exists droast bash -c 'curl -fsL https://ewry.net/droast/install.sh | sh'
+
+# zoxide #
+install_if_not_exists zoxide bash -s <<EOF
+set -euo pipefail
+curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
+command -v zoxide 1>/dev/null 2>/dev/null
+echo 'eval "$(zoxide init bash)"' >>~/.bashrc
+EOF
