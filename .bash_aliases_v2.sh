@@ -770,11 +770,14 @@ prompt_format() {
   Task: describe what is required.
   Input: what are the inputs to the task (e.g. multiple CSV files, all same columns)
   Assumptions: what is assumed to be true
-  Constraints: describe the limits
+  Constraints: describe BOTH what is in scope, and what is out of scope
   Output: describe required output length/format/schema
+  Acceptance criteria: "definition of done"
   Verify: describe how to verify that the proposed solution works
-  Examples: show the model what good and bad output looks like
+  Examples: show the model what good and bad output looks like. Point to existing patterns.
   
+  # post steps #
+  Self-critique: Tell the LLM to check against the constraints and definition of done, list edge cases, assumptions made, anything it couldn't test or verify etc.
 EOF
 }
 
