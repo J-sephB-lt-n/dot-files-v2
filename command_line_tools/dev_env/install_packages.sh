@@ -1,7 +1,4 @@
 #!/bin/bash
-:'
-Install of the dev packages that Joe uses
-'
 
 set -euo pipefail
 
