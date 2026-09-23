@@ -17,9 +17,11 @@ install_if_not_exists() {
 
 sudo apt-get update
 
-sudo apt-get install -y curl git ripgrep tmux unzip
+sudo apt-get install -y build-essential cloc commitizen curl git ripgrep taskwarrior tmux tree unzip
 
 install_if_not_exists droast bash -c 'curl -fsL https://ewry.net/droast/install.sh | sh'
+
+install_if_not_exists dust bash -c "curl -sSfL https://raw.githubusercontent.com/bootandy/dust/refs/heads/master/install.sh | sh"
 
 install_if_not_exists fnm bash -c 'curl -fsSL https://fnm.vercel.app/install | bash'
 
