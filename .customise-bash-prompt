@@ -21,11 +21,14 @@ _update_prompt() {
 
     git_branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null)
 
-    PS1="${COLOUR_CYAN}${current_dir}${COLOUR_RESET}"
+    PS1=""
 
     if [[ -n "$git_branch" ]]; then
         PS1+=" ${COLOUR_MAGENTA}${git_branch}${COLOUR_RESET}"
     fi
+
+    PS1+="${COLOUR_CYAN}${current_dir}${COLOUR_RESET}"
+
 
     PS1+=" ${COLOUR_YELLOW}${elapsed}s${COLOUR_RESET}"
     PS1+="\n\$ "
