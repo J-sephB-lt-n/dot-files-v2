@@ -1,0 +1,36 @@
+# Maximum displayed current_dir length
+CURRENT_DIR_MAX_CHARS=40
+
+# Colours
+COLOUR_CYAN='\[\e[36m\]'      # cyan
+COLOUR_MAGENTA='\[\e[35m\]'      # magenta
+COLOUR_YELLOW='\[\e[33m\]'     # yellow
+COLOUR_RESET='\[\e[0m\]'
+
+_cmd_start=$SECONDS
+
+_update_prompt() {
+    local elapsed=$((SECONDS - _cmd_start))
+    local git_branch=""
+    local current_dir="${PWD/#$HOME/~}"
+
+    if (( ${#current_dir} > CURRENT_DIR_MAX_CHARS )); then
+        local keep=$((CURRENT_DIR_MAX_CHARS - 3))
+        current_dir="...${current_dir: -keep}"
+    fi
+
+    git_branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null)
+
+    PS1="${COLOUR_CYAN}${current_dir}${COLOUR_RESET}"
+
+    if [[ -n "$git_branch" ]]; then
+        PS1+=" ${COLOUR_MAGENTA}${git_branch}${COLOUR_RESET}"
+    fi
+
+    PS1+=" ${COLOUR_YELLOW}${elapsed}s${COLOUR_RESET}"
+    PS1+="\n\$ "
+}
+
+trap '[[ $BASH_COMMAND == "_update_prompt" ]] || _cmd_start=$SECONDS' DEBUG
+
+PROMPT_COMMAND=_update_prompt
