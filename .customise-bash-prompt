@@ -24,7 +24,7 @@ _update_prompt() {
     PS1=""
 
     if [[ -n "$git_branch" ]]; then
-        PS1+=" ${COLOUR_MAGENTA}${git_branch}${COLOUR_RESET}"
+        PS1+=" ${COLOUR_MAGENTA}${git_branch}${COLOUR_RESET} "
     fi
 
     PS1+="${COLOUR_CYAN}${current_dir}${COLOUR_RESET}"
