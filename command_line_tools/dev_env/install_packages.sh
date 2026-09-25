@@ -17,7 +17,7 @@ install_if_not_exists() {
 
 sudo apt-get update
 
-sudo apt-get install -y bat build-essential cloc commitizen curl git ripgrep taskwarrior tmux tree unzip
+sudo apt-get install -y bat build-essential cloc commitizen curl git jq ripgrep taskwarrior tmux tree unzip
 
 install_if_not_exists droast bash -c 'curl -fsL https://ewry.net/droast/install.sh | sh'
 
