@@ -5,8 +5,10 @@ Display a resizable, modal popup message using tkinter.
 Example usage:
 $ popup_msg -m 'Hello World'
 
-Place this script (without .py) in /usr/local/bin/ to make this script globally available
-(might also need `sudo chmod +x /usr/local/bin/popup_msg`
+To make `popup_message` globally available:
+   1. chmod +x popup_msg.py
+   2. ln -s $HOME/command_line_tools/popup_msg.py ~/.local/bin/popup_msg
+   3. now you can run `popup_msg --help` from any folder
 """
 
 import argparse
