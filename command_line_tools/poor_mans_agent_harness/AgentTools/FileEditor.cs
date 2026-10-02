@@ -69,8 +69,31 @@ internal static class FileEditor
     private static void PrintDiff(string oldText, string newText)
     {
         var diff = InlineDiffBuilder.Diff(oldText, newText);
-        foreach (var line in diff.Lines)
+        var context_line_nums = new HashSet<int>();
+        int context_n_lines = 3;
+        for (int i = 0; i < diff.Lines.Count; i++)
         {
+            var line = diff.Lines[i];
+            if (line.Type is ChangeType.Inserted or ChangeType.Deleted or ChangeType.Modified)
+            {
+                for (
+                    int line_num = i - context_n_lines;
+                    line_num <= i + context_n_lines;
+                    line_num++
+                )
+                {
+                    if (line_num != i)
+                    {
+                        context_line_nums.Add(line_num);
+                    }
+                }
+            }
+        }
+
+        // foreach (var line in diff.Lines)
+        for (int i = 0; i < diff.Lines.Count; i++)
+        {
+            var line = diff.Lines[i];
             switch (line.Type)
             {
                 case ChangeType.Inserted:
@@ -87,6 +110,10 @@ internal static class FileEditor
                     break;
                 default:
                     Console.ResetColor();
+                    if (context_line_nums.Contains(i))
+                    {
+                        Console.WriteLine($"{line.Text}");
+                    }
                     break;
             }
         }
