@@ -109,11 +109,12 @@ internal static class FileEditor
                     Console.WriteLine($"~ {line.Text}");
                     break;
                 default:
-                    Console.ResetColor();
                     if (context_line_nums.Contains(i))
                     {
+                        Console.ForegroundColor = ConsoleColor.DarkGray;
                         Console.WriteLine($"{line.Text}");
                     }
+                    Console.ResetColor();
                     break;
             }
         }
